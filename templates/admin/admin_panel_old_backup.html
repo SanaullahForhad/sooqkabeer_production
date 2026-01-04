@@ -1,0 +1,203 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Panel - SooqKabeer{% endblock %}
+
+{% block styles %}
+<style>
+    /* Professional Layout Configuration */
+    :root {
+        --admin-sidebar-width: 250px;
+        --admin-header-height: 70px;
+        --primary-admin: #4e73df;
+        --secondary-admin: #1cc88a;
+        --warning-admin: #f6c23e;
+        --danger-admin: #e74a3b;
+        --dark-admin: #5a5c69;
+    }
+
+    .admin-container { display: flex; min-height: 100vh; }
+    
+    .admin-sidebar {
+        width: var(--admin-sidebar-width);
+        background: linear-gradient(180deg, var(--primary-admin) 0%, #224abe 100%);
+        color: white;
+        position: fixed;
+        height: 100vh;
+        overflow-y: auto;
+        z-index: 1000;
+    }
+
+    .admin-main {
+        flex: 1;
+        margin-left: var(--admin-sidebar-width);
+        background: #f8f9fc;
+    }
+
+    .admin-header {
+        background: white;
+        padding: 15px 30px;
+        border-bottom: 1px solid #e3e6f0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        height: var(--admin-header-height);
+    }
+
+    /* Sidebar Navigation Links */
+    .admin-nav-item {
+        padding: 12px 20px;
+        display: flex;
+        align-items: center;
+        color: rgba(255,255,255,.8);
+        text-decoration: none;
+        transition: 0.3s;
+        border-left: 3px solid transparent;
+    }
+
+    .admin-nav-item:hover, .admin-nav-item.active {
+        background: rgba(255,255,255,.1);
+        color: white;
+        border-left-color: var(--secondary-admin);
+    }
+
+    .admin-nav-icon { width: 25px; margin-right: 10px; }
+
+    /* Stats Cards Styling */
+    .admin-stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 20px;
+        padding: 20px;
+    }
+
+    .admin-stat-card {
+        background: white;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        border-left: 5px solid var(--primary-admin);
+    }
+
+    /* Quick Action Buttons */
+    .quick-actions {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 15px;
+        padding: 20px;
+    }
+
+    .quick-btn {
+        background: white;
+        border: 1px solid #ddd;
+        padding: 15px;
+        text-align: center;
+        border-radius: 8px;
+        text-decoration: none;
+        color: #333;
+        transition: 0.3s;
+    }
+
+    .quick-btn:hover { background: #f0f2f5; border-color: var(--primary-admin); }
+
+    @media (max-width: 768px) {
+        .admin-sidebar { width: 70px; }
+        .admin-main { margin-left: 70px; }
+        .admin-nav-text { display: none; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="admin-container">
+    <aside class="admin-sidebar">
+        <div class="p-3 text-center border-bottom border-white-50">
+            <h5 class="fw-bold">SK Admin</h5>
+        </div>
+        <nav class="admin-nav mt-3">
+            <a href="{{ url_for('admin_dashboard') }}" class="admin-nav-item active">
+                <i class="fas fa-home admin-nav-icon"></i>
+                <span class="admin-nav-text">Dashboard</span>
+            </a>
+            <a href="{{ url_for('admin_products') }}" class="admin-nav-item">
+                <i class="fas fa-boxes admin-nav-icon"></i>
+                <span class="admin-nav-text">All Products</span>
+            </a>
+            <a href="{{ url_for('add_product') }}" class="admin-nav-item">
+                <i class="fas fa-plus-circle admin-nav-icon"></i>
+                <span class="admin-nav-text">Add New Product</span>
+            </a>
+            <a href="{{ url_for('admin_orders') }}" class="admin-nav-item">
+                <i class="fas fa-shopping-cart admin-nav-icon"></i>
+                <span class="admin-nav-text">Orders</span>
+            </a>
+            <a href="{{ url_for('admin_users') }}" class="admin-nav-item">
+                <i class="fas fa-users admin-nav-icon"></i>
+                <span class="admin-nav-text">Manage Users</span>
+            </a>
+            <a href="{{ url_for('admin_settings') }}" class="admin-nav-item mt-5">
+                <i class="fas fa-cogs admin-nav-icon"></i>
+                <span class="admin-nav-text">Settings</span>
+            </a>
+            <a href="{{ url_for('admin_logout') }}" class="admin-nav-item text-danger">
+                <i class="fas fa-sign-out-alt admin-nav-icon"></i>
+                <span class="admin-nav-text">Logout</span>
+            </a>
+        </nav>
+    </aside>
+
+    <main class="admin-main">
+        <header class="admin-header">
+            <div>
+                <h4 class="mb-0">Control Panel</h4>
+                <small class="text-muted">Manage your store efficiently</small>
+            </div>
+            <div class="d-flex align-items-center gap-3">
+                <a href="/" class="btn btn-outline-dark btn-sm">View Website</a>
+                <div class="avatar bg-primary text-white rounded-circle p-2">
+                    <i class="fas fa-user-shield"></i>
+                </div>
+            </div>
+        </header>
+
+        <div class="admin-stats-grid">
+            <div class="admin-stat-card">
+                <div class="text-primary fw-bold">TOTAL PRODUCTS</div>
+                <div class="h3 mb-0">{{ stats.total_products if stats else '0' }}</div>
+            </div>
+            <div class="admin-stat-card" style="border-left-color: #1cc88a;">
+                <div class="text-success fw-bold">TOTAL ORDERS</div>
+                <div class="h3 mb-0">{{ stats.total_orders if stats else '0' }}</div>
+            </div>
+            <div class="admin-stat-card" style="border-left-color: #f6c23e;">
+                <div class="text-warning fw-bold">ACTIVE USERS</div>
+                <div class="h3 mb-0">{{ stats.total_users if stats else '0' }}</div>
+            </div>
+        </div>
+
+        <div class="p-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    {% block admin_content %}
+                    <h5>Quick Controls</h5>
+                    <div class="quick-actions">
+                        <a href="{{ url_for('add_product') }}" class="quick-btn">
+                            <i class="fas fa-cart-plus mb-2 d-block"></i> Add Product
+                        </a>
+                        <a href="{{ url_for('admin_products') }}" class="quick-btn">
+                            <i class="fas fa-list mb-2 d-block"></i> List Products
+                        </a>
+                        <a href="{{ url_for('admin_orders') }}" class="quick-btn">
+                            <i class="fas fa-truck mb-2 d-block"></i> View Orders
+                        </a>
+                        <a href="{{ url_for('admin_settings') }}" class="quick-btn">
+                            <i class="fas fa-tools mb-2 d-block"></i> Config
+                        </a>
+                    </div>
+                    {% endblock %}
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+{% endblock %}
+

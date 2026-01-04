@@ -1,0 +1,3 @@
+                        cursor.execute('''
+                                INSERT INTO commissions (user_id, amount, commission_rate, type, description)
+    VALUES (?, ?, ?, ?, ?)

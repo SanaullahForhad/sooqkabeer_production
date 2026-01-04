@@ -1,0 +1,51 @@
+def vendor_dashboard():
+    import sqlite3
+    vendor_id = session.get('user_id')
+    db = get_db()
+    db.row_factory = sqlite3.Row
+    cursor = db.cursor()
+
+    try:
+        # 1. Fetch vendor products (using stock_quantity as per your DB)
+        cursor.execute("SELECT * FROM products WHERE vendor_id = ?", (vendor_id,))
+        products = cursor.fetchall()
+
+        # 2. Fetch order stats (Total Orders and Total Sales)
+        cursor.execute("""
+            SELECT COUNT(DISTINCT order_id) as total_orders,
+                   SUM(price * quantity) as total_sales
+            FROM order_items
+            WHERE product_id IN (SELECT id FROM products WHERE vendor_id = ?)
+        """, (vendor_id,))
+        stats_row = cursor.fetchone()
+
+        # 3. Fetch total commission income
+        cursor.execute("SELECT SUM(amount) FROM commissions WHERE vendor_id = ?", (vendor_id,))
+        commission_row = cursor.fetchone()
+        total_income = commission_row[0] if commission_row and commission_row[0] else 0
+
+        # Stats dictionary for template
+        stats_dict = {
+            'total_orders': stats_row['total_orders'] if stats_row['total_orders'] else 0,
+            'total_sales': stats_row['total_sales'] if stats_row['total_sales'] else 0,
+            'total_commission': total_income
+        }
+
+        return render_template('vendor/dashboard.html',
+                               products=products,
+                               stats=stats_dict)
+
+    except Exception as e:
+        print(f"#=== [ERROR] Vendor Dashboard: {str(e)} ===#")
+        flash("Error loading dashboard data", "danger")
+        return redirect(url_for('index'))
+
+        # 4. Fetch recent orders
+        cursor.execute("""
+            SELECT oi.*, p.name_en, o.id as order_id, o.created_at
+            FROM order_items oi
+            JOIN products p ON oi.product_id = p.id
+            JOIN orders o ON oi.order_id = o.id
+            WHERE p.vendor_id = ?
+            ORDER BY o.created_at DESC LIMIT 5
+        """, (vendor_id,))

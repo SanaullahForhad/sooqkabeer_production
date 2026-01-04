@@ -1,0 +1,44 @@
+
+#=== Vendor Registration Logic (Fixed Indent) ===#
+@app.route('/vendor/register', methods=['GET', 'POST'])
+def vendor_register():
+    if request.method == 'POST':
+        try:
+            username = request.form.get('username', '').strip()
+            email = request.form.get('email', '').strip().lower()
+            password = request.form.get('password', '')
+            phone = request.form.get('phone', '').strip()
+            business_name = request.form.get('business_name', '').strip()
+            kyc_document = request.form.get('kyc_document', '').strip()
+
+            db = get_db()
+            cursor = db.cursor()
+
+            cursor.execute("SELECT id FROM users WHERE email = ?", (email,))
+            if cursor.fetchone():
+                flash('Email already registered!', 'danger')
+                return render_template('vendor/register.html')
+
+            cursor.execute("SELECT COUNT(id) FROM users WHERE role = 'vendor'")
+            count = cursor.fetchone()[0]
+            vendor_custom_id = f"HKO-{(count + 1):05d}"
+
+            password_hash = hashlib.sha256(password.encode()).hexdigest()
+
+            sql = """INSERT INTO users 
+                     (username, email, password, phone, role, is_active, 
+                      vendor_id_code, vendor_verified, business_name, kyc_document) 
+                     VALUES (?, ?, ?, ?, 'vendor', 1, ?, 0, ?, ?)"""
+            
+            cursor.execute(sql, (username, email, password_hash, phone, 
+                                vendor_custom_id, business_name, kyc_document))
+            db.commit()
+
+            flash(f'Registration Successful! ID: {vendor_custom_id}', 'success')
+            return redirect(url_for('vendor_login'))
+
+        except Exception as e:
+            print(f"#=== DEBUG ERROR: {str(e)} ===#")
+            return f"Internal Server Error: {str(e)}"
+
+    return render_template('vendor/register.html')

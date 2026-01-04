@@ -1,0 +1,1209 @@
+{% extends "admin_panel.html" %}
+
+{% block title %}Add New Product - SooqKabeer Admin{% endblock %}
+
+{% block styles %}
+<style>
+    /* Modern Product Form Styles */
+    :root {
+        --form-primary: #4e73df;
+        --form-secondary: #1cc88a;
+        --form-warning: #f6c23e;
+        --form-danger: #e74a3b;
+    }
+
+    .form-container {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .form-header {
+        background: linear-gradient(135deg, var(--form-primary) 0%, #224abe 100%);
+        color: white;
+        padding: 30px;
+        border-radius: 15px 15px 0 0;
+    }
+
+    .form-steps {
+        display: flex;
+        justify-content: space-between;
+        position: relative;
+        margin: 40px 0;
+        padding: 0 20px;
+    }
+
+    .form-steps::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50px;
+        right: 50px;
+        height: 2px;
+        background: #e3e6f0;
+        transform: translateY(-50%);
+        z-index: 1;
+    }
+
+    .step {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background: white;
+        padding: 10px;
+    }
+
+    .step-circle {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: #e3e6f0;
+        color: #6e707e;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        margin-bottom: 10px;
+        transition: all 0.3s;
+    }
+
+    .step.active .step-circle {
+        background: var(--form-primary);
+        color: white;
+    }
+
+    .step.completed .step-circle {
+        background: var(--form-secondary);
+        color: white;
+    }
+
+    .step-label {
+        font-size: 0.875rem;
+        color: #6e707e;
+        font-weight: 500;
+    }
+
+    .form-tabs {
+        display: none;
+        padding: 30px;
+        background: white;
+        border-radius: 0 0 15px 15px;
+        box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+    }
+
+    .form-tabs.active {
+        display: block;
+        animation: fadeIn 0.5s ease;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #5a5c69;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+    }
+
+    .form-label .required {
+        color: var(--form-danger);
+        margin-left: 4px;
+    }
+
+    .form-control-custom {
+        border: 1px solid #d1d3e2;
+        border-radius: 0.35rem;
+        padding: 0.75rem;
+        font-size: 0.95rem;
+        transition: all 0.3s;
+        width: 100%;
+    }
+
+    .form-control-custom:focus {
+        border-color: var(--form-primary);
+        box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+        outline: none;
+    }
+
+    .input-group-custom {
+        position: relative;
+        display: flex;
+        align-items: stretch;
+        width: 100%;
+    }
+
+    .input-group-custom .input-group-text {
+        background: #f8f9fc;
+        border: 1px solid #d1d3e2;
+        padding: 0.75rem 1rem;
+        color: #6e707e;
+        font-weight: 500;
+    }
+
+    .input-group-custom .form-control-custom {
+        border-left: none;
+    }
+
+    .form-row {
+        display: flex;
+        flex-wrap: wrap;
+        margin: 0 -0.75rem;
+    }
+
+    .form-col {
+        flex: 1;
+        padding: 0 0.75rem;
+        min-width: 250px;
+    }
+
+    /* Language Tabs */
+    .lang-tabs {
+        display: flex;
+        border-bottom: 1px solid #e3e6f0;
+        margin-bottom: 20px;
+    }
+
+    .lang-tab {
+        padding: 12px 24px;
+        background: none;
+        border: none;
+        font-weight: 500;
+        color: #6e707e;
+        cursor: pointer;
+        border-bottom: 3px solid transparent;
+        transition: all 0.3s;
+    }
+
+    .lang-tab.active {
+        color: var(--form-primary);
+        border-bottom-color: var(--form-primary);
+    }
+
+    /* Image Upload */
+    .image-upload-area {
+        border: 2px dashed #d1d3e2;
+        border-radius: 10px;
+        padding: 40px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s;
+        background: #f8f9fc;
+    }
+
+    .image-upload-area:hover {
+        border-color: var(--form-primary);
+        background: rgba(78, 115, 223, 0.05);
+    }
+
+    .image-upload-area.drag-over {
+        border-color: var(--form-primary);
+        background: rgba(78, 115, 223, 0.1);
+    }
+
+    .upload-icon {
+        font-size: 48px;
+        color: #dddfeb;
+        margin-bottom: 15px;
+    }
+
+    .image-preview-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 15px;
+        margin-top: 20px;
+    }
+
+    .image-preview {
+        position: relative;
+        border-radius: 8px;
+        overflow: hidden;
+        height: 120px;
+    }
+
+    .image-preview img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .remove-image {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        background: rgba(231, 74, 59, 0.9);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 25px;
+        height: 25px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-size: 12px;
+    }
+
+    /* Rich Text Editor */
+    .rich-text-editor {
+        border: 1px solid #d1d3e2;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .editor-toolbar {
+        background: #f8f9fc;
+        padding: 10px;
+        border-bottom: 1px solid #d1d3e2;
+        display: flex;
+        gap: 5px;
+        flex-wrap: wrap;
+    }
+
+    .editor-btn {
+        background: white;
+        border: 1px solid #d1d3e2;
+        border-radius: 4px;
+        padding: 8px 12px;
+        cursor: pointer;
+        font-size: 14px;
+        color: #5a5c69;
+        transition: all 0.2s;
+    }
+
+    .editor-btn:hover {
+        background: #f8f9fc;
+        border-color: var(--form-primary);
+        color: var(--form-primary);
+    }
+
+    .editor-content {
+        min-height: 200px;
+        padding: 15px;
+        outline: none;
+    }
+
+    /* Form Actions */
+    .form-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 30px;
+        background: #f8f9fc;
+        border-top: 1px solid #e3e6f0;
+        border-radius: 0 0 15px 15px;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 10px;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .form-steps::before {
+            left: 30px;
+            right: 30px;
+        }
+
+        .form-col {
+            min-width: 100%;
+            margin-bottom: 1rem;
+        }
+
+        .form-actions {
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .action-buttons {
+            width: 100%;
+        }
+
+        .action-buttons button {
+            flex: 1;
+        }
+    }
+
+    /* Custom Select Styling */
+    .select-custom {
+        position: relative;
+    }
+
+    .select-custom select {
+        appearance: none;
+        background: white url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%235a5c69' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e") right 0.75rem center/16px 12px no-repeat;
+        padding-right: 2.5rem;
+    }
+
+    /* Arabic Text */
+    .arabic-input {
+        direction: rtl;
+        text-align: right;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    /* Vendor Info Card */
+    .vendor-card {
+        background: #f8f9fc;
+        border: 1px solid #e3e6f0;
+        border-radius: 8px;
+        padding: 15px;
+        margin-top: 10px;
+        display: none;
+    }
+
+    .vendor-card.active {
+        display: block;
+    }
+
+    .vendor-info-item {
+        display: flex;
+        margin-bottom: 8px;
+    }
+
+    .vendor-info-label {
+        font-weight: 600;
+        color: #5a5c69;
+        min-width: 80px;
+    }
+
+    /* Status Badges */
+    .status-badge {
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .status-active {
+        background: #d1e7dd;
+        color: #0f5132;
+    }
+
+    .status-inactive {
+        background: #f8d7da;
+        color: #721c24;
+    }
+
+    .status-draft {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    /* Loading Spinner */
+    .loading-spinner {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border: 3px solid rgba(78, 115, 223, 0.3);
+        border-radius: 50%;
+        border-top-color: var(--form-primary);
+        animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Form Header -->
+    <div class="form-header">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h1 class="h3 mb-2 text-white">
+                    <i class="fas fa-plus-circle me-2"></i> Add New Product
+                </h1>
+                <p class="mb-0 text-white-50">Fill in the product details below to add a new product to your marketplace</p>
+            </div>
+            <a href="{{ url_for('admin_products') }}" class="btn btn-light">
+                <i class="fas fa-arrow-left me-2"></i> Back to Products
+            </a>
+        </div>
+    </div>
+
+    <!-- Form Steps -->
+    <div class="form-steps">
+        <div class="step active" data-step="1">
+            <div class="step-circle">1</div>
+            <span class="step-label">Basic Info</span>
+        </div>
+        <div class="step" data-step="2">
+            <div class="step-circle">2</div>
+            <span class="step-label">Pricing & Stock</span>
+        </div>
+        <div class="step" data-step="3">
+            <div class="step-circle">3</div>
+            <span class="step-label">Media</span>
+        </div>
+        <div class="step" data-step="4">
+            <div class="step-circle">4</div>
+            <span class="step-label">Advanced</span>
+        </div>
+    </div>
+
+    <!-- Form Container -->
+    <div class="form-container">
+        <form id="addProductForm" method="POST" enctype="multipart/form-data">
+            <!-- Tab 1: Basic Information -->
+            <div class="form-tabs active" id="tab1">
+                <h3 class="mb-4">
+                    <i class="fas fa-info-circle text-primary me-2"></i> Basic Information
+                </h3>
+
+                <!-- Product Names -->
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="fas fa-font me-1"></i> Product Name
+                        <span class="required">*</span>
+                    </label>
+                    
+                    <div class="lang-tabs mb-3">
+                        <button type="button" class="lang-tab active" data-lang="en">English</button>
+                        <button type="button" class="lang-tab" data-lang="ar">Arabic (العربية)</button>
+                    </div>
+
+                    <div class="lang-content">
+                        <!-- English Name -->
+                        <div class="lang-input active" data-lang="en">
+                            <input type="text" name="name_en" class="form-control-custom" 
+                                   placeholder="Enter product name in English" required>
+                            <small class="text-muted d-block mt-1">This name will be displayed to international customers</small>
+                        </div>
+                        
+                        <!-- Arabic Name -->
+                        <div class="lang-input" data-lang="ar">
+                            <input type="text" name="name_ar" class="form-control-custom arabic-input" 
+                                   placeholder="أدخل اسم المنتج باللغة العربية" dir="rtl" required>
+                            <small class="text-muted d-block mt-1">هذا الاسم سيظهر للعملاء المحليين</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Descriptions -->
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="fas fa-align-left me-1"></i> Description
+                    </label>
+                    
+                    <div class="lang-tabs mb-3">
+                        <button type="button" class="lang-tab active" data-lang="desc-en">English</button>
+                        <button type="button" class="lang-tab" data-lang="desc-ar">Arabic (العربية)</button>
+                    </div>
+
+                    <div class="lang-content">
+                        <!-- English Description -->
+                        <div class="lang-input active" data-lang="desc-en">
+                            <textarea name="description_en" class="form-control-custom" rows="4" 
+                                      placeholder="Enter product description in English"></textarea>
+                        </div>
+                        
+                        <!-- Arabic Description -->
+                        <div class="lang-input" data-lang="desc-ar">
+                            <textarea name="description_ar" class="form-control-custom arabic-input" rows="4" 
+                                      placeholder="أدخل وصف المنتج باللغة العربية" dir="rtl"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Category & Vendor -->
+                <div class="form-row">
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-tags me-1"></i> Category
+                                <span class="required">*</span>
+                            </label>
+                            <div class="select-custom">
+                                <select name="category_id" class="form-control-custom" required>
+                                    <option value="">Select Category</option>
+                                    {% for category in categories %}
+                                    <option value="{{ category.id }}">{{ category.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-store me-1"></i> Vendor/Supplier
+                                <span class="required">*</span>
+                            </label>
+                            <div class="select-custom">
+                                <select name="vendor_id" class="form-control-custom" id="vendorSelect" required>
+                                    <option value="">Select Vendor</option>
+                                    {% for vendor in vendors %}
+                                    <option value="{{ vendor.id }}" 
+                                            data-email="{{ vendor.email }}"
+                                            data-phone="{{ vendor.phone }}"
+                                            data-company="{{ vendor.company_name }}">
+                                        {{ vendor.company_name or vendor.username }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            
+                            <!-- Vendor Info Card -->
+                            <div class="vendor-card" id="vendorInfo">
+                                <div class="vendor-info-item">
+                                    <span class="vendor-info-label">Email:</span>
+                                    <span id="vendorEmail">-</span>
+                                </div>
+                                <div class="vendor-info-item">
+                                    <span class="vendor-info-label">Phone:</span>
+                                    <span id="vendorPhone">-</span>
+                                </div>
+                                <div class="vendor-info-item">
+                                    <span class="vendor-info-label">Company:</span>
+                                    <span id="vendorCompany">-</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 2: Pricing & Stock -->
+            <div class="form-tabs" id="tab2">
+                <h3 class="mb-4">
+                    <i class="fas fa-tag text-primary me-2"></i> Pricing & Stock Information
+                </h3>
+
+                <!-- Pricing -->
+                <div class="form-row">
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-shopping-cart me-1"></i> Retail Price (KD)
+                                <span class="required">*</span>
+                            </label>
+                            <div class="input-group-custom">
+                                <span class="input-group-text">KD</span>
+                                <input type="number" name="price" class="form-control-custom" 
+                                       step="0.001" min="0" placeholder="0.900" required>
+                            </div>
+                            <small class="text-muted">Price shown to retail customers</small>
+                        </div>
+                    </div>
+                    
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-industry me-1"></i> B2B Price (KD)
+                            </label>
+                            <div class="input-group-custom">
+                                <span class="input-group-text">KD</span>
+                                <input type="number" name="b2b_price" class="form-control-custom" 
+                                       step="0.001" min="0" placeholder="0.750">
+                            </div>
+                            <small class="text-muted">Special price for business customers</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cost Price & Profit -->
+                <div class="form-row">
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-dollar-sign me-1"></i> Cost Price (KD)
+                            </label>
+                            <div class="input-group-custom">
+                                <span class="input-group-text">KD</span>
+                                <input type="number" name="cost_price" class="form-control-custom" 
+                                       step="0.001" min="0" placeholder="0.600" id="costPrice">
+                            </div>
+                            <small class="text-muted">Your purchase cost from supplier</small>
+                        </div>
+                    </div>
+                    
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-chart-line me-1"></i> Profit Margin
+                            </label>
+                            <div class="input-group-custom">
+                                <input type="text" class="form-control-custom" id="profitMargin" 
+                                       value="0%" readonly>
+                                <span class="input-group-text">Margin</span>
+                            </div>
+                            <small class="text-muted">Calculated automatically</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stock Management -->
+                <div class="form-row">
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-boxes me-1"></i> Stock Quantity
+                                <span class="required">*</span>
+                            </label>
+                            <input type="number" name="stock" class="form-control-custom" 
+                                   min="0" placeholder="100" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-exclamation-triangle me-1"></i> Low Stock Alert
+                            </label>
+                            <input type="number" name="low_stock_alert" class="form-control-custom" 
+                                   min="1" placeholder="10">
+                            <small class="text-muted">Get notified when stock goes below this level</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Unit & Weight -->
+                <div class="form-row">
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-balance-scale me-1"></i> Unit
+                            </label>
+                            <div class="select-custom">
+                                <select name="unit" class="form-control-custom">
+                                    <option value="kg">Kilogram (KG)</option>
+                                    <option value="g">Gram (G)</option>
+                                    <option value="piece" selected>Piece</option>
+                                    <option value="pack">Pack</option>
+                                    <option value="box">Box</option>
+                                    <option value="liter">Liter</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-weight me-1"></i> Weight (KG)
+                            </label>
+                            <input type="number" name="weight" class="form-control-custom" 
+                                   step="0.01" min="0" placeholder="0.5">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 3: Media -->
+            <div class="form-tabs" id="tab3">
+                <h3 class="mb-4">
+                    <i class="fas fa-images text-primary me-2"></i> Product Images
+                </h3>
+
+                <!-- Main Image -->
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="fas fa-image me-1"></i> Main Product Image
+                        <span class="required">*</span>
+                    </label>
+                    <div class="image-upload-area" id="mainImageUpload">
+                        <div class="upload-icon">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                        </div>
+                        <h5>Upload Main Image</h5>
+                        <p class="text-muted">Click to upload or drag and drop</p>
+                        <p class="text-muted">PNG, JPG, GIF up to 5MB</p>
+                        <input type="file" name="main_image" class="d-none" id="mainImageInput" accept="image/*" required>
+                    </div>
+                    <div id="mainImagePreview" class="image-preview-container"></div>
+                </div>
+
+                <!-- Gallery Images -->
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="fas fa-layer-group me-1"></i> Gallery Images (Optional)
+                    </label>
+                    <div class="image-upload-area" id="galleryUpload">
+                        <div class="upload-icon">
+                            <i class="fas fa-images"></i>
+                        </div>
+                        <h5>Upload Gallery Images</h5>
+                        <p class="text-muted">Upload up to 5 additional images</p>
+                        <input type="file" name="gallery_images[]" class="d-none" id="galleryInput" 
+                               accept="image/*" multiple>
+                    </div>
+                    <div id="galleryPreview" class="image-preview-container"></div>
+                </div>
+            </div>
+
+            <!-- Tab 4: Advanced Settings -->
+            <div class="form-tabs" id="tab4">
+                <h3 class="mb-4">
+                    <i class="fas fa-cogs text-primary me-2"></i> Advanced Settings
+                </h3>
+
+                <!-- Product Identification -->
+                <div class="form-row">
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-barcode me-1"></i> SKU
+                            </label>
+                            <div class="input-group-custom">
+                                <input type="text" name="sku" class="form-control-custom" 
+                                       id="skuInput" placeholder="PROD-001">
+                                <button type="button" class="btn btn-outline-secondary" id="generateSKU">
+                                    <i class="fas fa-random"></i>
+                                </button>
+                            </div>
+                            <small class="text-muted">Stock Keeping Unit - Leave blank to auto-generate</small>
+                        </div>
+                    </div>
+                    
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-hashtag me-1"></i> Product Code
+                            </label>
+                            <input type="text" name="product_code" class="form-control-custom" 
+                                   placeholder="TOM-001">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Status & Visibility -->
+                <div class="form-row">
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-toggle-on me-1"></i> Status
+                            </label>
+                            <div class="select-custom">
+                                <select name="status" class="form-control-custom">
+                                    <option value="active" selected>Active</option>
+                                    <option value="inactive">Inactive</option>
+                                    <option value="draft">Draft</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-eye me-1"></i> Visibility
+                            </label>
+                            <div class="select-custom">
+                                <select name="visibility" class="form-control-custom">
+                                    <option value="public" selected>Public</option>
+                                    <option value="private">Private</option>
+                                    <option value="b2b_only">B2B Customers Only</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Shipping -->
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="fas fa-truck me-1"></i> Shipping Information
+                    </label>
+                    <div class="form-row">
+                        <div class="form-col">
+                            <label class="small mb-1">Shipping Cost (KD)</label>
+                            <input type="number" name="shipping_cost" class="form-control-custom" 
+                                   step="0.001" min="0" placeholder="0.500">
+                        </div>
+                        
+                        <div class="form-col">
+                            <label class="small mb-1">Delivery Time (Days)</label>
+                            <input type="number" name="delivery_days" class="form-control-custom" 
+                                   min="1" placeholder="3">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Additional Options -->
+                <div class="form-group">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="is_featured" id="isFeatured">
+                        <label class="form-check-label" for="isFeatured">
+                            <i class="fas fa-star me-1"></i> Mark as Featured Product
+                        </label>
+                    </div>
+                    
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="allow_backorders" id="allowBackorders">
+                        <label class="form-check-label" for="allowBackorders">
+                            <i class="fas fa-box-open me-1"></i> Allow Backorders
+                        </label>
+                    </div>
+                    
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="notify_vendor" id="notifyVendor" checked>
+                        <label class="form-check-label" for="notifyVendor">
+                            <i class="fas fa-bell me-1"></i> Notify Vendor via Email
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Detailed Description (Rich Text Editor) -->
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="fas fa-file-alt me-1"></i> Detailed Description
+                    </label>
+                    <div class="rich-text-editor">
+                        <div class="editor-toolbar">
+                            <button type="button" class="editor-btn" data-command="bold">
+                                <i class="fas fa-bold"></i>
+                            </button>
+                            <button type="button" class="editor-btn" data-command="italic">
+                                <i class="fas fa-italic"></i>
+                            </button>
+                            <button type="button" class="editor-btn" data-command="underline">
+                                <i class="fas fa-underline"></i>
+                            </button>
+                            <div class="mx-2" style="border-left: 1px solid #d1d3e2;"></div>
+                            <button type="button" class="editor-btn" data-command="insertUnorderedList">
+                                <i class="fas fa-list-ul"></i>
+                            </button>
+                            <button type="button" class="editor-btn" data-command="insertOrderedList">
+                                <i class="fas fa-list-ol"></i>
+                            </button>
+                        </div>
+                        <div class="editor-content" id="editorContent" 
+                             contenteditable="true" data-placeholder="Enter detailed product description..."></div>
+                        <textarea name="detailed_description" class="d-none" id="detailedDescription"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="form-actions">
+                <div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="saveAndAddAnother">
+                        <label class="form-check-label" for="saveAndAddAnother">
+                            Save and add another product
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button type="button" class="btn btn-secondary" id="prevBtn">
+                        <i class="fas fa-arrow-left me-2"></i> Previous
+                    </button>
+                    <button type="button" class="btn btn-primary" id="nextBtn">
+                        Next <i class="fas fa-arrow-right ms-2"></i>
+                    </button>
+                    <button type="submit" class="btn btn-success" id="submitBtn">
+                        <i class="fas fa-save me-2"></i> Save Product
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Form Navigation
+    let currentStep = 1;
+    const totalSteps = 4;
+    
+    // Update steps
+    function updateSteps() {
+        // Update step circles
+        document.querySelectorAll('.step').forEach((step, index) => {
+            const stepNum = index + 1;
+            step.classList.remove('active', 'completed');
+            
+            if (stepNum === currentStep) {
+                step.classList.add('active');
+            } else if (stepNum < currentStep) {
+                step.classList.add('completed');
+            }
+        });
+        
+        // Show current tab
+        document.querySelectorAll('.form-tabs').forEach(tab => {
+            tab.classList.remove('active');
+        });
+        document.getElementById(`tab${currentStep}`).classList.add('active');
+        
+        // Update buttons
+        document.getElementById('prevBtn').style.display = currentStep === 1 ? 'none' : 'block';
+        document.getElementById('nextBtn').style.display = currentStep === totalSteps ? 'none' : 'block';
+        document.getElementById('submitBtn').style.display = currentStep === totalSteps ? 'block' : 'none';
+    }
+    
+    // Next button
+    document.getElementById('nextBtn').addEventListener('click', function() {
+        if (currentStep < totalSteps) {
+            currentStep++;
+            updateSteps();
+            scrollToTop();
+        }
+    });
+    
+    // Previous button
+    document.getElementById('prevBtn').addEventListener('click', function() {
+        if (currentStep > 1) {
+            currentStep--;
+            updateSteps();
+            scrollToTop();
+        }
+    });
+    
+    // Language tabs
+    document.querySelectorAll('.lang-tab').forEach(tab => {
+        tab.addEventListener('click', function() {
+            const lang = this.dataset.lang;
+            const parent = this.closest('.form-group');
+            
+            // Update active tab
+            parent.querySelectorAll('.lang-tab').forEach(t => t.classList.remove('active'));
+            this.classList.add('active');
+            
+            // Show corresponding input
+            parent.querySelectorAll('.lang-input').forEach(input => {
+                input.classList.remove('active');
+                if (input.dataset.lang === lang) {
+                    input.classList.add('active');
+                }
+            });
+        });
+    });
+    
+    // Image Upload Handling
+    function setupImageUpload(uploadAreaId, inputId, previewId) {
+        const uploadArea = document.getElementById(uploadAreaId);
+        const fileInput = document.getElementById(inputId);
+        const previewArea = document.getElementById(previewId);
+        
+        uploadArea.addEventListener('click', () => fileInput.click());
+        
+        // Drag and drop
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, preventDefaults, false);
+        });
+        
+        ['dragenter', 'dragover'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, () => uploadArea.classList.add('drag-over'), false);
+        });
+        
+        ['dragleave', 'drop'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, () => uploadArea.classList.remove('drag-over'), false);
+        });
+        
+        uploadArea.addEventListener('drop', handleDrop, false);
+        fileInput.addEventListener('change', handleFileSelect, false);
+        
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            handleFiles(files);
+        }
+        
+        function handleFileSelect(e) {
+            const files = e.target.files;
+            handleFiles(files);
+        }
+        
+        function handleFiles(files) {
+            [...files].forEach(previewFile);
+        }
+        
+        function previewFile(file) {
+            if (!file.type.match('image.*')) {
+                alert('Please select an image file');
+                return;
+            }
+            
+            if (file.size > 5 * 1024 * 1024) {
+                alert('File size must be less than 5MB');
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onloadend = function() {
+                const img = document.createElement('div');
+                img.className = 'image-preview';
+                img.innerHTML = `
+                    <img src="${reader.result}" alt="Preview">
+                    <button type="button" class="remove-image">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
+                
+                // Remove image functionality
+                img.querySelector('.remove-image').addEventListener('click', function() {
+                    img.remove();
+                    if (previewId === 'mainImagePreview') {
+                        fileInput.value = '';
+                    }
+                });
+                
+                previewArea.appendChild(img);
+                
+                // Hide upload area if it's main image
+                if (previewId === 'mainImagePreview') {
+                    uploadArea.style.display = 'none';
+                }
+            };
+        }
+    }
+    
+    // Setup image uploads
+    setupImageUpload('mainImageUpload', 'mainImageInput', 'mainImagePreview');
+    setupImageUpload('galleryUpload', 'galleryInput', 'galleryPreview');
+    
+    // Vendor info display
+    const vendorSelect = document.getElementById('vendorSelect');
+    const vendorInfo = document.getElementById('vendorInfo');
+    const vendorEmail = document.getElementById('vendorEmail');
+    const vendorPhone = document.getElementById('vendorPhone');
+    const vendorCompany = document.getElementById('vendorCompany');
+    
+    vendorSelect.addEventListener('change', function() {
+        const selectedOption = this.options[this.selectedIndex];
+        
+        if (selectedOption.value) {
+            vendorEmail.textContent = selectedOption.dataset.email || 'N/A';
+            vendorPhone.textContent = selectedOption.dataset.phone || 'N/A';
+            vendorCompany.textContent = selectedOption.dataset.company || 'N/A';
+            vendorInfo.classList.add('active');
+        } else {
+            vendorInfo.classList.remove('active');
+        }
+    });
+    
+    // Profit calculation
+    const priceInput = document.querySelector('input[name="price"]');
+    const costInput = document.getElementById('costPrice');
+    const profitSpan = document.getElementById('profitMargin');
+    
+    function calculateProfit() {
+        const price = parseFloat(priceInput.value) || 0;
+        const cost = parseFloat(costInput.value) || 0;
+        
+        if (price > 0 && cost > 0) {
+            const profit = price - cost;
+            const margin = (profit / price) * 100;
+            profitSpan.value = `${margin.toFixed(1)}%`;
+            
+            // Color coding
+            if (margin >= 50) {
+                profitSpan.style.color = '#1cc88a';
+            } else if (margin >= 20) {
+                profitSpan.style.color = '#f6c23e';
+            } else {
+                profitSpan.style.color = '#e74a3b';
+            }
+        } else {
+            profitSpan.value = '0%';
+            profitSpan.style.color = '#6e707e';
+        }
+    }
+    
+    priceInput.addEventListener('input', calculateProfit);
+    costInput.addEventListener('input', calculateProfit);
+    
+    // SKU Generation
+    document.getElementById('generateSKU').addEventListener('click', function() {
+        const prefix = 'PROD';
+        const timestamp = Date.now().toString().slice(-6);
+        const random = Math.floor(100 + Math.random() * 900);
+        const sku = `${prefix}-${timestamp}${random}`;
+        document.getElementById('skuInput').value = sku;
+    });
+    
+    // Rich text editor
+    const editorContent = document.getElementById('editorContent');
+    const hiddenTextarea = document.getElementById('detailedDescription');
+    
+    document.querySelectorAll('.editor-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const command = this.dataset.command;
+            document.execCommand(command, false, null);
+            editorContent.focus();
+        });
+    });
+    
+    // Sync editor content with hidden textarea
+    editorContent.addEventListener('input', function() {
+        hiddenTextarea.value = this.innerHTML;
+    });
+    
+    // Form submission
+    document.getElementById('addProductForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Validate required fields
+        const requiredFields = this.querySelectorAll('[required]');
+        let isValid = true;
+        
+        requiredFields.forEach(field => {
+            if (!field.value.trim()) {
+                isValid = false;
+                field.classList.add('is-invalid');
+                
+                // Find the corresponding tab
+                const tabId = field.closest('.form-tabs').id;
+                const stepNum = parseInt(tabId.replace('tab', ''));
+                currentStep = stepNum;
+                updateSteps();
+                
+                // Scroll to field
+                field.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            } else {
+                field.classList.remove('is-invalid');
+            }
+        });
+        
+        if (!isValid) {
+            alert('Please fill all required fields marked with *');
+            return;
+        }
+        
+        // Show loading
+        const submitBtn = document.getElementById('submitBtn');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<span class="loading-spinner"></span> Saving...';
+        submitBtn.disabled = true;
+        
+        // Submit form
+        setTimeout(() => {
+            this.submit();
+        }, 1000);
+    });
+    
+    // Helper functions
+    function scrollToTop() {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    
+    // Auto-generate SKU on load
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('generateSKU').click();
+        updateSteps();
+    });
+</script>
+{% endblock %}

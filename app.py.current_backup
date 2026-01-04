@@ -1,0 +1,157 @@
+from flask import Flask, render_template, request, redirect, session
+import sqlite3
+import os
+from datetime import datetime
+
+app = Flask(__name__)
+app.secret_key = 'sooqkabeer-kuwait-2024-secret'
+app.config['DATABASE'] = 'sooqkabeer.db'
+app.config['TEMPLATES_AUTO_RELOAD'] = True
+
+def get_db():
+    conn = sqlite3.connect(app.config['DATABASE'])
+    conn.row_factory = sqlite3.Row
+    return conn
+
+def init_db():
+    conn = get_db()
+    cursor = conn.cursor()
+    
+    # এডমিন টেবিল
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS admin (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT UNIQUE NOT NULL,
+            password TEXT NOT NULL,
+            email TEXT UNIQUE NOT NULL
+        )
+    ''')
+    
+    # ভেন্ডর টেবিল
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS vendor (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            vendor_code TEXT UNIQUE NOT NULL,
+            name TEXT NOT NULL,
+            email TEXT UNIQUE NOT NULL,
+            phone TEXT NOT NULL,
+            status TEXT DEFAULT 'Active',
+            commission_rate REAL DEFAULT 10.0
+        )
+    ''')
+    
+    # ডিফল্ট এডমিন যোগ করুন
+    cursor.execute("SELECT * FROM admin WHERE username='admin'")
+    if not cursor.fetchone():
+        cursor.execute(
+            "INSERT INTO admin (username, password, email) VALUES (?, ?, ?)",
+            ('admin', 'admin123', 'admin@sooqkabeer.com')
+        )
+    
+    # ডেমো ভেন্ডর যোগ করুন
+    cursor.execute("SELECT * FROM vendor")
+    if not cursor.fetchone():
+        vendors = [
+            ('HKO-001', 'أحمد ستور', 'ahmed@sooqkabeer.com', '12345678', 'Active', 10.0),
+            ('HKO-002', 'رحمان ترادرز', 'rahman@sooqkabeer.com', '87654321', 'Active', 10.0)
+        ]
+        cursor.executemany(
+            "INSERT INTO vendor (vendor_code, name, email, phone, status, commission_rate) VALUES (?, ?, ?, ?, ?, ?)",
+            vendors
+        )
+    
+    conn.commit()
+    conn.close()
+
+# হোমপেজ রাউট
+@app.route('/')
+def home():
+    return render_template('index.html')
+
+# ভেন্ডর পেইজ
+@app.route('/vendors')
+def vendors():
+    conn = get_db()
+    vendors = conn.execute('SELECT * FROM vendor WHERE status="Active"').fetchall()
+    conn.close()
+    return render_template('vendors.html', vendors=vendors)
+
+# অ্যাডমিন লগিন
+@app.route('/admin/login', methods=['GET', 'POST'])
+def admin_login():
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+        
+        if username == 'admin' and password == 'admin123':
+            session['admin_logged_in'] = True
+            session['admin_username'] = username
+            return redirect('/admin/dashboard')
+    
+    return render_template('admin/login.html')
+
+# অ্যাডমিন ড্যাশবোর্ড
+@app.route('/admin/dashboard')
+def admin_dashboard():
+    if not session.get('admin_logged_in'):
+        return redirect('/admin/login')
+    
+    conn = get_db()
+    total_vendors = conn.execute('SELECT COUNT(*) FROM vendor').fetchone()[0]
+    total_orders = conn.execute('SELECT COUNT(*) FROM orders').fetchone()[0] if 'orders' in [table[0] for table in conn.execute("SELECT name FROM sqlite_master WHERE type='table'").fetchall()] else 0
+    conn.close()
+    
+    return render_template('admin/dashboard.html',
+                         total_vendors=total_vendors,
+                         total_orders=total_orders,
+                         total_products=0,
+                         recent_orders=[])
+
+# অন্যান্য অ্যাডমিন পেইজ
+@app.route('/admin/vendors')
+def admin_vendors():
+    if not session.get('admin_logged_in'):
+        return redirect('/admin/login')
+    conn = get_db()
+    vendors = conn.execute('SELECT * FROM vendor').fetchall()
+    conn.close()
+    return render_template('admin/vendors.html', vendors=vendors)
+
+@app.route('/admin/commissions')
+def admin_commissions():
+    if not session.get('admin_logged_in'):
+        return redirect('/admin/login')
+    return render_template('admin/commissions.html')
+
+@app.route('/admin/products')
+def admin_products():
+    if not session.get('admin_logged_in'):
+        return redirect('/admin/login')
+    return render_template('admin/products.html')
+
+@app.route('/admin/users')
+def admin_users():
+    if not session.get('admin_logged_in'):
+        return redirect('/admin/login')
+    return render_template('admin/users.html')
+
+@app.route('/admin/logout')
+def admin_logout():
+    session.clear()
+    return redirect('/admin/login')
+
+if __name__ == '__main__':
+    print("=" * 60)
+    print("سوق كبير الكويت - الإصدار النهائي")
+    print("=" * 60)
+    print("🌐 الموقع: http://127.0.0.1:8080")
+    print("👨‍💼 لوحة التحكم: http://127.0.0.1:8080/admin/login")
+    print("🔑 اسم المستخدم: admin")
+    print("🔑 كلمة المرور: admin123")
+    print("=" * 60)
+    
+    # ডাটাবেস ইনিশিয়ালাইজ
+    init_db()
+    
+    # সার্ভার চালু
+    app.run(host='0.0.0.0', port=8080, debug=True)

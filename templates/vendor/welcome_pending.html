@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block title %}Registration Successful - SooqKabeer{% endblock %}
+
+{% block styles %}
+<style>
+    .success-container {
+        max-width: 800px;
+        margin: 50px auto;
+        padding: 40px;
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        text-align: center;
+    }
+    
+    .success-icon {
+        font-size: 80px;
+        color: #4cd964;
+        margin-bottom: 20px;
+    }
+    
+    .vendor-code-box {
+        background: #f8f9fc;
+        border: 2px dashed #4cd964;
+        border-radius: 10px;
+        padding: 20px;
+        margin: 30px 0;
+        font-family: monospace;
+        font-size: 1.5rem;
+        color: #333;
+    }
+    
+    .next-steps {
+        text-align: left;
+        background: #f8f9fc;
+        padding: 20px;
+        border-radius: 10px;
+        margin-top: 30px;
+    }
+    
+    .next-steps li {
+        margin-bottom: 10px;
+        color: #5a5c69;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="success-container">
+    <div class="success-icon">
+        <i class="fas fa-check-circle"></i>
+    </div>
+    
+    <h1 class="mb-3">Registration Successful!</h1>
+    
+    <p class="lead text-muted mb-4">
+        Thank you for registering <strong>{{ business_name }}</strong> on SooqKabeer B2B Marketplace.
+    </p>
+    
+    <div class="vendor-code-box">
+        <strong>Your Vendor Code:</strong>
+        <div class="display-4 text-primary mt-2">{{ vendor_code }}</div>
+    </div>
+    
+    <p class="text-muted mb-4">
+        Please save this vendor code for future reference. You will need it for login and business operations.
+    </p>
+    
+    <div class="alert alert-info mb-4">
+        <h5><i class="fas fa-info-circle me-2"></i> Account Status: <span class="text-warning">Pending Approval</span></h5>
+        <p class="mb-0">
+            Your application is under review. Our team will verify your documents and activate your account within <strong>3-5 business days</strong>.
+            You will receive an email notification once your account is approved.
+        </p>
+    </div>
+    
+    <div class="next-steps">
+        <h5 class="mb-3"><i class="fas fa-list-check me-2"></i> What happens next?</h5>
+        <ol>
+            <li><strong>Document Verification:</strong> Our team will verify your uploaded documents (Civil ID & Commercial License)</li>
+            <li><strong>Business Verification:</strong> We may contact you for additional information if needed</li>
+            <li><strong>Account Activation:</strong> Once verified, your vendor account will be activated</li>
+            <li><strong>Welcome Email:</strong> You'll receive login credentials and onboarding instructions</li>
+            <li><strong>Start Selling:</strong> Begin adding products and accepting orders</li>
+        </ol>
+    </div>
+    
+    <div class="mt-5">
+        <a href="/" class="btn btn-primary me-3">
+            <i class="fas fa-home me-2"></i> Back to Home
+        </a>
+        <a href="/contact" class="btn btn-outline-primary">
+            <i class="fas fa-question-circle me-2"></i> Need Help?
+        </a>
+    </div>
+</div>
+{% endblock %}

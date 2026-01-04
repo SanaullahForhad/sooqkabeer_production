@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - SooqKabeer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .login-container {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 400px;
+        }
+        
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .logo h1 {
+            color: #2c3e50;
+            font-size: 32px;
+            margin-bottom: 5px;
+        }
+        
+        .logo span {
+            color: #3498db;
+            font-weight: bold;
+        }
+        
+        .logo p {
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            color: #2c3e50;
+            font-weight: 500;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border 0.3s;
+        }
+        
+        .form-input:focus {
+            border-color: #3498db;
+            outline: none;
+        }
+        
+        .login-btn {
+            width: 100%;
+            padding: 15px;
+            background: #2ecc71;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+        
+        .login-btn:hover {
+            background: #27ae60;
+            transform: translateY(-2px);
+        }
+        
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+        
+        .error-message.show {
+            display: block;
+        }
+        
+        .footer-links {
+            text-align: center;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        
+        .footer-links a {
+            color: #3498db;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        
+        .footer-links a:hover {
+            text-decoration: underline;
+        }
+        
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="logo">
+            <h1>Sooq<span>Kabeer</span></h1>
+            <p>Admin Panel Login</p>
+        </div>
+        
+        {% if error %}
+        <div class="error-message show">
+            {{ error }}
+        </div>
+        {% endif %}
+        
+        <form method="POST" action="/admin/login">
+            <div class="form-group">
+                <label class="form-label">Username</label>
+                <input type="text" 
+                       name="username" 
+                       class="form-input" 
+                       placeholder="Enter admin username" 
+                       required>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Password</label>
+                <input type="password" 
+                       name="password" 
+                       class="form-input" 
+                       placeholder="Enter password" 
+                       required>
+            </div>
+            
+            <button type="submit" class="login-btn">
+                🔐 Login to Admin Panel
+            </button>
+        </form>
+        
+        <div class="footer-links">
+            <a href="/">← Back to Home</a>
+        </div>
+    </div>
+    
+    <script>
+        // Remove error message after 5 seconds
+        setTimeout(function() {
+            const errorMsg = document.querySelector('.error-message');
+            if (errorMsg) {
+                errorMsg.style.display = 'none';
+            }
+        }, 5000);
+    </script>
+</body>
+</html>

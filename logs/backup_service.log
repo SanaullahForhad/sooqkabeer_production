@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/sooqkabeer_production/auto_backup.py", line 12, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'

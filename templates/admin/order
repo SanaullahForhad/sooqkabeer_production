@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إدارة الطلبات (Orders) - سوق كبير</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 10px; background: #f0f2f5; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .header { background: #2c3e50; color: white; padding: 25px; border-radius: 12px; margin-bottom: 20px; text-align: center; }
+        
+        /* Navigation Tabs Fix */
+        .nav { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; justify-content: center; }
+        .nav a { padding: 10px 16px; background: #3498db; color: white; text-decoration: none; border-radius: 8px; font-size: 14px; transition: 0.3s; flex-grow: 1; text-align: center; min-width: 100px; }
+        .nav a:hover { background: #2980b9; }
+
+        .table-container { background: white; padding: 15px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; min-width: 900px; }
+        th { background: #f8f9fa; color: #333; font-weight: 600; padding: 15px; text-align: right; border-bottom: 2px solid #eee; }
+        td { padding: 12px 15px; text-align: right; border-bottom: 1px solid #eee; font-size: 14px; }
+        
+        /* Status Badges */
+        .status-badge { padding: 5px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; }
+        .pending { background: #fff3cd; color: #856404; }
+        .completed { background: #d4edda; color: #155724; }
+        
+        /* Referrer Code Highlight */
+        .ref-code { color: #e67e22; font-weight: bold; font-family: monospace; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>إدارة الطلبات (Orders)</h1>
+            <a href="/admin/dashboard" style="color: #bdc3c7; text-decoration: none; font-size: 14px;">← العودة للوحة التحكم</a>
+        </div>
+
+        <div class="nav">
+            <a href="/admin/products">المنتجات</a>
+            <a href="/admin/vendors">البائعين</a>
+            <a href="/admin/users">المستخدمين</a>
+            <a href="/admin/orders" style="background: #2c3e50;">الطلبات</a>
+            <a href="/admin/settings">الإعدادات</a>
+        </div>
+
+        <div class="table-container">
+            <h2 style="margin-bottom: 20px;">قائمة الطلبات</h2>
+            {% if orders %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>رقم الطلب (ID)</th>
+                            <th>الزبون (Customer)</th>
+                            <th>المرجع (Referrer Code)</th> 
+                            <th>المبلغ (Price)</th>
+                            <th>الحالة (Status)</th>
+                            <th>التاريخ (Date)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in orders %}
+                        <tr>
+                            <td>#{{ order.id }}</td>
+                            <td><strong>{{ order.customer_name }}</strong></td>
+                            <td><span class="ref-code">{{ order.referrer_id_code }}</span></td>
+                            <td>{{ order.total_price }}</td>
+                            <td>
+                                <span class="status-badge {{ 'pending' if order.status == 'pending' else 'completed' }}">
+                                    {{ order.status }}
+                                </span>
+                            </td>
+                            <td>{{ order.created_at }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <div style="text-align: center; padding: 50px; color: #7f8c8d;">
+                    <p style="font-size: 18px;">لا توجد طلبات حالياً</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>
+

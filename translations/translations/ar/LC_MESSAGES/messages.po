@@ -1,0 +1,232 @@
+# Arabic translations for SooqKabeer
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: ar\n"
+
+msgid "Home"
+msgstr "الرئيسية"
+
+msgid "Products"
+msgstr "المنتجات"
+
+msgid "My Orders"
+msgstr "طلباتي"
+
+msgid "Referral"
+msgstr "الإحالة"
+
+msgid "Login"
+msgstr "تسجيل الدخول"
+
+msgid "Logout"
+msgstr "تسجيل الخروج"
+
+msgid "Username"
+msgstr "اسم المستخدم"
+
+msgid "Password"
+msgstr "كلمة المرور"
+
+msgid "Email"
+msgstr "البريد الإلكتروني"
+
+msgid "Phone"
+msgstr "الهاتف"
+
+msgid "Register"
+msgstr "تسجيل"
+
+msgid "Submit"
+msgstr "إرسال"
+
+msgid "Reset"
+msgstr "إعادة تعيين"
+
+msgid "Search"
+msgstr "بحث"
+
+msgid "Add to Cart"
+msgstr "أضف إلى السلة"
+
+msgid "View Details"
+msgstr "عرض التفاصيل"
+
+msgid "Price"
+msgstr "السعر"
+
+msgid "Quantity"
+msgstr "الكمية"
+
+msgid "Total"
+msgstr "الإجمالي"
+
+msgid "Checkout"
+msgstr "الدفع"
+
+msgid "Continue Shopping"
+msgstr "مواصلة التسوق"
+
+msgid "Your cart is empty"
+msgstr "سلة التسوق فارغة"
+
+msgid "Order Summary"
+msgstr "ملخص الطلب"
+
+msgid "Shipping"
+msgstr "الشحن"
+
+msgid "Tax"
+msgstr "الضريبة"
+
+msgid "Grand Total"
+msgstr "المجموع الكلي"
+
+msgid "Place Order"
+msgstr "تأكيد الطلب"
+
+msgid "Order placed successfully!"
+msgstr "تم تقديم الطلب بنجاح!"
+
+msgid "Thank you for your purchase"
+msgstr "شكراً لشرائك"
+
+msgid "Order Number"
+msgstr "رقم الطلب"
+
+msgid "Date"
+msgstr "التاريخ"
+
+msgid "Status"
+msgstr "الحالة"
+
+msgid "Pending"
+msgstr "قيد الانتظار"
+
+msgid "Processing"
+msgstr "قيد المعالجة"
+
+msgid "Shipped"
+msgstr "تم الشحن"
+
+msgid "Delivered"
+msgstr "تم التوصيل"
+
+msgid "Cancelled"
+msgstr "ملغى"
+
+msgid "View Order"
+msgstr "عرض الطلب"
+
+msgid "Order History"
+msgstr "سجل الطلبات"
+
+msgid "No orders yet"
+msgstr "لا توجد طلبات بعد"
+
+msgid "Start shopping now"
+msgstr "ابدأ التسوق الآن"
+
+msgid "Referral Dashboard"
+msgstr "لوحة الإحالة"
+
+msgid "Your Referral ID"
+msgstr "معرف الإحالة الخاص بك"
+
+msgid "Referral Link"
+msgstr "رابط الإحالة"
+
+msgid "Copy"
+msgstr "نسخ"
+
+msgid "Share on Facebook"
+msgstr "مشاركة على فيسبوك"
+
+msgid "Share on WhatsApp"
+msgstr "مشاركة على واتساب"
+
+msgid "Share on Twitter"
+msgstr "مشاركة على تويتر"
+
+msgid "Direct Referrals"
+msgstr "الإحالات المباشرة"
+
+msgid "Indirect Referrals"
+msgstr "الإحالات غير المباشرة"
+
+msgid "Commission History"
+msgstr "سجل العمولات"
+
+msgid "Withdraw Earnings"
+msgstr "سحب الأرباح"
+
+msgid "Available Balance"
+msgstr "الرصيد المتاح"
+
+msgid "Withdraw Amount"
+msgstr "مبلغ السحب"
+
+msgid "Payment Method"
+msgstr "طريقة الدفع"
+
+msgid "Account Details"
+msgstr "تفاصيل الحساب"
+
+msgid "Submit Withdrawal"
+msgstr "تقديم طلب السحب"
+
+msgid "Withdrawal successful!"
+msgstr "تم السحب بنجاح!"
+
+msgid "Minimum withdrawal"
+msgstr "الحد الأدنى للسحب"
+
+msgid "Earnings Report"
+msgstr "تقرير الأرباح"
+
+msgid "Tips to increase earnings"
+msgstr "نصائح لزيادة الأرباح"
+
+msgid "Share your referral link"
+msgstr "شارك رابط الإحالة الخاص بك"
+
+msgid "Invite friends via email"
+msgstr "ادعو الأصدقاء عبر البريد الإلكتروني"
+
+msgid "Encourage referrals to shop"
+msgstr "شجع الإحالات على التسوق"
+
+msgid "Get more referrals for upgrade"
+msgstr "احصل على المزيد من الإحالات للترقية"
+
+msgid "Settings"
+msgstr "الإعدادات"
+
+msgid "Profile"
+msgstr "الملف الشخصي"
+
+msgid "Notifications"
+msgstr "الإشعارات"
+
+msgid "Help"
+msgstr "مساعدة"
+
+msgid "Contact Us"
+msgstr "اتصل بنا"
+
+msgid "About"
+msgstr "من نحن"
+
+msgid "Privacy Policy"
+msgstr "سياسة الخصوصية"
+
+msgid "Terms of Service"
+msgstr "شروط الخدمة"
+
+msgid "FAQ"
+msgstr "الأسئلة الشائعة"
+
+msgid "All rights reserved"
+msgstr "جميع الحقوق محفوظة"

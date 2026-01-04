@@ -1,0 +1,108 @@
+
+# ==================== ADMIN ROUTES ====================
+
+# Admin - Vendors Management
+@app.route('/admin/vendors')
+def admin_vendors():
+    if not session.get('admin'):
+        return redirect(url_for('admin_login'))
+    
+    conn = sqlite3.connect('sooq.db')
+    cursor = conn.cursor()
+    cursor.execute('SELECT * FROM vendors')
+    vendors = cursor.fetchall()
+    conn.close()
+    
+    current_lang = session.get('language', 'ar')
+    return render_template('admin_vendors.html', 
+                         vendors=vendors,
+                         current_lang=current_lang)
+
+# Admin - Referrals Management
+@app.route('/admin/referrals')
+def admin_referrals():
+    if not session.get('admin'):
+        return redirect(url_for('admin_login'))
+    
+    conn = sqlite3.connect('sooq.db')
+    cursor = conn.cursor()
+    cursor.execute('''
+        SELECT u.name, u.email, u.phone, r.amount, r.created_at 
+        FROM referral_earnings r 
+        JOIN users u ON r.user_id = u.id
+    ''')
+    referrals = cursor.fetchall()
+    conn.close()
+    
+    current_lang = session.get('language', 'ar')
+    return render_template('admin_referrals.html',
+                         referrals=referrals,
+                         current_lang=current_lang)
+
+# Admin - Products Management
+@app.route('/admin/products')
+def admin_products():
+    if not session.get('admin'):
+        return redirect(url_for('admin_login'))
+    
+    conn = sqlite3.connect('sooq.db')
+    cursor = conn.cursor()
+    cursor.execute('SELECT * FROM products')
+    products = cursor.fetchall()
+    conn.close()
+    
+    current_lang = session.get('language', 'ar')
+    return render_template('admin_products.html',
+                         products=products,
+                         current_lang=current_lang)
+
+# Admin - Orders Management
+@app.route('/admin/orders')
+def admin_orders():
+    if not session.get('admin'):
+        return redirect(url_for('admin_login'))
+    
+    conn = sqlite3.connect('sooq.db')
+    cursor = conn.cursor()
+    cursor.execute('SELECT * FROM orders')
+    orders = cursor.fetchall()
+    conn.close()
+    
+    current_lang = session.get('language', 'ar')
+    return render_template('admin_orders.html',
+                         orders=orders,
+                         current_lang=current_lang)
+
+# Admin - Users Management
+@app.route('/admin/users')
+def admin_users():
+    if not session.get('admin'):
+        return redirect(url_for('admin_login'))
+    
+    conn = sqlite3.connect('sooq.db')
+    cursor = conn.cursor()
+    cursor.execute('SELECT * FROM users')
+    users = cursor.fetchall()
+    conn.close()
+    
+    current_lang = session.get('language', 'ar')
+    return render_template('admin_users.html',
+                         users=users,
+                         current_lang=current_lang)
+
+# Admin - Settings
+@app.route('/admin/settings')
+def admin_settings():
+    if not session.get('admin'):
+        return redirect(url_for('admin_login'))
+    
+    current_lang = session.get('language', 'ar')
+    return render_template('admin_settings.html',
+                         current_lang=current_lang)
+
+# Admin - Logout
+@app.route('/admin/logout')
+def admin_logout():
+    session.pop('admin', None)
+    return redirect(url_for('admin_login'))
+
