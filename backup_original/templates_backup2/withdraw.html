@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block title %}Withdraw Earnings{% endblock %}
+
+{% block content %}
+<h2>Withdraw Earnings</h2>
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0"><i class="fas fa-credit-card"></i> Withdraw Request</h5>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info mb-4">
+                    <h6><i class="fas fa-info-circle"></i> Account Balance</h6>
+                    <h3 class="text-success mb-0">${{ "%.2f"|format(balance) }}</h3>
+                    <small>Minimum withdrawal: ${{ "%.2f"|format(min_withdrawal) }}</small>
+                </div>
+                
+                <form method="POST" action="/referral/withdraw" id="withdrawForm">
+                    <div class="mb-3">
+                        <label class="form-label">Amount to Withdraw *</label>
+                        <div class="input-group">
+                            <span class="input-group-text">$</span>
+                            <input type="number" name="amount" class="form-control" 
+                                   min="{{ min_withdrawal }}" max="{{ balance }}" 
+                                   step="0.01" required 
+                                   placeholder="Enter amount">
+                        </div>
+                        <small class="text-muted">Minimum: ${{ "%.2f"|format(min_withdrawal) }}, Maximum: ${{ "%.2f"|format(balance) }}</small>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Withdrawal Method *</label>
+                        <select name="method" class="form-select" required>
+                            <option value="">Select method</option>
+                            <option value="bank">Bank Transfer</option>
+                            <option value="bkash">bKash</option>
+                            <option value="nagad">Nagad</option>
+                            <option value="rocket">Rocket</option>
+                            <option value="paypal">PayPal</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Account Details *</label>
+                        <textarea name="account" class="form-control" rows="3" required 
+                                  placeholder="Enter account number, phone number, or email"></textarea>
+                        <small class="text-muted">
+                            For bank: Account number, Bank name, Branch<br>
+                            For mobile: Phone number, Account name
+                        </small>
+                    </div>
+                    
+                    <div class="alert alert-warning">
+                        <h6><i class="fas fa-exclamation-triangle"></i> Important</h6>
+                        <ul class="mb-0">
+                            <li>Withdrawal requests are processed within 3-5 business days</li>
+                            <li>Ensure account details are correct</li>
+                            <li>Contact support for any issues</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-success btn-lg">
+                            <i class="fas fa-paper-plane"></i> Submit Withdrawal Request
+                        </button>
+                    </div>
+                </form>
+                
+                <div class="text-center mt-3">
+                    <a href="/referral" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left"></i> Back to Referral Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('withdrawForm').addEventListener('submit', function(e) {
+    const amount = parseFloat(this.amount.value);
+    const balance = parseFloat({{ balance }});
+    const min = parseFloat({{ min_withdrawal }});
+    
+    if (amount < min) {
+        e.preventDefault();
+        alert(`Minimum withdrawal amount is $${min}`);
+        return false;
+    }
+    
+    if (amount > balance) {
+        e.preventDefault();
+        alert(`Insufficient balance. Maximum you can withdraw is $${balance}`);
+        return false;
+    }
+    
+    return true;
+});
+</script>
+{% endblock %}

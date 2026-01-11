@@ -1,0 +1,22 @@
+/* Admin Mobile Styles */
+@media (max-width: 768px) {
+    .table-container {
+        overflow-x: auto;
+    }
+    
+    table {
+        font-size: 12px;
+    }
+    
+    .btn-edit, .btn-delete, .btn-approve {
+        padding: 5px 8px;
+        font-size: 12px;
+        margin: 2px;
+    }
+    
+    .action-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+}

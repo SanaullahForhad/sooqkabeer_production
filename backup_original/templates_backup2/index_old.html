@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>SooqKabeer - Online Marketplace</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body { padding: 20px; }
+        .category-card { 
+            border: 1px solid #ddd; 
+            padding: 15px; 
+            border-radius: 10px; 
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        .product-card {
+            border: 1px solid #eee;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        .price {
+            color: green;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <!-- Language Toggle Button -->
+    <div style="position: fixed; top: 10px; right: 10px; z-index: 1000;">
+        <button onclick="toggleLanguage()" class="btn btn-sm btn-outline-primary">
+            <span id="lang-text">AR/EN</span>
+        </button>
+    </div>
+
+    <div class="container">
+        <h1>SooqKabeer Marketplace</h1>
+        <p>Welcome to our online store!</p>
+        
+        <!-- Categories Section -->
+        <h2>Shop by Category</h2>
+        <div class="row">
+            {% for category in categories %}
+            <div class="col-md-3">
+                <div class="category-card">
+                    <i class="{{ category.icon }} fa-2x"></i>
+                    <h4>{{ category.name }}</h4>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <!-- Products Section -->
+        <h2>Featured Products</h2>
+        {% if products %}
+        <div class="row">
+            {% for product in products %}
+            <div class="col-md-3">
+                <div class="product-card">
+                    <h5>{{ product.name }}</h5>
+                    <p>Category: {{ product.category_name }}</p>
+                    <p class="price">৳{{ product.price }}</p>
+                    <button class="btn btn-primary btn-sm">Add to Cart</button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p>No featured products available.</p>
+        {% endif %}
+    </div>
+
+    <!-- Language JS -->
+    <script>
+    function toggleLanguage() {
+        const currentLang = localStorage.getItem('app_lang') || 'en';
+        const newLang = currentLang === 'en' ? 'ar' : 'en';
+        localStorage.setItem('app_lang', newLang);
+        location.reload();
+    }
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        const lang = localStorage.getItem('app_lang') || 'en';
+        const button = document.getElementById('lang-text');
+        if(button) button.textContent = lang === 'en' ? 'AR' : 'EN';
+        
+        if(lang === 'ar') {
+            document.body.style.direction = 'rtl';
+            document.body.style.textAlign = 'right';
+        }
+    });
+    </script>
+</body>
+</html>

@@ -1,9 +1,8 @@
+#=== NOTICE: Running without Arabic reshaper library ===#
 🚀 Starting SooqKabeer...
 📊 Initializing database...
 📊 Initializing database from code...
-✅ Database repair complete with ALL columns!
-✅ Default admin created: admin / admin123
-✅ Database initialized successfully
+✅ Database initialized successfully!
 ✅ Database ready
 🌐 Available at: http://localhost:8000
 🔑 Admin login: admin / admin123
@@ -17,4 +16,10 @@
 [33mPress CTRL+C to quit[0m
  * Restarting with stat
  * Debugger is active!
- * Debugger PIN: 458-141-135
+ * Debugger PIN: 944-336-725
+127.0.0.1 - - [09/Jan/2026 00:55:56] "GET /vendor/products HTTP/1.1" 200 -
+127.0.0.1 - - [09/Jan/2026 00:55:59] "GET /vendor/products HTTP/1.1" 200 -
+127.0.0.1 - - [09/Jan/2026 00:56:01] "GET /vendor/products HTTP/1.1" 200 -
+127.0.0.1 - - [09/Jan/2026 00:56:14] "GET /vendor/products HTTP/1.1" 200 -
+127.0.0.1 - - [09/Jan/2026 00:57:02] "GET /vendor/add-product HTTP/1.1" 200 -
+127.0.0.1 - - [09/Jan/2026 00:57:43] "[33mPOST /set-language HTTP/1.1[0m" 404 -

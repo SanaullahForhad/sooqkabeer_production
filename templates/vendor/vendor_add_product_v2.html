@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HKO-001 | Add Product | إضافة منتج</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --border: #ddd;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            direction: ltr;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        /* Header Styles */
+        .header {
+            background: var(--primary);
+            color: white;
+            padding: 25px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo i {
+            font-size: 2.2rem;
+            color: var(--secondary);
+        }
+
+        .logo h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .logo .subtitle {
+            font-size: 1rem;
+            opacity: 0.8;
+            margin-top: 5px;
+        }
+
+        .lang-switch {
+            display: flex;
+            gap: 10px;
+        }
+
+        .lang-btn {
+            padding: 8px 20px;
+            border: 2px solid var(--secondary);
+            background: transparent;
+            color: white;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .lang-btn.active {
+            background: var(--secondary);
+        }
+
+        .lang-btn:hover {
+            background: var(--secondary);
+        }
+
+        /* Form Container */
+        .form-container {
+            padding: 40px;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            color: var(--primary);
+            margin-bottom: 25px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid var(--secondary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title i {
+            color: var(--secondary);
+        }
+
+        .section-title-ar {
+            direction: rtl;
+            text-align: right;
+            font-family: 'Segoe UI', 'Arial', sans-serif;
+        }
+
+        /* Form Grid */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Form Group */
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .dual-input {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .dual-input .form-group:first-child {
+            direction: ltr;
+        }
+
+        .dual-input .form-group:last-child {
+            direction: rtl;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .label-en {
+            text-align: left;
+        }
+
+        .label-ar {
+            text-align: right;
+            direction: rtl;
+            font-family: 'Segoe UI', 'Arial', sans-serif;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="url"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border 0.3s;
+        }
+
+        input:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--secondary);
+        }
+
+        .textarea-ar {
+            direction: rtl;
+            text-align: right;
+            font-family: 'Segoe UI', 'Arial', sans-serif;
+        }
+
+        .currency {
+            position: relative;
+        }
+
+        .currency:before {
+            content: "KWD";
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--light);
+            padding: 0 10px;
+            font-weight: 600;
+            color: var(--dark);
+            z-index: 1;
+        }
+
+        .currency input {
+            padding-left: 70px;
+        }
+
+        .price-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        /* File Upload Areas */
+        .upload-area {
+            border: 3px dashed var(--border);
+            border-radius: 10px;
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: var(--light);
+            margin-bottom: 20px;
+        }
+
+        .upload-area:hover {
+            border-color: var(--secondary);
+            background: #f8f9fa;
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            color: var(--secondary);
+            margin-bottom: 15px;
+        }
+
+        .upload-text {
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            color: var(--dark);
+        }
+
+        .upload-subtext {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .upload-subtext-ar {
+            direction: rtl;
+        }
+
+        .file-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .file-chip {
+            background: var(--secondary);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+
+        .file-chip i {
+            cursor: pointer;
+        }
+
+        /* Video Options */
+        .video-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .video-option {
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            padding: 25px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .video-option:hover {
+            border-color: var(--secondary);
+            background: #f8f9fa;
+        }
+
+        .video-option.active {
+            border-color: var(--secondary);
+            background: rgba(52, 152, 219, 0.05);
+        }
+
+        .video-icon {
+            font-size: 2.5rem;
+            color: var(--secondary);
+            margin-bottom: 15px;
+        }
+
+        /* Form Actions */
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 2px solid var(--border);
+        }
+
+        .btn {
+            padding: 15px 35px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-primary {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2980b9;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(41, 128, 185, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--light);
+            color: var(--dark);
+            border: 2px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        /* Hidden video link input when not active */
+        .video-link-container {
+            display: none;
+        }
+        
+        .video-link-container.active {
+            display: block;
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .form-container {
+                padding: 25px;
+            }
+            
+            .header {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .price-grid,
+            .video-options,
+            .dual-input {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-actions {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        /* Arabic specific styles */
+        .ar-text {
+            font-family: 'Segoe UI', 'Arial', sans-serif;
+        }
+
+        /* Validation states */
+        .required:after {
+            content: " *";
+            color: var(--accent);
+        }
+
+        .error {
+            border-color: var(--accent) !important;
+        }
+
+        .success {
+            border-color: var(--success) !important;
+        }
+        
+        /* Hidden form for file transfers */
+        .hidden-form-input {
+            display: none;
+        }
+        
+        .error-message {
+            color: var(--accent);
+            font-size: 0.9rem;
+            margin-top: 5px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header Section -->
+        <div class="header">
+            <div class="logo">
+                <i class="fas fa-shopping-bag"></i>
+                <div>
+                    <h1>HKO-001 Product Management</h1>
+                    <div class="subtitle">Kuwait B2B & Retail System | نظام الكويت للأعمال والتجزئة</div>
+                </div>
+            </div>
+            <div class="lang-switch">
+                <button class="lang-btn active" id="btn-en">English</button>
+                <button class="lang-btn" id="btn-ar">العربية</button>
+            </div>
+        </div>
+
+        <!-- Main Form - FIXED: Added form tag with correct attributes -->
+        <form action="/vendor/add_product" method="POST" enctype="multipart/form-data" id="productForm">
+        <div class="form-container">
+            <h2 class="section-title">
+                <i class="fas fa-plus-circle"></i>
+                <span class="title-en">Add New Product | إضافة منتج جديد</span>
+            </h2>
+
+            <!-- Product Name Section -->
+            <div class="form-section">
+                <h3 class="section-title">
+                    <i class="fas fa-heading"></i>
+                    <span class="title-en">Product Name | اسم المنتج</span>
+                </h3>
+                <div class="dual-input">
+                    <div class="form-group">
+                        <label class="label-en required">Product Name (English)</label>
+                        <input type="text" name="name_en" id="name_en" placeholder="Enter product name in English" required>
+                        <div class="error-message" id="name_en_error"></div>
+                    </div>
+                    <div class="form-group">
+                        <label class="label-ar required">اسم المنتج (عربي)</label>
+                        <input type="text" name="name_ar" id="name_ar" placeholder="أدخل اسم المنتج بالعربية" required class="ar-text">
+                        <div class="error-message" id="name_ar_error"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product Description -->
+            <div class="form-section">
+                <h3 class="section-title">
+                    <i class="fas fa-align-left"></i>
+                    <span class="title-en">Product Description | وصف المنتج</span>
+                </h3>
+                <div class="dual-input">
+                    <div class="form-group">
+                        <label class="label-en">Description (English)</label>
+                        <textarea name="desc_en" id="desc_en" rows="4" placeholder="Enter detailed description in English"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="label-ar">الوصف (عربي)</label>
+                        <textarea name="desc_ar" id="desc_ar" rows="4" placeholder="أدخل وصف مفصل باللغة العربية" class="textarea-ar"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pricing Section -->
+            <div class="form-section">
+                <h3 class="section-title">
+                    <i class="fas fa-tags"></i>
+                    <span class="title-en">Pricing (KWD) | التسعير (دينار كويتي)</span>
+                </h3>
+                <div class="price-grid">
+                    <div class="form-group">
+                        <label class="label-en required">Retail Price</label>
+                        <div class="currency">
+                            <input type="number" name="price" id="price" min="0" step="0.001" placeholder="0.000" required>
+                        </div>
+                        <div class="upload-subtext">Price for individual customers</div>
+                        <div class="error-message" id="price_error"></div>
+                    </div>
+                    <div class="form-group">
+                        <label class="label-en required">B2B Price (Wholesale)</label>
+                        <div class="currency">
+                            <input type="number" name="b2b_price" id="b2b_price" min="0" step="0.001" placeholder="0.000" required>
+                        </div>
+                        <div class="upload-subtext">Price for bulk/wholesale buyers</div>
+                        <div class="error-message" id="b2b_price_error"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Image Upload -->
+            <div class="form-section">
+                <h3 class="section-title">
+                    <i class="fas fa-image"></i>
+                    <span class="title-en">Main Product Image | الصورة الرئيسية</span>
+                </h3>
+                <div class="upload-area" id="mainImageUpload">
+                    <div class="upload-icon">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                    </div>
+                    <div class="upload-text">Click or drag main product image here</div>
+                    <div class="upload-subtext">أو اسحب الصورة الرئيسية هنا</div>
+                    <div class="upload-subtext">Recommended: 800x800px, JPG/PNG format (Max 5MB)</div>
+                </div>
+                <!-- FIXED: Main image input with correct name -->
+                <input type="file" name="main_image" id="main_image" accept="image/*" class="hidden-form-input">
+                <div class="file-info" id="mainImageInfo"></div>
+                <div class="error-message" id="main_image_error"></div>
+            </div>
+
+            <!-- Gallery Images Upload -->
+            <div class="form-section">
+                <h3 class="section-title">
+                    <i class="fas fa-images"></i>
+                    <span class="title-en">Gallery Images (5-10 images) | معرض الصور</span>
+                </h3>
+                <div class="upload-area" id="galleryUpload">
+                    <div class="upload-icon">
+                        <i class="fas fa-layer-group"></i>
+                    </div>
+                    <div class="upload-text">Drag & drop 5-10 product images here</div>
+                    <div class="upload-subtext">اسحب وأسقط 5-10 صور للمنتج هنا</div>
+                    <div class="upload-subtext">Multiple selection allowed. Max 10MB per image</div>
+                </div>
+                <!-- FIXED: Gallery input with correct name and multiple attribute -->
+                <input type="file" name="product_gallery" id="product_gallery" multiple accept="image/*" class="hidden-form-input">
+                <div class="file-info" id="galleryInfo"></div>
+            </div>
+
+            <!-- Video Section -->
+            <div class="form-section">
+                <h3 class="section-title">
+                    <i class="fas fa-video"></i>
+                    <span class="title-en">Product Video | فيديو المنتج</span>
+                </h3>
+                <div class="video-options">
+                    <div class="video-option active" id="videoFileOption">
+                        <div class="video-icon">
+                            <i class="fas fa-upload"></i>
+                        </div>
+                        <h4>Upload Video File</h4>
+                        <p class="upload-subtext">Max 20MB, MP4/WebM format</p>
+                        <div class="upload-area small" id="videoUploadArea">
+                            <div class="upload-subtext">Click to select video file</div>
+                        </div>
+                        <!-- FIXED: Video file input with correct name -->
+                        <input type="file" name="product_video" id="product_video" accept="video/*" class="hidden-form-input">
+                    </div>
+                    <div class="video-option" id="videoLinkOption">
+                        <div class="video-icon">
+                            <i class="fas fa-link"></i>
+                        </div>
+                        <h4>Video Link (YouTube/Vimeo)</h4>
+                        <p class="upload-subtext">Paste URL from YouTube or Vimeo</p>
+                        <div class="form-group video-link-container active" id="videoLinkContainer">
+                            <!-- FIXED: Video link input with correct name -->
+                            <input type="url" name="video_link" id="video_link" placeholder="https://www.youtube.com/watch?v=...">
+                        </div>
+                    </div>
+                </div>
+                <input type="hidden" name="video_type" id="video_type" value="link">
+            </div>
+
+            <!-- Form Actions -->
+            <div class="form-actions">
+                <button class="btn btn-secondary" type="button" id="cancelBtn">
+                    <i class="fas fa-times"></i>
+                    Cancel | إلغاء
+                </button>
+                <!-- FIXED: Submit button with correct type -->
+                <button class="btn btn-primary" type="submit" id="submitBtn">
+                    <i class="fas fa-save"></i>
+                    Save Product | حفظ المنتج
+                </button>
+            </div>
+        </div>
+        </form>
+    </div>
+
+    <script>
+        // Language Switch Functionality
+        document.getElementById('btn-en').addEventListener('click', function() {
+            document.getElementById('btn-en').classList.add('active');
+            document.getElementById('btn-ar').classList.remove('active');
+        });
+
+        document.getElementById('btn-ar').addEventListener('click', function() {
+            document.getElementById('btn-ar').classList.add('active');
+            document.getElementById('btn-en').classList.remove('active');
+        });
+
+        // File Upload Interactions - FIXED: Now properly connects to file inputs
+        const mainImageUpload = document.getElementById('mainImageUpload');
+        const mainImageInput = document.getElementById('main_image');
+        const mainImageInfo = document.getElementById('mainImageInfo');
+        
+        const galleryUpload = document.getElementById('galleryUpload');
+        const galleryInput = document.getElementById('product_gallery');
+        const galleryInfo = document.getElementById('galleryInfo');
+
+        // Main image upload
+        mainImageUpload.addEventListener('click', () => mainImageInput.click());
+        mainImageUpload.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            mainImageUpload.style.borderColor = '#3498db';
+            mainImageUpload.style.background = '#f0f8ff';
+        });
+        mainImageUpload.addEventListener('dragleave', () => {
+            mainImageUpload.style.borderColor = '#ddd';
+            mainImageUpload.style.background = '#ecf0f1';
+        });
+        mainImageUpload.addEventListener('drop', (e) => {
+            e.preventDefault();
+            mainImageUpload.style.borderColor = '#ddd';
+            mainImageUpload.style.background = '#ecf0f1';
+            
+            if (e.dataTransfer.files.length) {
+                // FIXED: Directly assign files to input
+                mainImageInput.files = e.dataTransfer.files;
+                updateMainImageInfo(e.dataTransfer.files[0]);
+            }
+        });
+
+        mainImageInput.addEventListener('change', function() {
+            if (this.files.length) {
+                updateMainImageInfo(this.files[0]);
+            }
+        });
+
+        function updateMainImageInfo(file) {
+            mainImageInfo.innerHTML = `
+                <div class="file-chip">
+                    <i class="fas fa-image"></i>
+                    ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)
+                    <i class="fas fa-times" onclick="clearMainImage()"></i>
+                </div>
+            `;
+        }
+
+        function clearMainImage() {
+            mainImageInput.value = '';
+            mainImageInfo.innerHTML = '';
+        }
+
+        // Gallery images upload - FIXED: Multiple file handling
+        galleryUpload.addEventListener('click', () => galleryInput.click());
+        galleryUpload.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            galleryUpload.style.borderColor = '#3498db';
+            galleryUpload.style.background = '#f0f8ff';
+        });
+        galleryUpload.addEventListener('dragleave', () => {
+            galleryUpload.style.borderColor = '#ddd';
+            galleryUpload.style.background = '#ecf0f1';
+        });
+        galleryUpload.addEventListener('drop', (e) => {
+            e.preventDefault();
+            galleryUpload.style.borderColor = '#ddd';
+            galleryUpload.style.background = '#ecf0f1';
+            
+            if (e.dataTransfer.files.length) {
+                // FIXED: Create new DataTransfer to handle multiple files
+                const dt = new DataTransfer();
+                for (let i = 0; i < e.dataTransfer.files.length; i++) {
+                    dt.items.add(e.dataTransfer.files[i]);
+                }
+                galleryInput.files = dt.files;
+                updateGalleryInfo(Array.from(dt.files));
+            }
+        });
+
+        galleryInput.addEventListener('change', function() {
+            if (this.files.length) {
+                updateGalleryInfo(Array.from(this.files));
+            }
+        });
+
+        function updateGalleryInfo(files) {
+            galleryInfo.innerHTML = '';
+            files.forEach((file, index) => {
+                const chip = document.createElement('div');
+                chip.className = 'file-chip';
+                chip.innerHTML = `
+                    <i class="fas fa-image"></i>
+                    ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)
+                    <i class="fas fa-times" data-index="${index}" onclick="removeGalleryImage(this)"></i>
+                `;
+                galleryInfo.appendChild(chip);
+            });
+        }
+
+        // FIXED: Proper gallery image removal
+        function removeGalleryImage(element) {
+            const index = parseInt(element.getAttribute('data-index'));
+            const dt = new DataTransfer();
+            const files = Array.from(galleryInput.files);
+            
+            // Remove the file at the specified index
+            files.splice(index, 1);
+            
+            // Add remaining files to DataTransfer
+            files.forEach(file => dt.items.add(file));
+            
+            // Update the input files
+            galleryInput.files = dt.files;
+            
+            // Update the UI
+            updateGalleryInfo(files);
+        }
+
+        // Video option toggle - FIXED: Proper video type handling
+        const videoFileOption = document.getElementById('videoFileOption');
+        const videoLinkOption = document.getElementById('videoLinkOption');
+        const videoUploadArea = document.getElementById('videoUploadArea');
+        const videoInput = document.getElementById('product_video');
+        const videoLinkInput = document.getElementById('video_link');
+        const videoTypeInput = document.getElementById('video_type');
+        const videoLinkContainer = document.getElementById('videoLinkContainer');
+
+        videoFileOption.addEventListener('click', function() {
+            if (!this.classList.contains('active')) {
+                this.classList.add('active');
+                videoLinkOption.classList.remove('active');
+                videoLinkContainer.classList.remove('active');
+                videoTypeInput.value = 'file';
+                videoLinkInput.disabled = true;
+                videoInput.disabled = false;
+            }
+        });
+
+        videoLinkOption.addEventListener('click', function() {
+            if (!this.classList.contains('active')) {
+                this.classList.add('active');
+                videoFileOption.classList.remove('active');
+                videoLinkContainer.classList.add('active');
+                videoTypeInput.value = 'link';
+                videoInput.disabled = true;
+                videoLinkInput.disabled = false;
+                // Clear file input when switching to link
+                videoInput.value = '';
+            }
+        });
+
+        videoUploadArea.addEventListener('click', () => videoInput.click());
+
+        // Form validation and submission - FIXED: Removed e.preventDefault()
+        document.getElementById('productForm').addEventListener('submit', function(e) {
+            // REMOVED: e.preventDefault() - Now form will submit normally
+            
+            // Basic validation (optional, can be removed if you want server-side only)
+            let isValid = true;
+            const nameEn = document.getElementById('name_en').value;
+            const nameAr = document.getElementById('name_ar').value;
+            const price = document.getElementById('price').value;
+            const b2bPrice = document.getElementById('b2b_price').value;
+            
+            // Clear previous errors
+            document.querySelectorAll('.error-message').forEach(el => {
+                el.style.display = 'none';
+                el.textContent = '';
+            });
+            
+            if (!nameEn.trim()) {
+                document.getElementById('name_en_error').textContent = 'English name is required';
+                document.getElementById('name_en_error').style.display = 'block';
+                document.getElementById('name_en').classList.add('error');
+                isValid = false;
+            }
+            
+            if (!nameAr.trim()) {
+                document.getElementById('name_ar_error').textContent = 'Arabic name is required';
+                document.getElementById('name_ar_error').style.display = 'block';
+                document.getElementById('name_ar').classList.add('error');
+                isValid = false;
+            }
+            
+            if (!price || parseFloat(price) <= 0) {
+                document.getElementById('price_error').textContent = 'Valid retail price is required';
+                document.getElementById('price_error').style.display = 'block';
+                document.getElementById('price').classList.add('error');
+                isValid = false;
+            }
+            
+            if (!b2bPrice || parseFloat(b2bPrice) <= 0) {
+                document.getElementById('b2b_price_error').textContent = 'Valid B2B price is required';
+                document.getElementById('b2b_price_error').style.display = 'block';
+                document.getElementById('b2b_price').classList.add('error');
+                isValid = false;
+            }
+            
+            // If validation fails, prevent form submission
+            if (!isValid) {
+                e.preventDefault();
+                return false;
+            }
+            
+            // If video type is file, ensure video_link is not sent
+            if (videoTypeInput.value === 'file') {
+                videoLinkInput.disabled = true;
+            } else {
+                videoInput.disabled = true;
+            }
+            
+            // Form will submit normally if validation passes
+            return true;
+        });
+
+        // Cancel button
+        document.getElementById('cancelBtn').addEventListener('click', function() {
+            if (confirm('Are you sure you want to cancel? All unsaved data will be lost.')) {
+                window.location.href = '/vendor/products';
+            }
+        });
+
+        // Remove error class on input
+        document.querySelectorAll('input, textarea').forEach(input => {
+            input.addEventListener('input', function() {
+                this.classList.remove('error');
+                const errorId = this.id + '_error';
+                if (document.getElementById(errorId)) {
+                    document.getElementById(errorId).style.display = 'none';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,166 @@
+{% extends "vendor/base.html" %}
+
+{% block title %}Wallet Management - Vendor Dashboard{% endblock %}
+
+{% block page_title %}Wallet & Balance{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Balance Overview -->
+    <div class="row mb-4">
+        <div class="col-lg-8">
+            <div class="glass-card p-4">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <h3 class="mb-2">Current Balance</h3>
+                        <h1 class="display-4 text-gradient">KWD {{ "%.3f"|format(balance) }}</h1>
+                        <p class="text-muted">Available for withdrawal</p>
+                    </div>
+                    <div class="col-md-6 text-end">
+                        <i class="fas fa-wallet fa-5x text-primary opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="glass-card p-4 h-100">
+                <h5 class="mb-3">Quick Stats</h5>
+                <div class="d-flex justify-content-between mb-2">
+                    <span>Total Earned:</span>
+                    <strong>KWD 2,450.500</strong>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span>Withdrawn:</span>
+                    <strong>KWD 2,400.000</strong>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <span>Pending:</span>
+                    <strong class="text-warning">KWD 50.500</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Withdrawal Form -->
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="glass-card p-4">
+                <h4 class="mb-4">Request Withdrawal</h4>
+                <form id="withdrawalForm" method="POST" action="{{ url_for('vendor_wallet') }}">
+                    <div class="mb-3">
+                        <label for="withdrawAmount" class="form-label">Amount (KWD)</label>
+                        <input type="number" class="form-control" id="withdrawAmount" name="amount" 
+                               step="0.001" min="0.001" max="{{ balance }}" required>
+                        <div class="form-text">Minimum withdrawal: KWD 5.000</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="paymentMethod" class="form-label">Payment Method</label>
+                        <select class="form-select" id="paymentMethod" name="method" required>
+                            <option value="" selected disabled>Select a method</option>
+                            <option value="bank">Bank Transfer</option>
+                            <option value="knet">KNET</option>
+                            <option value="cash">Cash Pickup</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="accountDetails" class="form-label">Account Details</label>
+                        <textarea class="form-control" id="accountDetails" name="details" rows="3" 
+                                  placeholder="Enter your account number, bank name, etc." required></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-paper-plane me-2"></i>Submit Withdrawal Request
+                    </button>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Transaction History -->
+        <div class="col-lg-6">
+            <div class="glass-card p-4 h-100">
+                <h4 class="mb-4">Recent Transactions</h4>
+                <div class="table-responsive">
+                    <table class="table table-borderless text-white">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Type</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>15 Jan 2024</td>
+                                <td>Withdrawal</td>
+                                <td>KWD 100.000</td>
+                                <td><span class="badge bg-success">Completed</span></td>
+                            </tr>
+                            <tr>
+                                <td>10 Jan 2024</td>
+                                <td>Sale</td>
+                                <td>KWD 45.500</td>
+                                <td><span class="badge bg-success">Credited</span></td>
+                            </tr>
+                            <tr>
+                                <td>05 Jan 2024</td>
+                                <td>Withdrawal</td>
+                                <td>KWD 200.000</td>
+                                <td><span class="badge bg-warning">Pending</span></td>
+                            </tr>
+                            <tr>
+                                <td>01 Jan 2024</td>
+                                <td>Sale</td>
+                                <td>KWD 30.000</td>
+                                <td><span class="badge bg-success">Credited</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <a href="#" class="btn btn-outline-light w-100">View All Transactions</a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Important Notes -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="glass-card p-4">
+                <h5><i class="fas fa-info-circle me-2"></i>Important Information</h5>
+                <ul class="mb-0">
+                    <li>Withdrawal requests are processed within 3-5 business days.</li>
+                    <li>A minimum balance of KWD 5.000 is required for withdrawal.</li>
+                    <li>Please ensure your account details are correct to avoid delays.</li>
+                    <li>For any issues, contact support@sooqkabeer.com</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Withdrawal amount validation
+    document.getElementById('withdrawalForm').addEventListener('submit', function(event) {
+        const amountInput = document.getElementById('withdrawAmount');
+        const amount = parseFloat(amountInput.value);
+        const balance = {{ balance }};
+        const minWithdrawal = 5.000;
+        
+        if (amount < minWithdrawal) {
+            alert('Minimum withdrawal amount is KWD ' + minWithdrawal.toFixed(3));
+            event.preventDefault();
+        } else if (amount > balance) {
+            alert('Insufficient balance. Available: KWD ' + balance.toFixed(3));
+            event.preventDefault();
+        }
+    });
+    
+    // Update max attribute when balance changes (if dynamic)
+    const balance = {{ balance }};
+    document.getElementById('withdrawAmount').max = balance;
+</script>
+{% endblock %}

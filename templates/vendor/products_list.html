@@ -1,0 +1,183 @@
+{% extends "vendor/base.html" %}
+
+{% block title %}My Products - Vendor Dashboard{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Page Header with Add Button -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="h3 mb-0">
+                        <i class="fas fa-boxes me-2"></i>
+                        My Products
+                    </h1>
+                    <p class="text-muted mb-0">Manage all your products in one place</p>
+                </div>
+                <a href="{{ url_for('vendor_add_product') }}" class="btn btn-success btn-lg">
+                    <i class="fas fa-plus-circle me-2"></i> Add New Product
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Status Filter Tabs -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex flex-wrap gap-2">
+                        <a href="?status=all" 
+                           class="btn btn-outline-primary {% if request.args.get('status', 'all') == 'all' %}active{% endif %}">
+                            All Products <span class="badge bg-primary ms-2">{{ products|length }}</span>
+                        </a>
+                        {% for stat in stats %}
+                        <a href="?status={{ stat.status }}" 
+                           class="btn btn-outline-secondary {% if request.args.get('status') == stat.status %}active{% endif %}">
+                            {{ stat.status|title }} <span class="badge bg-secondary ms-2">{{ stat.count }}</span>
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Products Table -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    {% if products %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Product</th>
+                                    <th>SKU</th>
+                                    <th>Price</th>
+                                    <th>Stock</th>
+                                    <th>Status</th>
+                                    <th>Created</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for product in products %}
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            {% if product.main_image %}
+                                            <img src="{{ url_for('static', filename=product.main_image) }}" 
+                                                 class="rounded me-3" width="50" height="50" 
+                                                 style="object-fit: cover;" alt="{{ product.name_en }}">
+                                            {% else %}
+                                            <div class="rounded bg-light me-3 d-flex align-items-center justify-content-center" 
+                                                 style="width: 50px; height: 50px;">
+                                                <i class="fas fa-box text-muted"></i>
+                                            </div>
+                                            {% endif %}
+                                            <div>
+                                                <strong class="d-block">{{ product.name_en }}</strong>
+                                                <small class="text-muted">{{ product.name_ar }}</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="align-middle">
+                                        <code>{{ product.sku or 'N/A' }}</code>
+                                    </td>
+                                    <td class="align-middle">
+                                        <div>
+                                            <strong class="text-success">{{ "%.3f"|format(product.price|float) }} KWD</strong><br>
+                                            <small class="text-muted">B2B: {{ "%.3f"|format(product.b2b_price|float) }} KWD</small>
+                                        </div>
+                                    </td>
+                                    <td class="align-middle">
+                                        <span class="badge {% if product.stock_quantity > 10 %}bg-success{% elif product.stock_quantity > 0 %}bg-warning{% else %}bg-danger{% endif %}">
+                                            {{ product.stock_quantity }} units
+                                        </span>
+                                    </td>
+                                    <td class="align-middle">
+                                        {% if product.status == 'active' %}
+                                        <span class="badge bg-success">Active</span>
+                                        {% elif product.status == 'pending' %}
+                                        <span class="badge bg-warning">Pending Review</span>
+                                        {% elif product.status == 'inactive' %}
+                                        <span class="badge bg-secondary">Inactive</span>
+                                        {% elif product.status == 'rejected' %}
+                                        <span class="badge bg-danger">Rejected</span>
+                                        {% else %}
+                                        <span class="badge bg-info">{{ product.status }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="align-middle">
+                                        <small class="text-muted">
+                                            {{ product.created_at[:10] }}
+                                        </small>
+                                    </td>
+                                    <td class="align-middle">
+                                        <div class="btn-group btn-group-sm">
+                                            <a href="{{ url_for('edit_product', product_id=product.id) }}" 
+                                               class="btn btn-outline-primary" title="Edit">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <a href="#" 
+                                               class="btn btn-outline-info" title="View">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <button type="button" 
+                                                    class="btn btn-outline-danger" 
+                                                    title="Delete"
+                                                    onclick="confirmDelete({{ product.id }}, '{{ product.name_en }}')">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-5">
+                        <i class="fas fa-box fa-4x text-muted mb-4"></i>
+                        <h3 class="text-muted">No Products Found</h3>
+                        <p class="text-muted mb-4">You haven't added any products yet</p>
+                        <a href="{{ url_for('vendor_add_product') }}" class="btn btn-primary btn-lg">
+                            <i class="fas fa-plus-circle me-2"></i> Add Your First Product
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function confirmDelete(productId, productName) {
+    if (confirm(`Are you sure you want to delete "${productName}"? This action cannot be undone.`)) {
+        // AJAX call to delete product
+        fetch(`/vendor/delete-product/${productId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Product deleted successfully!');
+                location.reload();
+            } else {
+                alert('Error: ' + data.message);
+            }
+        })
+        .catch(error => {
+            alert('Error deleting product');
+        });
+    }
+}
+</script>
+{% endblock %}

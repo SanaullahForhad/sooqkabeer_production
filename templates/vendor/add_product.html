@@ -1,108 +1,709 @@
-{% extends "base.html" %}
+{% extends "vendor/base.html" %}
 
-{% block title %}Add Product{% endblock %}
+{% block title %}Add New Product - Sooq Kabeer{% endblock %}
+
+{% block page_title %}Add New Product{% endblock %}
 
 {% block content %}
-<h2>Add New Product</h2>
+<div class="container-fluid py-4">
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category if category != 'message' else 'info' }} alert-dismissible fade show glass-card mb-4" role="alert">
+                    {% if category == 'success' %}
+                        <i class="fas fa-check-circle me-2"></i>
+                    {% elif category == 'danger' %}
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                    {% elif category == 'warning' %}
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                    {% else %}
+                        <i class="fas fa-info-circle me-2"></i>
+                    {% endif %}
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
 
-<div class="row justify-content-center">
-    <div class="col-md-8">
-        <div class="card">
-            <div class="card-header bg-primary text-white">
-                <h5 class="mb-0"><i class="fas fa-plus-circle"></i> Product Details</h5>
-            </div>
-            <div class="card-body">
-                <form method="POST" action="/vendor/add_product">
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Product Name (English) *</label>
-                            <input type="text" name="name_en" class="form-control" required 
-                                   placeholder="Enter product name in English">
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Product Name (Arabic)</label>
-                            <input type="text" name="name_ar" class="form-control" 
-                                   placeholder="Enter product name in Arabic">
-                        </div>
-                    </div>
-                    
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Description (English) *</label>
-                            <textarea name="description_en" class="form-control" rows="3" required 
-                                      placeholder="Describe the product in English"></textarea>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Description (Arabic)</label>
-                            <textarea name="description_ar" class="form-control" rows="3" 
-                                      placeholder="Describe the product in Arabic"></textarea>
-                        </div>
-                    </div>
-                    
-                    <div class="row">
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label">Price *</label>
-                            <div class="input-group">
-                                <span class="input-group-text">$</span>
-                                <input type="number" name="price" class="form-control" 
-                                       step="0.01" min="0.01" required 
-                                       placeholder="0.00">
-                            </div>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label">Unit *</label>
-                            <select name="unit" class="form-select" required>
-                                <option value="kg">kg</option>
-                                <option value="g">gram</option>
-                                <option value="liter">liter</option>
-                                <option value="piece">piece</option>
-                                <option value="dozen">dozen</option>
-                                <option value="pack">pack</option>
-                                <option value="bottle">bottle</option>
-                                <option value="box">box</option>
-                            </select>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label">Category</label>
-                            <input type="text" name="category" class="form-control" 
-                                   placeholder="e.g., vegetables, fruits, dairy">
-                        </div>
-                    </div>
-                    
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Stock Quantity *</label>
-                            <input type="number" name="stock_quantity" class="form-control" 
-                                   step="0.1" min="0" required 
-                                   placeholder="Enter available quantity">
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Image URL (Optional)</label>
-                            <input type="text" name="image_url" class="form-control" 
-                                   placeholder="https://example.com/image.jpg">
-                            <small class="text-muted">Leave empty for default image</small>
-                        </div>
-                    </div>
-                    
-                    <div class="alert alert-info">
-                        <h6><i class="fas fa-info-circle"></i> Vendor Commission</h6>
-                        <p class="mb-0">
-                            You'll earn 10% commission on every sale of this product. 
-                            Commission is automatically added to your wallet.
-                        </p>
-                    </div>
-                    
-                    <div class="d-grid gap-2">
-                        <button type="submit" class="btn btn-success btn-lg">
-                            <i class="fas fa-save"></i> Add Product
-                        </button>
-                        <a href="/vendor" class="btn btn-outline-secondary">
-                            <i class="fas fa-arrow-left"></i> Cancel
-                        </a>
-                    </div>
-                </form>
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2 class="h3 text-white mb-1">Add New Product</h2>
+                    <p class="text-muted mb-0">Add vegetables, fruits, grocery items to your store</p>
+                </div>
+                <a href="{{ url_for('vendor_products') }}" class="btn btn-outline-golden">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Products
+                </a>
             </div>
         </div>
     </div>
+
+    <!-- Real-time Profit Calculator -->
+    <div class="glass-card mb-4">
+        <div class="card-header border-0 bg-transparent">
+            <h5 class="mb-0 text-white">
+                <i class="fas fa-calculator me-2 text-golden"></i>Real-time Profit Calculator
+            </h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3 mb-3">
+                    <div class="text-center p-3 bg-dark-golden rounded">
+                        <small class="text-muted d-block mb-1">Vendor Profit</small>
+                        <h3 id="vendorProfit" class="text-success mb-0">0.000 KWD</h3>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="text-center p-3 bg-dark-golden rounded">
+                        <small class="text-muted d-block mb-1">Platform Commission</small>
+                        <h3 id="platformCommission" class="text-warning mb-0">0.000 KWD</h3>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="text-center p-3 bg-dark-golden rounded">
+                        <small class="text-muted d-block mb-1">Total Sale Price</small>
+                        <h3 id="totalSalePrice" class="text-golden mb-0">0.000 KWD</h3>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="text-center p-3 bg-dark-golden rounded">
+                        <small class="text-muted d-block mb-1">Profit Margin</small>
+                        <h3 id="profitMargin" class="text-primary mb-0">0%</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Form -->
+    <div class="glass-card">
+        <form id="productForm" method="POST" action="{{ url_for('vendor_add_product') }}" enctype="multipart/form-data">
+            <div class="card-body">
+                <!-- Product Category Section -->
+                <div class="mb-5">
+                    <h4 class="text-golden mb-4 border-bottom pb-2" style="border-color: rgba(212, 175, 55, 0.3);">
+                        <i class="fas fa-tags me-2"></i>Product Category & Type
+                    </h4>
+
+                    <div class="row">
+                        <!-- Main Category -->
+                        <div class="col-md-6 mb-3">
+                            <label for="category" class="form-label text-white">Category *</label>
+                            <select class="form-control-glass" id="category" name="category" required onchange="updateUnits()">
+                                <option value="">Select Category</option>
+                                <option value="vegetables">Vegetables</option>
+                                <option value="fruits">Fruits</option>
+                                <option value="grocery">Grocery & Staples</option>
+                                <option value="dairy">Dairy Products</option>
+                                <option value="meat">Meat & Poultry</option>
+                                <option value="seafood">Seafood</option>
+                                <option value="beverages">Beverages</option>
+                                <option value="snacks">Snacks & Sweets</option>
+                            </select>
+                            <div class="form-text text-muted">Select the main category of your product</div>
+                        </div>
+
+                        <!-- Sub Category -->
+                        <div class="col-md-6 mb-3">
+                            <label for="sub_category" class="form-label text-white">Sub Category</label>
+                            <input type="text" class="form-control-glass" id="sub_category" name="sub_category">
+                            <div class="form-text text-muted">e.g., Leafy Greens, Citrus Fruits, Canned Goods</div>
+                        </div>
+                    </div>
+
+                    <!-- Unit Selection based on Category -->
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="unit" class="form-label text-white">Unit of Measurement *</label>
+                            <select class="form-control-glass" id="unit" name="unit" required>
+                                <option value="">Select Unit</option>
+                                <option value="kg">Kilogram (KG)</option>
+                                <option value="pcs">Pieces (Pcs)</option>
+                                <option value="box">Box</option>
+                                <option value="pkt">Packet (Pkt)</option>
+                                <option value="can">Can</option>
+                                <option value="bottle">Bottle</option>
+                                <option value="liter">Liter</option>
+                                <option value="gram">Gram (g)</option>
+                                <option value="dozen">Dozen</option>
+                                <option value="bundle">Bundle</option>
+                                <option value="sack">Sack</option>
+                            </select>
+                            <div class="form-text text-muted">How this product is sold</div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="stock_quantity" class="form-label text-white">Stock Quantity *</label>
+                            <input type="number" class="form-control-glass" id="stock_quantity" 
+                                   name="stock_quantity" min="0" step="0.01" required>
+                            <div class="form-text text-muted">Available quantity in stock</div>
+                        </div>
+                    </div>
+
+                    <!-- Stock Date & Expiry Date -->
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="stock_date" class="form-label text-white">Stock Date *</label>
+                            <input type="date" class="form-control-glass" id="stock_date" 
+                                   name="stock_date" required>
+                            <div class="form-text text-muted">Date when product was added to stock</div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="expiry_date" class="form-label text-white">Expiry Date</label>
+                            <input type="date" class="form-control-glass" id="expiry_date" 
+                                   name="expiry_date">
+                            <div class="form-text text-muted">Required for Grocery items (Optional for fresh produce)</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Media Section -->
+                <div class="mb-5">
+                    <h4 class="text-golden mb-4 border-bottom pb-2" style="border-color: rgba(212, 175, 55, 0.3);">
+                        <i class="fas fa-images me-2"></i>Media & Images
+                    </h4>
+
+                    <!-- Main Image -->
+                    <div class="mb-4">
+                        <label for="main_image" class="form-label text-white">
+                            <i class="fas fa-star me-2"></i>Main Product Image *
+                        </label>
+                        <div class="file-upload-container glass-card-sm p-3">
+                            <input type="file" class="form-control-glass" id="main_image" name="main_image" accept="image/*" required>
+                            <div class="form-text text-muted">Primary image displayed on product listing (Max 5MB)</div>
+                            <div id="mainImagePreview" class="mt-3"></div>
+                        </div>
+                    </div>
+
+                    <!-- Gallery Images -->
+                    <div class="mb-4">
+                        <label for="gallery_files" class="form-label text-white">
+                            <i class="fas fa-layer-group me-2"></i>Gallery Images
+                        </label>
+                        <div class="file-upload-container glass-card-sm p-3">
+                            <input type="file" class="form-control-glass" id="gallery_files" name="gallery_files" accept="image/*" multiple>
+                            <div class="form-text text-muted">Additional product images (max 5 images, 5MB each)</div>
+                            <div id="galleryPreview" class="row mt-3"></div>
+                        </div>
+                    </div>
+
+                    <!-- Video Section -->
+                    <div class="mb-4">
+                        <h6 class="text-white mb-3">
+                            <i class="fas fa-video me-2"></i>Product Video
+                        </h6>
+                        
+                        <!-- Video File Upload -->
+                        <div class="mb-3">
+                            <label for="video_file" class="form-label text-white">Upload Video File</label>
+                            <div class="file-upload-container glass-card-sm p-3">
+                                <input type="file" class="form-control-glass" id="video_file" name="video_file" accept="video/*">
+                                <div class="form-text text-muted">Upload product video (max 50MB, MP4 recommended)</div>
+                                <div id="videoPreview" class="mt-3"></div>
+                            </div>
+                        </div>
+
+                        <!-- Video URL -->
+                        <div class="mb-3">
+                            <label for="video_url" class="form-label text-white">Or Enter Video URL</label>
+                            <input type="url" class="form-control-glass" id="video_url" name="video_url" 
+                                   placeholder="https://www.youtube.com/watch?v=... or https://vimeo.com/...">
+                            <div class="form-text text-muted">YouTube, Vimeo, or direct video link</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product Information Section -->
+                <div class="mb-5">
+                    <h4 class="text-golden mb-4 border-bottom pb-2" style="border-color: rgba(212, 175, 55, 0.3);">
+                        <i class="fas fa-info-circle me-2"></i>Product Information
+                    </h4>
+
+                    <div class="row">
+                        <!-- Product Name -->
+                        <div class="col-md-6 mb-3">
+                            <label for="name_en" class="form-label text-white">Product Name (English) *</label>
+                            <input type="text" class="form-control-glass" id="name_en" name="name_en" required>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="name_ar" class="form-label text-white">اسم المنتج (عربي) *</label>
+                            <input type="text" class="form-control-glass arabic-input" id="name_ar" name="name_ar" required dir="rtl">
+                        </div>
+                    </div>
+
+                    <!-- Product Description -->
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="desc_en" class="form-label text-white">Description (English)</label>
+                            <textarea class="form-control-glass" id="desc_en" name="desc_en" rows="3"></textarea>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="desc_ar" class="form-label text-white">الوصف (عربي)</label>
+                            <textarea class="form-control-glass arabic-input" id="desc_ar" name="desc_ar" rows="3" dir="rtl"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- SKU & Barcode -->
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="sku" class="form-label text-white">SKU (Stock Keeping Unit)</label>
+                            <input type="text" class="form-control-glass" id="sku" name="sku">
+                            <div class="form-text text-muted">Unique product identifier</div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="barcode" class="form-label text-white">Barcode</label>
+                            <input type="text" class="form-control-glass" id="barcode" name="barcode">
+                            <div class="form-text text-muted">Product barcode (ISBN, UPC, EAN)</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pricing & Commission Section -->
+                <div class="mb-5">
+                    <h4 class="text-golden mb-4 border-bottom pb-2" style="border-color: rgba(212, 175, 55, 0.3);">
+                        <i class="fas fa-money-bill-wave me-2"></i>Pricing & Commission
+                    </h4>
+
+                    <div class="row">
+                        <!-- Cost Price -->
+                        <div class="col-md-4 mb-3">
+                            <label for="cost_price" class="form-label text-white">Cost Price (KWD) *</label>
+                            <input type="number" class="form-control-glass" id="cost_price" name="cost_price"
+                                   step="0.001" min="0" required oninput="calculateProfit()">
+                            <div class="form-text text-muted">Your purchase cost per unit</div>
+                        </div>
+
+                        <!-- Sale Price -->
+                        <div class="col-md-4 mb-3">
+                            <label for="sale_price" class="form-label text-white">Sale Price (KWD) *</label>
+                            <input type="number" class="form-control-glass" id="sale_price" name="sale_price"
+                                   step="0.001" min="0" required oninput="calculateProfit()">
+                            <div class="form-text text-muted">Price customers will pay</div>
+                        </div>
+
+                        <!-- Platform Commission (Fixed 10%) -->
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label text-white">Platform Commission</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control-glass" id="admin_commission"
+                                       name="admin_commission" step="0.1" min="0" max="50"
+                                       value="10" oninput="calculateProfit()" readonly>
+                                <span class="input-group-text bg-dark-golden text-golden">%</span>
+                            </div>
+                            <div class="form-text text-muted">Fixed 10% as per HKO-001 protocol</div>
+                        </div>
+                    </div>
+
+                    <!-- Commission Breakdown -->
+                    <div class="glass-card-sm p-4 mt-3">
+                        <h6 class="text-white mb-3">Commission Breakdown (Per Unit)</h6>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <small class="text-muted">Platform Fee (10%):</small>
+                                    <span id="platformFeeDisplay" class="text-warning fw-bold">0.000 KWD</span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <small class="text-muted">Your Net Earning:</small>
+                                    <span id="vendorEarningDisplay" class="text-success fw-bold">0.000 KWD</span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <small class="text-muted">Profit Margin:</small>
+                                    <span id="marginDisplay" class="text-golden fw-bold">0%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sales Target Section -->
+                <div class="mb-5">
+                    <h4 class="text-golden mb-4 border-bottom pb-2" style="border-color: rgba(212, 175, 55, 0.3);">
+                        <i class="fas fa-bullseye me-2"></i>Sales Target
+                    </h4>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="sales_target" class="form-label text-white">Sales Target (KWD)</label>
+                            <input type="number" class="form-control-glass" id="sales_target" name="sales_target"
+                                   step="0.001" min="0">
+                            <div class="form-text text-muted">Target sales amount for this product</div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="target_duration" class="form-label text-white">Target Duration (Days)</label>
+                            <input type="number" class="form-control-glass" id="target_duration" name="target_duration"
+                                   min="1" max="365" value="30">
+                            <div class="form-text text-muted">Days to achieve the sales target</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product Features -->
+              <div class="mb-5">
+                    <h4 class="text-golden mb-4 border-bottom pb-2" style="border-color: rgba(212, 175, 55, 0.3);">
+                        <i class="fas fa-star me-2"></i>Product Features
+                    </h4>
+
+                    <div class="row">
+                        <!-- Origin -->
+                        <div class="col-md-6 mb-3">
+                            <label for="origin" class="form-label text-white">Country of Origin</label>
+                            <select class="form-control-glass" id="origin" name="origin">
+                                <option value="">Select Origin</option>
+                                <option value="kuwait">Kuwait</option>
+                                <option value="saudi">Saudi Arabia</option>
+                                <option value="uae">UAE</option>
+                                <option value="qatar">Qatar</option>
+                                <option value="oman">Oman</option>
+                                <option value="bahrain">Bahrain</option>
+                                <option value="jordan">Jordan</option>
+                                <option value="lebanon">Lebanon</option>
+                                <option value="egypt">Egypt</option>
+                                <option value="india">India</option>
+                                <option value="pakistan">Pakistan</option>
+                                <option value="iran">Iran</option>
+                                <option value="turkey">Turkey</option>
+                            </select>
+                        </div>
+
+                        <!-- Brand -->
+                        <div class="col-md-6 mb-3">
+                            <label for="brand" class="form-label text-white">Brand Name</label>
+                            <input type="text" class="form-control-glass" id="brand" name="brand">
+                        </div>
+                    </div>
+
+                    <!-- Product Status -->
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="status" class="form-label text-white">Product Status</label>
+                            <select class="form-control-glass" id="status" name="status" required>
+                                <option value="active" selected>Active</option>
+                                <option value="inactive">Inactive</option>
+                                <option value="draft">Draft</option>
+                            </select>
+                        </div>
+
+                        <!-- Featured Product -->
+                        <div class="col-md-6 mb-3">
+                            <div class="form-check form-switch mt-4">
+                                <input class="form-check-input" type="checkbox" id="is_featured" name="is_featured">
+                                <label class="form-check-label text-white" for="is_featured">
+                                    Mark as Featured Product
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="d-flex justify-content-between mt-4 pt-4 border-top" style="border-color: rgba(212, 175, 55, 0.2);">
+                    <button type="button" class="btn btn-outline-golden" onclick="resetForm()">
+                        <i class="fas fa-redo me-2"></i>Reset Form
+                    </button>
+                    <button type="submit" class="btn btn-golden px-5">
+                        <i class="fas fa-plus-circle me-2"></i>Add Product
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Real-time Profit Calculation based on HKO-001 protocol
+function calculateProfit() {
+    const costPrice = parseFloat(document.getElementById('cost_price').value) || 0;
+    const salePrice = parseFloat(document.getElementById('sale_price').value) || 0;
+    const adminCommission = 10; // Fixed 10% as per HKO-001
+
+    if (costPrice > 0 && salePrice > 0) {
+        // Calculate platform commission (10%)
+        const platformFee = (salePrice * adminCommission) / 100;
+        
+        // Vendor earning (90%)
+        const vendorEarning = salePrice - platformFee;
+        
+        // Profit margin calculation
+        const profit = vendorEarning - costPrice;
+        const profitMargin = costPrice > 0 ? (profit / costPrice) * 100 : 0;
+
+        // Update displays
+        document.getElementById('vendorProfit').textContent = profit.toFixed(3) + ' KWD';
+        document.getElementById('platformCommission').textContent = platformFee.toFixed(3) + ' KWD';
+        document.getElementById('totalSalePrice').textContent = salePrice.toFixed(3) + ' KWD';
+        document.getElementById('profitMargin').textContent = profitMargin.toFixed(1) + '%';
+
+        // Update breakdown section
+        document.getElementById('platformFeeDisplay').textContent = platformFee.toFixed(3) + ' KWD';
+        document.getElementById('vendorEarningDisplay').textContent = vendorEarning.toFixed(3) + ' KWD';
+        document.getElementById('marginDisplay').textContent = profitMargin.toFixed(1) + '%';
+    } else {
+        // Reset if no values
+        document.getElementById('vendorProfit').textContent = '0.000 KWD';
+        document.getElementById('platformCommission').textContent = '0.000 KWD';
+        document.getElementById('totalSalePrice').textContent = '0.000 KWD';
+        document.getElementById('profitMargin').textContent = '0%';
+        
+        document.getElementById('platformFeeDisplay').textContent = '0.000 KWD';
+        document.getElementById('vendorEarningDisplay').textContent = '0.000 KWD';
+        document.getElementById('marginDisplay').textContent = '0%';
+    }
+}
+
+// Update units based on category selection
+function updateUnits() {
+    const category = document.getElementById('category').value;
+    const unitSelect = document.getElementById('unit');
+    
+    // Clear all options except first
+    while (unitSelect.options.length > 1) {
+        unitSelect.remove(1);
+    }
+
+    // Add units based on category
+    const units = {
+        'vegetables': ['kg', 'pcs', 'box', 'bundle', 'sack'],
+        'fruits': ['kg', 'pcs', 'box', 'dozen', 'bundle'],
+        'grocery': ['pkt', 'can', 'bottle', 'kg', 'gram'],
+        'dairy': ['liter', 'pcs', 'pkt', 'bottle'],
+        'meat': ['kg', 'gram', 'pcs'],
+        'seafood': ['kg', 'pcs', 'box'],
+        'beverages': ['bottle', 'can', 'liter', 'pcs'],
+        'snacks': ['pkt', 'pcs', 'box', 'gram']
+    };
+
+    const categoryUnits = units[category] || ['kg', 'pcs', 'box', 'pkt', 'can', 'bottle', 'liter'];
+    
+    categoryUnits.forEach(unit => {
+        let unitName = '';
+        switch(unit) {
+            case 'kg': unitName = 'Kilogram (KG)'; break;
+            case 'pcs': unitName = 'Pieces (Pcs)'; break;
+            case 'box': unitName = 'Box'; break;
+            case 'pkt': unitName = 'Packet (Pkt)'; break;
+            case 'can': unitName = 'Can'; break;
+            case 'bottle': unitName = 'Bottle'; break;
+            case 'liter': unitName = 'Liter'; break;
+            case 'gram': unitName = 'Gram (g)'; break;
+            case 'dozen': unitName = 'Dozen'; break;
+            case 'bundle': unitName = 'Bundle'; break;
+            case 'sack': unitName = 'Sack'; break;
+        }
+        
+        const option = new Option(unitName, unit);
+        unitSelect.add(option);
+    });
+}
+
+// Image Preview Functions
+document.getElementById('main_image').addEventListener('change', function(e) {
+    const preview = document.getElementById('mainImagePreview');
+    preview.innerHTML = '';
+
+    if (this.files && this.files[0]) {
+        const fileSize = this.files[0].size / 1024 / 1024; // MB
+        if (fileSize > 5) {
+            alert('File size must be less than 5MB');
+            this.value = '';
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const img = document.createElement('img');
+            img.src = e.target.result;
+            img.className = 'img-thumbnail';
+            img.style.maxHeight = '200px';
+            img.style.maxWidth = '100%';
+            img.style.objectFit = 'cover';
+            preview.appendChild(img);
+        }
+        reader.readAsDataURL(this.files[0]);
+    }
+});
+
+document.getElementById('gallery_files').addEventListener('change', function(e) {
+    const preview = document.getElementById('galleryPreview');
+    preview.innerHTML = '';
+
+    const files = Array.from(this.files).slice(0, 5); // Limit to 5 images
+
+    files.forEach((file, index) => {
+        const fileSize = file.size / 1024 / 1024; // MB
+        if (fileSize > 5) {
+            alert(`File ${file.name} exceeds 5MB limit`);
+            return;
+        }
+
+        if (file.type.startsWith('image/')) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const col = document.createElement('div');
+                col.className = 'col-4 col-md-2 mb-2';
+
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.className = 'img-thumbnail w-100';
+                img.style.height = '100px';
+                img.style.objectFit = 'cover';
+
+                const removeBtn = document.createElement('button');
+                removeBtn.type = 'button';
+                removeBtn.className = 'btn btn-danger btn-sm position-absolute';
+                removeBtn.style.top = '5px';
+                removeBtn.style.right = '5px';
+                removeBtn.innerHTML = '&times;';
+                removeBtn.onclick = function() {
+                    col.remove();
+                };
+
+                col.style.position = 'relative';
+                col.appendChild(img);
+                col.appendChild(removeBtn);
+                preview.appendChild(col);
+            }
+            reader.readAsDataURL(file);
+        }
+    });
+});
+
+// Video Preview
+document.getElementById('video_file').addEventListener('change', function(e) {
+    const preview = document.getElementById('videoPreview');
+    preview.innerHTML = '';
+
+    if (this.files && this.files[0]) {
+        const file = this.files[0];
+        const fileSize = file.size / 1024 / 1024; // MB
+        
+        if (fileSize > 50) {
+            alert('Video file must be less than 50MB');
+            this.value = '';
+            return;
+        }
+
+        if (file.type.startsWith('video/')) {
+            const video = document.createElement('video');
+            video.controls = true;
+            video.style.maxWidth = '100%';
+            video.style.maxHeight = '300px';
+            video.style.borderRadius = '8px';
+
+            const source = document.createElement('source');
+            source.src = URL.createObjectURL(file);
+            source.type = file.type;
+
+            video.appendChild(source);
+            preview.appendChild(video);
+        }
+    }
+});
+
+// Reset Form
+function resetForm() {
+    if (confirm('Are you sure you want to reset the form? All data will be lost.')) {
+        document.getElementById('productForm').reset();
+        document.getElementById('mainImagePreview').innerHTML = '';
+        document.getElementById('galleryPreview').innerHTML = '';
+        document.getElementById('videoPreview').innerHTML = '';
+        calculateProfit();
+    }
+}
+
+// Set default dates
+document.addEventListener('DOMContentLoaded', function() {
+    // Set stock date to today
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('stock_date').value = today;
+    
+    // Set expiry date to 30 days from today
+    const futureDate = new Date();
+    futureDate.setDate(futureDate.getDate() + 30);
+    document.getElementById('expiry_date').value = futureDate.toISOString().split('T')[0];
+    
+    // Initialize profit calculation
+    calculateProfit();
+    
+    // Auto-generate SKU
+    document.getElementById('name_en').addEventListener('blur', function() {
+        if (!document.getElementById('sku').value) {
+            const name = this.value.trim().toUpperCase().substring(0, 3);
+            const random = Math.floor(Math.random() * 10000).toString().padStart(4, '0');
+            document.getElementById('sku').value = 'SKU-' + name + '-' + random;
+        }
+    });
+});
+</script>
+
+<style>
+.file-upload-container {
+    border: 2px dashed rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+}
+
+.file-upload-container:hover {
+    border-color: var(--accent-gold);
+    background: rgba(212, 175, 55, 0.05);
+}
+
+.arabic-input {
+    font-family: 'Segoe UI', 'Arial', sans-serif;
+    text-align: right;
+    font-size: 1rem;
+}
+
+.form-control-glass {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    border-radius: 8px;
+    padding: 10px 15px;
+    transition: all 0.3s ease;
+}
+
+.form-control-glass:focus {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: var(--accent-gold);
+    color: #ffffff;
+    box-shadow: 0 0 0 0.25rem rgba(212, 175, 55, 0.25);
+}
+
+.form-control-glass::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.bg-dark-golden {
+    background: rgba(212, 175, 55, 0.1);
+    border: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+.glass-card-sm {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+}
+
+/* Custom Switch for Featured Product */
+.form-check-input:checked {
+    background-color: var(--accent-gold);
+    border-color: var(--accent-gold);
+}
+</style>
 {% endblock %}

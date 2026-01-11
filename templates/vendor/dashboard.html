@@ -1,106 +1,511 @@
-{% extends "base.html" %}
+{% extends "vendor/base.html" %}
+
+{% block title %}Vendor Dashboard{% endblock %}
+
+{% block page_title %}Dashboard Overview{% endblock %}
+
 {% block content %}
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-
-<style>
-    :root { --primary: #f5576c; --secondary: #f093fb; --dark: #2d3436; --light: #f9f9f9; --success: #00b894; }
-    body { background-color: #f4f7f6; font-family: 'Segoe UI', sans-serif; }
-    
-    .dashboard-header { background: linear-gradient(135deg, var(--secondary), var(--primary)); color: white; padding: 40px 20px; border-radius: 0 0 30px 30px; margin-bottom: 30px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
-    .nav-buttons { display: flex; justify-content: space-between; align-items: center; }
-    
-    .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin: -50px 20px 20px 20px; }
-    .stat-card { background: white; padding: 20px; border-radius: 20px; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.05); border-bottom: 4px solid var(--primary); }
-    .stat-card i { font-size: 2rem; color: var(--primary); margin-bottom: 10px; }
-    .stat-card h3 { font-size: 1.5rem; margin: 5px 0; color: var(--dark); }
-    
-    .kyc-banner { background: #fff3cd; border-left: 5px solid #ffc107; padding: 15px; margin: 20px; border-radius: 10px; display: flex; align-items: center; justify-content: space-between; }
-    .verified-badge { background: var(--success); color: white; padding: 5px 15px; border-radius: 50px; font-size: 0.8rem; }
-    
-    .action-section { padding: 0 20px; }
-    .card { background: white; border-radius: 20px; padding: 20px; margin-bottom: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
-    .btn-withdraw { background: var(--primary); color: white; border: none; padding: 12px 25px; border-radius: 12px; font-weight: bold; width: 100%; cursor: pointer; }
-    .btn-withdraw:disabled { background: #ccc; cursor: not-allowed; }
-</style>
-
-<div class="dashboard-header">
-    <div class="nav-buttons">
-        <div>
-            <h2 style="margin:0;">{{ vendor['company_name'] or 'My Shop' }}</h2>
-            <p style="opacity: 0.9;">ID: <strong>{{ vendor['vendor_code'] }}</strong></p>
-        </div>
-        <a href="/logout" style="color: white; font-size: 1.5rem;"><i class="fas fa-sign-out-alt"></i></a>
-    </div>
-</div>
-
-<div class="stat-grid">
-    <div class="stat-card">
-        <i class="fas fa-wallet"></i>
-        <p>Balance</p>
-        <h3>{{ "%.3f"|format(vendor['balance'] or 0) }} KD</h3>
-    </div>
-    <div class="stat-card">
-        <i class="fas fa-shopping-bag"></i>
-        <p>Orders</p>
-        <h3>{{ stats['total_orders'] }}</h3>
-    </div>
-    <div class="stat-card">
-        <i class="fas fa-chart-line"></i>
-        <p>Total Sales</p>
-        <h3>{{ "%.2f"|format(stats['total_sales']) }} KD</h3>
-    </div>
-</div>
-
-<div class="action-section">
-    {% if vendor['kyc_status'] != 'verified' %}
-    <div class="kyc-banner">
-        <div>
-            <i class="fas fa-exclamation-triangle"></i>
-            <strong>Action Required:</strong> Please upload Civil ID to verify your account.
-        </div>
-        <a href="/vendor/upload-kyc" class="btn-small" style="color: #856404; font-weight: bold;">Upload Now</a>
-    </div>
-    {% else %}
-    <div class="card" style="border-left: 5px solid var(--success);">
-        <span class="verified-badge"><i class="fas fa-check-circle"></i> Verified Merchant</span>
-    </div>
-    {% endif %}
-
-    <div class="card">
-        <h3><i class="fas fa-money-check-alt"></i> Withdrawal</h3>
-        <p style="font-size: 0.9rem; color: #666;">Minimum withdrawal amount: <strong>5.000 KD</strong></p>
-        
-        <form action="/vendor/withdraw" method="POST">
-            <input type="number" name="amount" step="0.001" placeholder="Enter amount in KD" class="form-input" style="width: 100%; padding: 12px; margin: 10px 0; border-radius: 10px; border: 1px solid #ddd;">
+<div class="container-fluid py-4">
+    <!-- Dashboard Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div>
+                    <h2 class="h3 mb-1 text-white">Dashboard Overview</h2>
+                    <p class="text-light mb-0">Welcome back, <span class="text-golden">{{ vendor.business_name }}</span>! Here's your store performance summary.</p>
+                </div>
+                <a href="{{ url_for('vendor_add_product') }}" class="btn btn-golden">
+                    <i class="fas fa-plus-circle me-2"></i> Add New Product
+                </a>
+            </div>
             
-            {% if vendor['kyc_status'] == 'verified' and (vendor['balance'] or 0) >= 5 %}
-                <button type="submit" class="btn-withdraw">Request Withdrawal</button>
-            {% else %}
-                <button type="button" class="btn-withdraw" disabled>Withdrawal Locked</button>
-                <p style="color: #e74c3c; font-size: 0.8rem; margin-top: 10px;">
-                    * You need 5 KD balance and Verified status to withdraw.
-                </p>
-            {% endif %}
-        </form>
+            <!-- Stats Summary Row -->
+            <div class="row mt-4">
+                <div class="col-auto">
+                    <div class="d-flex align-items-center glass-card p-3">
+                        <div class="me-3">
+                            <div class="rounded-circle bg-dark-golden p-2">
+                                <i class="fas fa-calendar-alt text-golden fa-lg"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <small class="text-muted d-block">Today</small>
+                            <span class="text-white">{{ now.strftime('%d %B %Y') }}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-auto">
+                    <div class="d-flex align-items-center glass-card p-3">
+                        <div class="me-3">
+                            <div class="rounded-circle bg-dark-golden p-2">
+                                <i class="fas fa-clock text-golden fa-lg"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <small class="text-muted d-block">Last Login</small>
+                            <span class="text-white">2 hours ago</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div class="card">
-        <h3>Recent Orders</h3>
-        <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
-            <tr style="border-bottom: 1px solid #eee; text-align: left; font-size: 0.8rem; color: #777;">
-                <th style="padding: 10px;">Order</th>
-                <th>Status</th>
-                <th>Net Income</th>
-            </tr>
-            {% for order in orders %}
-            <tr style="border-bottom: 1px solid #f9f9f9; font-size: 0.9rem;">
-                <td style="padding: 12px;">#{{ order['order_number'] }}</td>
-                <td><span class="status-pill">{{ order['order_status'] }}</span></td>
-                <td>{{ "%.3f"|format(order['subtotal'] * 0.9) }} KD</td>
-            </tr>
-            {% endfor %}
-        </table>
+    <!-- Statistics Cards with Glassmorphism -->
+    <div class="row mb-4">
+        <!-- Total Products Card -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="glass-card stat-card">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <div>
+                        <p class="text-muted small mb-1">Total Products</p>
+                        <h3 class="h2 mb-0 text-white">{{ products|length }}</h3>
+                    </div>
+                    <div class="rounded-circle bg-dark-golden d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                        <i class="fas fa-box fa-2x text-golden"></i>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mt-3">
+                    <a href="{{ url_for('vendor_products') }}" class="text-golden small">
+                        <i class="fas fa-eye me-1"></i> View All
+                    </a>
+                    <span class="badge bg-success">Active</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Sales Card -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="glass-card stat-card">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <div>
+                        <p class="text-muted small mb-1">Total Sales</p>
+                        <h3 class="h2 mb-0 text-white">
+                            {% if stats and stats.total_sales %}
+                                {{ "%.3f"|format(stats.total_sales|float) }}
+                            {% else %}
+                                0.000
+                            {% endif %} <small class="h6">KWD</small>
+                        </h3>
+                    </div>
+                    <div class="rounded-circle bg-dark-golden d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                        <i class="fas fa-shopping-cart fa-2x text-golden"></i>
+                    </div>
+                </div>
+                <div class="progress mt-3">
+                    <div class="progress-bar" role="progressbar" style="width: 75%"></div>
+                </div>
+                <small class="text-muted mt-2 d-block">+15% from last month</small>
+            </div>
+        </div>
+
+        <!-- Balance Card -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="glass-card stat-card">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <div>
+                        <p class="text-muted small mb-1">Available Balance</p>
+                        <h3 class="h2 mb-0 text-white">
+                            {% if balance %}
+                                {{ "%.3f"|format(balance|float) }}
+                            {% else %}
+                                0.000
+                            {% endif %} <small class="h6">KWD</small>
+                        </h3>
+                    </div>
+                    <div class="rounded-circle bg-dark-golden d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                        <i class="fas fa-wallet fa-2x text-golden"></i>
+                    </div>
+                </div>
+                <button class="btn btn-sm btn-golden w-100 mt-3">
+                    <i class="fas fa-download me-1"></i> Withdraw Funds
+                </button>
+            </div>
+        </div>
+
+        <!-- Total Orders Card -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="glass-card stat-card">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <div>
+                        <p class="text-muted small mb-1">Total Orders</p>
+                        <h3 class="h2 mb-0 text-white">
+                            {% if stats and stats.total_orders %}
+                                {{ stats.total_orders }}
+                            {% else %}
+                                0
+                            {% endif %}
+                        </h3>
+                    </div>
+                    <div class="rounded-circle bg-dark-golden d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                        <i class="fas fa-clipboard-list fa-2x text-golden"></i>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-between mt-3">
+                    <div>
+                        <small class="text-muted">Pending</small>
+                        <p class="mb-0 text-white">3</p>
+                    </div>
+                    <div>
+                        <small class="text-muted">Completed</small>
+                        <p class="mb-0 text-white">
+                            {% if stats and stats.total_orders %}
+                                {{ stats.total_orders - 3 }}
+                            {% else %}
+                                0
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions with Hover Effects -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="glass-card">
+                <div class="card-header border-0 bg-transparent">
+                    <h5 class="mb-0 text-white">
+                        <i class="fas fa-bolt me-2 text-golden"></i> Quick Actions
+                    </h5>
+                    <p class="text-muted small mb-0">Manage your store with one click</p>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <!-- Add Product -->
+                        <div class="col-lg-3 col-md-6 mb-4">
+                            <a href="{{ url_for('vendor_add_product') }}" class="text-decoration-none">
+                                <div class="action-card h-100 text-center p-4 glass-card">
+                                    <div class="action-icon mb-3">
+                                        <div class="icon-wrapper rounded-circle bg-dark-golden d-inline-flex align-items-center justify-content-center" style="width: 70px; height: 70px;">
+                                            <i class="fas fa-plus-circle fa-2x text-golden"></i>
+                                        </div>
+                                    </div>
+                                    <h6 class="text-white mb-2">Add Product</h6>
+                                    <p class="text-muted small mb-3">
+                                        Add new products to your store
+                                    </p>
+                                    <span class="btn btn-sm btn-outline-golden">Start Now</span>
+                                </div>
+                            </a>
+                        </div>
+
+                        <!-- Manage Products -->
+                        <div class="col-lg-3 col-md-6 mb-4">
+                            <a href="{{ url_for('vendor_products') }}" class="text-decoration-none">
+                                <div class="action-card h-100 text-center p-4 glass-card">
+                                    <div class="action-icon mb-3">
+                                        <div class="icon-wrapper rounded-circle bg-dark-golden d-inline-flex align-items-center justify-content-center" style="width: 70px; height: 70px;">
+                                            <i class="fas fa-boxes fa-2x text-golden"></i>
+                                        </div>
+                                    </div>
+                                    <h6 class="text-white mb-2">Manage Products</h6>
+                                    <p class="text-muted small mb-3">
+                                        Edit, update or delete products
+                                    </p>
+                                    <span class="btn btn-sm btn-outline-golden">Manage</span>
+                                </div>
+                            </a>
+                        </div>
+
+                        <!-- View Orders -->
+                        <div class="col-lg-3 col-md-6 mb-4">
+                            <a href="#" class="text-decoration-none">
+                                <div class="action-card h-100 text-center p-4 glass-card">
+                                    <div class="action-icon mb-3">
+                                        <div class="icon-wrapper rounded-circle bg-dark-golden d-inline-flex align-items-center justify-content-center" style="width: 70px; height: 70px;">
+                                            <i class="fas fa-shopping-cart fa-2x text-golden"></i>
+                                        </div>
+                                    </div>
+                                    <h6 class="text-white mb-2">View Orders</h6>
+                                    <p class="text-muted small mb-3">
+                                        Check and manage customer orders
+                                    </p>
+                                    <span class="btn btn-sm btn-outline-golden">View</span>
+                                </div>
+                            </a>
+                        </div>
+
+                        <!-- Analytics -->
+                        <div class="col-lg-3 col-md-6 mb-4">
+                            <a href="#" class="text-decoration-none">
+                                <div class="action-card h-100 text-center p-4 glass-card">
+                                    <div class="action-icon mb-3">
+                                        <div class="icon-wrapper rounded-circle bg-dark-golden d-inline-flex align-items-center justify-content-center" style="width: 70px; height: 70px;">
+                                            <i class="fas fa-chart-line fa-2x text-golden"></i>
+                                        </div>
+                                    </div>
+                                    <h6 class="text-white mb-2">Sales Analytics</h6>
+                                    <p class="text-muted small mb-3">
+                                        View sales reports and insights
+                                    </p>
+                                    <span class="btn btn-sm btn-outline-golden">Analyze</span>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<!-- Recent Products & Orders -->
+    <div class="row">
+        <!-- Recent Products -->
+        <div class="col-lg-6 mb-4">
+            <div class="glass-card h-100">
+                <div class="card-header border-0 bg-transparent d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="mb-0 text-white">
+                            <i class="fas fa-box me-2 text-golden"></i> Recent Products
+                        </h5>
+                        <p class="text-muted small mb-0">Your latest added products</p>
+                    </div>
+                    <a href="{{ url_for('vendor_products') }}" class="btn btn-sm btn-outline-golden">View All</a>
+                </div>
+                <div class="card-body">
+                    {% if products %}
+                    <div class="table-responsive">
+                        <table class="table table-dark table-hover align-middle">
+                            <thead>
+                                <tr>
+                                    <th class="border-0">Product</th>
+                                    <th class="border-0">Price</th>
+                                    <th class="border-0">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for product in products[:5] %}
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            {% if product.main_image %}
+                                            <img src="{{ url_for('static', filename=product.main_image) }}"
+                                                 class="rounded me-3" width="45" height="45" alt="Product" style="object-fit: cover;">
+                                            {% else %}
+                                            <div class="rounded bg-dark-golden me-3 d-flex align-items-center justify-content-center"
+                                                 style="width: 45px; height: 45px;">
+                                                <i class="fas fa-box text-golden"></i>
+                                            </div>
+                                            {% endif %}
+                                            <div>
+                                                <strong class="text-white">{{ product.name_en|truncate(20) }}</strong>
+                                                <br>
+                                                <small class="text-muted">SKU: {{ product.sku or 'N/A' }}</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="text-white">
+                                        <strong>{{ "%.3f"|format(product.price|float) }} KWD</strong>
+                                    </td>
+                                    <td>
+                                        {% if product.status == 'active' %}
+                                        <span class="badge bg-success">Active</span>
+                                        {% elif product.status == 'pending' %}
+                                        <span class="badge bg-warning">Pending</span>
+                                        {% elif product.status == 'inactive' %}
+                                        <span class="badge bg-secondary">Inactive</span>
+                                        {% else %}
+                                        <span class="badge bg-info">{{ product.status }}</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-5">
+                        <div class="icon-wrapper rounded-circle bg-dark-golden d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                            <i class="fas fa-box fa-2x text-golden"></i>
+                        </div>
+                        <h5 class="text-white mb-2">No Products Yet</h5>
+                        <p class="text-muted mb-4">Start adding products to your store</p>
+                        <a href="{{ url_for('vendor_add_product') }}" class="btn btn-golden">
+                            <i class="fas fa-plus-circle me-2"></i> Add Your First Product
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Orders -->
+        <div class="col-lg-6 mb-4">
+            <div class="glass-card h-100">
+                <div class="card-header border-0 bg-transparent d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="mb-0 text-white">
+                            <i class="fas fa-shopping-cart me-2 text-golden"></i> Recent Orders
+                        </h5>
+                        <p class="text-muted small mb-0">Latest customer orders</p>
+                    </div>
+                    <a href="#" class="btn btn-sm btn-outline-golden">View All</a>
+                </div>
+                <div class="card-body">
+                    {% if orders and orders|length > 0 %}
+                    <div class="table-responsive">
+                        <table class="table table-dark table-hover align-middle">
+                            <thead>
+                                <tr>
+                                    <th class="border-0">Order #</th>
+                                    <th class="border-0">Customer</th>
+                                    <th class="border-0">Amount</th>
+                                    <th class="border-0 text-end">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for order in orders[:5] %}
+                                <tr>
+                                    <td class="text-white">
+                                        <strong>#{{ order.order_number }}</strong>
+                                        <br>
+                                        <small class="text-muted">
+                                            {% if order.created_at %}
+                                                {{ order.created_at.strftime('%d %b %Y') }}
+                                            {% endif %}
+                                        </small>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="rounded-circle bg-dark-golden me-2 d-flex align-items-center justify-content-center" style="width: 35px; height: 35px;">
+                                                <i class="fas fa-user text-golden"></i>
+                                            </div>
+                                            <div>
+                                                <strong class="text-white">{{ order.customer_name|default('Guest') }}</strong>
+                                                <br>
+                                                <small class="text-muted">
+                                                    {% if order.items %}
+                                                        {{ order.items|length }} items
+                                                    {% else %}
+                                                        1 item
+                                                    {% endif %}
+                                                </small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="text-white">
+                                        <strong>{{ "%.3f"|format(order.subtotal|float) }} KWD</strong>
+                                    </td>
+                                    <td class="text-end">
+                                        <span class="badge bg-success">Paid</span>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-5">
+                        <div class="icon-wrapper rounded-circle bg-dark-golden d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                            <i class="fas fa-shopping-cart fa-2x text-golden"></i>
+                        </div>
+                        <h5 class="text-white mb-2">No Orders Yet</h5>
+                        <p class="text-muted mb-4">You haven't received any orders yet</p>
+                        <a href="{{ url_for('vendor_add_product') }}" class="btn btn-golden">
+                            <i class="fas fa-bullhorn me-2"></i> Promote Products
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Performance Chart -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="glass-card">
+                <div class="card-header border-0 bg-transparent">
+                    <h5 class="mb-0 text-white">
+                        <i class="fas fa-chart-bar me-2 text-golden"></i> Performance Overview
+                    </h5>
+                    <p class="text-muted small mb-0">Last 30 days performance</p>
+                </div>
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <!-- Chart Placeholder -->
+                            <div class="chart-placeholder rounded" style="height: 250px; background: rgba(255,255,255,0.05);">
+                                <div class="d-flex align-items-center justify-content-center h-100">
+                                    <div class="text-center">
+                                        <i class="fas fa-chart-line fa-3x text-golden mb-3"></i>
+                                        <p class="text-muted">Sales chart will appear here</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="ps-md-4">
+                                <div class="mb-4">
+                                    <p class="text-muted small mb-1">Average Order Value</p>
+                                    <h4 class="text-white">45.500 KWD</h4>
+                                    <small class="text-success"><i class="fas fa-arrow-up me-1"></i> 12% increase</small>
+                                </div>
+                                <div class="mb-4">
+                                    <p class="text-muted small mb-1">Conversion Rate</p>
+                                    <h4 class="text-white">3.2%</h4>
+                                    <small class="text-success"><i class="fas fa-arrow-up me-1"></i> 0.5% increase</small>
+                                </div>
+                                <div>
+                                    <p class="text-muted small mb-1">Customer Satisfaction</p>
+                                    <h4 class="text-white">4.8/5.0</h4>
+                                    <small class="text-success"><i class="fas fa-star me-1 text-warning"></i> Excellent</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}
 
+{% block scripts %}
+<script>
+    // Animate stats counting
+    document.addEventListener('DOMContentLoaded', function() {
+        // Stats animation
+        const statNumbers = document.querySelectorAll('.stat-card .h2');
+        statNumbers.forEach(stat => {
+            const originalText = stat.textContent.trim();
+            const numberMatch = originalText.match(/[\d,\.]+/);
+            
+            if (numberMatch) {
+                const targetNumber = parseFloat(numberMatch[0].replace(/,/g, ''));
+                let currentNumber = 0;
+                const increment = targetNumber / 30;
+                const timer = setInterval(() => {
+                    currentNumber += increment;
+                    if (currentNumber >= targetNumber) {
+                        currentNumber = targetNumber;
+                        clearInterval(timer);
+                    }
+                    stat.textContent = originalText.replace(numberMatch[0], currentNumber.toFixed(3));
+                }, 50);
+            }
+        });
+        
+        // Hover effects for action cards
+        const actionCards = document.querySelectorAll('.action-card');
+        actionCards.forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-8px)';
+                const icon = this.querySelector('.icon-wrapper');
+                if (icon) {
+                    icon.style.transform = 'scale(1.1)';
+                }
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+                const icon = this.querySelector('.icon-wrapper');
+                if (icon) {
+                    icon.style.transform = 'scale(1)';
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,9 @@
+app.py                # মূল অ্যাপ
+models.py             # ডাটাবেস মডেলস
+templates/            # সব টেমপ্লেট
+static/               # সব স্ট্যাটিক ফাইল
+requirements.txt      # প্যাকেজ লিস্ট
+database.db           # ডাটাবেস
+sooqkabeer.db         # ডাটাবেস
+admin_routes.py       # অ্যাডমিন রাউটস
+vendor_api.py         # ভেন্ডর API

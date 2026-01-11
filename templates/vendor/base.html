@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Vendor Dashboard - Sooq Kabeer{% endblock %}</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Custom Base CSS -->
+    <style>
+        /* CSS Variables - Kuwaiti Premium Theme */
+        :root {
+            --golden: #d4af37;
+            --golden-light: #f4e4b5;
+            --golden-dark: #b8941f;
+            --dark-blue: #0a192f;
+            --dark-blue-light: #112240;
+            --glass-bg: rgba(255, 255, 255, 0.08);
+            --text-white: #ffffff;
+            --text-light: #e6f1ff;
+        }
+
+        /* Base Styles */
+        body {
+            background: linear-gradient(135deg, var(--dark-blue) 0%, var(--dark-blue-light) 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--text-light);
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Glassmorphism Base Effect */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .glass-card:hover {
+            background: rgba(255, 255, 255, 0.12);
+            transform: translateY(-5px);
+        }
+
+        /* Sidebar Styling */
+        .sidebar {
+            background: rgba(10, 25, 47, 0.85);
+            backdrop-filter: blur(20px);
+            min-height: 100vh;
+            border-right: 1px solid rgba(212, 175, 55, 0.2);
+        }
+
+        .sidebar .nav-link {
+            color: rgba(255, 255, 255, 0.7);
+            padding: 12px 20px;
+            margin: 5px 10px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar .nav-link:hover,
+        .sidebar .nav-link.active {
+            background: linear-gradient(45deg, rgba(212, 175, 55, 0.2), rgba(212, 175, 55, 0.1));
+            color: var(--golden);
+            transform: translateX(5px);
+            border-left: 3px solid var(--golden);
+        }
+
+        .sidebar .nav-link.active {
+            background: linear-gradient(45deg, rgba(212, 175, 55, 0.3), rgba(212, 175, 55, 0.15));
+        }
+
+        .sidebar .nav-link i {
+            width: 25px;
+            color: var(--golden-light);
+        }
+
+        /* Top Navbar */
+        .top-navbar {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+            padding: 15px 0;
+            border-radius: 0 0 10px 10px;
+        }
+
+        /* Utility Classes */
+        .text-golden { color: var(--golden) !important; }
+        .bg-golden { background: var(--golden) !important; }
+        .bg-dark-golden { 
+            background: rgba(212, 175, 55, 0.1) !important;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+        }
+        
+        /* Golden Button */
+        .btn-golden {
+            background: linear-gradient(45deg, var(--golden), var(--golden-dark));
+            color: var(--dark-blue);
+            border: none;
+            font-weight: 600;
+            padding: 10px 25px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-golden:hover {
+            background: linear-gradient(45deg, var(--golden-dark), #9c7c15);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.3);
+            color: var(--dark-blue);
+        }
+
+        /* Outlined Golden Button */
+        .btn-outline-golden {
+            color: var(--golden);
+            border-color: var(--golden);
+            background: transparent;
+        }
+
+        .btn-outline-golden:hover {
+            background: var(--golden);
+            color: var(--dark-blue);
+            border-color: var(--golden);
+        }
+
+        /* Stat Card */
+        .stat-card {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.1), rgba(212, 175, 55, 0.05));
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: 15px;
+            padding: 25px;
+            height: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.15), rgba(212, 175, 55, 0.08));
+        }
+
+        /* Action Card */
+        .action-card {
+            transition: all 0.3s ease;
+            border-radius: 12px;
+            overflow: hidden;
+            height: 100%;
+        }
+
+        .action-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+            border-color: rgba(212, 175, 55, 0.3);
+        }
+
+        /* Golden Badge */
+        .gold-badge {
+            background: linear-gradient(45deg, var(--golden), var(--golden-light));
+            color: var(--dark-blue);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+
+        /* Icon Wrapper */
+        .icon-wrapper {
+            transition: all 0.3s ease;
+        }
+
+        .action-card:hover .icon-wrapper {
+            transform: scale(1.1);
+            background: rgba(212, 175, 55, 0.2) !important;
+        }
+
+        /* Progress Bar */
+        .progress {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            height: 6px;
+        }
+
+        .progress-bar {
+            background: linear-gradient(45deg, var(--golden), var(--golden-light));
+            border-radius: 10px;
+        }
+
+        /* Table Styling */
+        .table-dark {
+            background: transparent;
+            --bs-table-bg: transparent;
+            --bs-table-striped-bg: rgba(255, 255, 255, 0.03);
+            --bs-table-hover-bg: rgba(212, 175, 55, 0.1);
+        }
+
+        .table-dark th {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--golden-light);
+            font-weight: 600;
+        }
+
+        .table-dark td {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* Golden Divider */
+        .golden-divider {
+            border-top: 1px solid rgba(212, 175, 55, 0.3);
+            margin: 20px 0;
+        }
+
+        /* RTL Support */
+        [dir="rtl"] {
+            text-align: right;
+        }
+
+        [dir="rtl"] .sidebar .nav-link:hover,
+        [dir="rtl"] .sidebar .nav-link.active {
+            transform: translateX(-5px);
+            border-left: none;
+            border-right: 3px solid var(--golden);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .sidebar {
+                min-height: auto;
+                margin-bottom: 20px;
+            }
+            
+            .glass-card, .stat-card {
+                margin-bottom: 15px;
+            }
+            
+            .h2 {
+                font-size: 1.8rem !important;
+            }
+        }
+    </style>
+
+    <!-- Page-specific CSS -->
+    {% block styles %}{% endblock %}
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-lg-2 col-md-3 sidebar">
+                <!-- Brand Logo -->
+                <div class="text-center py-4">
+                    <h3 class="text-white mb-0">
+                        <i class="fas fa-store me-2" style="color: #d4af37;"></i>
+                        <span style="color: #d4af37;">Sooq</span> <span class="text-white">Kabeer</span>
+                    </h3>
+                    <small class="text-muted">Vendor Panel</small>
+                </div>
+
+                <!-- User Info -->
+                <div class="text-center mb-4 p-3 glass-card mx-2">
+                    <div class="mb-3">
+                        <i class="fas fa-user-circle fa-3x" style="color: #d4af37;"></i>
+                    </div>
+                    <h6 class="text-white mb-1">{{ session.get('vendor_name', 'Vendor') }}</h6>
+                    <small class="text-muted">
+                        <i class="fas fa-id-badge me-1"></i>
+                        Vendor ID: {{ session.get('vendor_code', 'N/A') }}
+                    </small>
+                    <div class="mt-2">
+                        <span class="gold-badge">
+                            <i class="fas fa-wallet me-1"></i>
+                            KWD {{ "%.3f"|format(session.get('balance', 0)) }}
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Navigation -->
+                <nav class="nav flex-column">
+                    <ul class="nav flex-column p-0 m-0" style="list-style: none;">
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.path == '/vendor/dashboard' %}active{% endif %}" 
+                               href="{{ url_for('vendor_dashboard') }}">
+                                <i class="fas fa-tachometer-alt me-2"></i> Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.path == '/vendor/products' %}active{% endif %}" 
+                               href="{{ url_for('vendor_products') }}">
+                                <i class="fas fa-box me-2"></i> My Products
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.path == '/vendor/add_product' or request.path == '/vendor/add-product' %}active{% endif %}" 
+                               href="{{ url_for('vendor_add_product') }}">
+                                <i class="fas fa-plus-circle me-2"></i> Add Product
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <i class="fas fa-shopping-cart me-2"></i> Orders
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <i class="fas fa-user me-2"></i> Profile
+                            </a>
+                        </li>
+                        <div class="dropdown-divider my-3 golden-divider"></div>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('home') }}" target="_blank">
+                                <i class="fas fa-external-link-alt me-2"></i> Visit Store
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-danger" href="{{ url_for('logout') }}">
+                                <i class="fas fa-sign-out-alt me-2"></i> Logout
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+
+                <!-- Quick Stats -->
+                <div class="mt-4 p-3 glass-card mx-2">
+                    <small class="text-muted d-block mb-2">QUICK STATS</small>
+                    <div class="d-flex justify-content-between mb-2">
+                        <small>Products:</small>
+                        <small class="text-white">{{ session.get('product_count', 0) }}</small>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <small>Orders:</small>
+                        <small class="text-white">{{ session.get('order_count', 0) }}</small>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <small>Revenue:</small>
+                        <small class="text-golden">KWD {{ "%.3f"|format(session.get('revenue', 0)) }}</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-lg-10 col-md-9">
+                <!-- Top Navbar -->
+                <nav class="navbar navbar-expand-lg top-navbar rounded-bottom mb-4">
+                    <div class="container-fluid">
+                        <div class="d-flex align-items-center">
+                            <button class="navbar-toggler d-md-none" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#sidebarCollapse">
+                                <i class="fas fa-bars"></i>
+                            </button>
+                            <h5 class="mb-0 ms-3 text-dark">
+                                {% block page_title %}Vendor Dashboard{% endblock %}
+                            </h5>
+                        </div>
+
+                        <div class="d-flex align-items-center">
+                            <!-- Language Toggle -->
+                            <div class="btn-group me-3" role="group">
+                                <button type="button" class="btn btn-sm btn-outline-dark {% if session.get('language', 'en') == 'en' %}active{% endif %}"
+                                        onclick="setLanguage('en')">EN</button>
+                                <button type="button" class="btn btn-sm btn-outline-dark {% if session.get('language') == 'ar' %}active{% endif %}"
+                                        onclick="setLanguage('ar')" dir="rtl">AR</button>
+                            </div>
+
+                            <!-- Notifications -->
+                            <div class="dropdown me-3">
+                                <button class="btn btn-outline-dark btn-sm dropdown-toggle" type="button"
+                                        data-bs-toggle="dropdown">
+                                    <i class="fas fa-bell" style="color: #d4af37;"></i>
+                                    <span class="badge gold-badge">3</span>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li><h6 class="dropdown-header">Notifications</h6></li>
+                                    <li><a class="dropdown-item" href="#"><i class="fas fa-shopping-cart me-2" style="color: #d4af37;"></i> New order #1234</a></li>
+                                    <li><a class="dropdown-item" href="#"><i class="fas fa-money-bill me-2" style="color: #d4af37;"></i> Payment received</a></li>
+                                    <li><a class="dropdown-item" href="#"><i class="fas fa-star me-2" style="color: #d4af37;"></i> Product review received</a></li>
+                                </ul>
+                            </div>
+
+                            <!-- User Menu -->
+                            <div class="dropdown">
+                                <button class="btn btn-golden btn-sm dropdown-toggle" type="button"
+                                        data-bs-toggle="dropdown">
+                                    <i class="fas fa-user-circle me-1"></i>
+                                    {{ session.get('vendor_name', 'Vendor') }}
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2" style="color: #d4af37;"></i> Profile</a></li>
+                                    <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2" style="color: #d4af37;"></i> Settings</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item text-danger" href="{{ url_for('logout') }}">
+                                        <i class="fas fa-sign-out-alt me-2"></i> Logout
+                                    </a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+
+                <!-- Flash Messages -->
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        <div class="row">
+                            <div class="col-12">
+                                {% for category, message in messages %}
+                                    <div class="alert alert-{{ category if category != 'error' else 'danger' }} alert-dismissible fade show glass-card" role="alert">
+                                        {% if category == 'success' %}
+                                            <i class="fas fa-check-circle me-2"></i>
+                                        {% elif category == 'danger' %}
+                                            <i class="fas fa-exclamation-circle me-2"></i>
+                                        {% elif category == 'warning' %}
+                                            <i class="fas fa-exclamation-triangle me-2"></i>
+                                        {% else %}
+                                            <i class="fas fa-info-circle me-2"></i>
+                                        {% endif %}
+                                        {{ message }}
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endwith %}
+
+                <!-- Main Content Block -->
+                <div class="container-fluid">
+                    {% block content %}{% endblock %}
+                </div>
+
+                <!-- Footer -->
+                <footer class="mt-5 py-3 text-center text-muted">
+                    <small>
+                        Sooq Kabeer &copy; 2026 | Vendor Dashboard v2.0 | Kuwait Market ({{ session.get('vendor_code', 'HKO-001') }}) |
+                        <span id="current-date"></span>
+                    </small>
+                </footer>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Custom Base Scripts -->
+    <script>
+        // Set current date
+        const now = new Date();
+        const options = { year: 'numeric', month: 'long', day: 'numeric' };
+        document.getElementById('current-date').textContent = now.toLocaleDateString('en-US', options);
+
+        // Language toggle function
+        function setLanguage(lang) {
+            const buttons = document.querySelectorAll('.btn-group .btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            if (lang === 'ar') {
+                document.body.dir = 'rtl';
+                document.body.classList.add('rtl-mode');
+            } else {
+                document.body.dir = 'ltr';
+                document.body.classList.remove('rtl-mode');
+            }
+
+            // Save preference to localStorage and send to server
+            localStorage.setItem('preferred_language', lang);
+            
+            // Optional: Send to server
+            fetch('/set-language', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ language: lang })
+            }).then(response => {
+                if (response.ok) {
+                    // Optionally reload the page
+                    // window.location.reload();
+                }
+            });
+        }
+
+        // Load saved language preference
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedLang = localStorage.getItem('preferred_language') || '{{ session.get("language", "en") }}';
+            if (savedLang === 'ar') {
+                document.body.dir = 'rtl';
+                document.body.classList.add('rtl-mode');
+                const arButton = document.querySelector('.btn-group .btn[dir="rtl"]');
+                if (arButton) arButton.classList.add('active');
+            }
+
+            // Mobile sidebar toggle
+            const sidebarCollapse = document.getElementById('sidebarCollapse');
+            const sidebar = document.querySelector('.sidebar');
+
+            if (sidebarCollapse && sidebar) {
+                sidebarCollapse.addEventListener('click', function() {
+                    sidebar.classList.toggle('d-none');
+                });
+            }
+        });
+    </script>
+
+    <!-- Page-specific Scripts -->
+    {% block scripts %}{% endblock %}
+</body>
+</html>
