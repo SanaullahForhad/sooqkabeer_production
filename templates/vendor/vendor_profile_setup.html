@@ -1,75 +1,391 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Setup Profile - HKO-001</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>إعداد ملف البائع | SooqKabeer</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --primary: #4361ee; --dark: #212529; --light: #f8f9fa; }
-        body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; margin: 0; padding: 20px; }
-        .setup-container { max-width: 800px; margin: 0 auto; background: white; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); overflow: hidden; }
-        .header { background: var(--primary); color: white; padding: 30px; text-align: center; }
-        .form-body { padding: 40px; }
-        .form-group { margin-bottom: 20px; }
-        label { display: block; margin-bottom: 8px; font-weight: 600; color: var(--dark); }
-        .form-control { width: 100%; padding: 12px; border: 2px solid #dee2e6; border-radius: 8px; font-size: 1rem; box-sizing: border-box; }
-        .vendor-badge { background: #e8f0fe; color: var(--primary); padding: 5px 15px; border-radius: 20px; font-weight: bold; display: inline-block; margin-bottom: 20px; }
-        .btn-save { background: var(--primary); color: white; border: none; padding: 15px 30px; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: 600; width: 100%; }
-        .btn-save:hover { background: #3a0ca3; }
+        :root {
+            --primary-bg: #0a192f;
+            --primary-gold: #d4af37;
+            --card-bg: rgba(255, 255, 255, 0.08);
+            --success-green: #28a745;
+            --error-red: #dc3545;
+            --text-light: #f8f9fa;
+            --text-muted: #adb5bd;
+        }
+        
+        body {
+            background: var(--primary-bg);
+            color: var(--text-light);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            padding-top: 20px;
+        }
+        
+        .glass-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+        
+        .form-control, .form-select {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: var(--text-light);
+            border-radius: 8px;
+            padding: 12px 15px;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: var(--primary-gold);
+            box-shadow: 0 0 0 0.25rem rgba(212, 175, 55, 0.25);
+            color: var(--text-light);
+        }
+        
+        .form-control::placeholder {
+            color: var(--text-muted);
+        }
+        
+        .form-label {
+            color: var(--text-light);
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+        
+        .btn-gold {
+            background: var(--primary-gold);
+            color: #0a192f;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .btn-gold:hover {
+            background: #c19d2e;
+            transform: translateY(-2px);
+        }
+        
+        .btn-outline-gold {
+            border: 2px solid var(--primary-gold);
+            color: var(--primary-gold);
+            background: transparent;
+        }
+        
+        .btn-outline-gold:hover {
+            background: var(--primary-gold);
+            color: #0a192f;
+        }
+        
+        .alert {
+            border-radius: 10px;
+            border: none;
+        }
+        
+        .alert-success {
+            background: rgba(40, 167, 69, 0.2);
+            color: #75b798;
+            border-left: 4px solid var(--success-green);
+        }
+        
+        .alert-danger {
+            background: rgba(220, 53, 69, 0.2);
+            color: #e6a3aa;
+            border-left: 4px solid var(--error-red);
+        }
+        
+        .header-section {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .header-section h1 {
+            color: var(--primary-gold);
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .header-section p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+        
+        .password-strength {
+            height: 5px;
+            border-radius: 5px;
+            margin-top: 5px;
+            transition: all 0.3s;
+        }
+        
+        .strength-weak { background: var(--error-red); width: 25%; }
+        .strength-medium { background: orange; width: 50%; }
+        .strength-strong { background: var(--success-green); width: 100%; }
+        
+        .password-match {
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+        
+        .match-valid { color: var(--success-green); }
+        .match-invalid { color: var(--error-red); }
+        
+        .info-box {
+            background: rgba(212, 175, 55, 0.1);
+            border-left: 4px solid var(--primary-gold);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .info-box i {
+            color: var(--primary-gold);
+            margin-left: 10px;
+        }
     </style>
 </head>
 <body>
-
-<div class="setup-container">
-    <div class="header">
-        <i class="fas fa-id-card fa-3x"></i>
-        <h2>Complete Your Vendor Profile</h2>
-        <p>This information will be displayed on your store page.</p>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 col-md-10">
+                <!-- Header -->
+                <div class="header-section">
+                    <h1><i class="fas fa-store"></i> إعداد ملف البائع</h1>
+                    <p>أكمل معلوماتك لبدء البيع على SooqKabeer</p>
+                </div>
+                
+                <!-- Flash Messages -->
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ 'success' if category == 'success' else 'danger' }}">
+                                <i class="fas fa-{{ 'check-circle' if category == 'success' else 'exclamation-circle' }}"></i>
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+                
+                <!-- Info Box -->
+                <div class="info-box">
+                    <i class="fas fa-info-circle"></i>
+                    <strong>ملاحظة:</strong> سوف تحصل على كود بائع فريد (مثل HKO-001) بعد التسجيل. هذا الكود سيتم استخدامه لتتبع منتجاتك وأرباحك.
+                </div>
+                
+                <!-- Profile Form -->
+                <div class="glass-card">
+                    <form method="POST" action="{{ url_for('vendor_create_profile') }}" id="vendorForm">
+                        <!-- Shop Name -->
+                        <div class="mb-4">
+                            <label for="shop_name_en" class="form-label">
+                                <i class="fas fa-store"></i> اسم المتجر (باللغة الإنجليزية)
+                            </label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="shop_name_en" 
+                                   name="shop_name_en" 
+                                   value="{{ vendor_data.shop_name_en if vendor_data else '' }}"
+                                   required
+                                   placeholder="مثال: Kuwait Electronics">
+                            <div class="form-text text-muted">اسم المتجر كما سيظهر للعملاء</div>
+                        </div>
+                        
+                        <!-- Phone -->
+                        <div class="mb-4">
+                            <label for="phone" class="form-label">
+                                <i class="fas fa-phone"></i> رقم الهاتف
+                            </label>
+                            <input type="tel" 
+                                   class="form-control" 
+                                   id="phone" 
+                                   name="phone" 
+                                   value="{{ vendor_data.phone if vendor_data else '' }}"
+                                   required
+                                   placeholder="مثال: 12345678">
+                            <div class="form-text text-muted">رقم هاتف للتواصل معك</div>
+                        </div>
+                        
+                        <!-- Location -->
+                        <div class="mb-4">
+                            <label for="location" class="form-label">
+                                <i class="fas fa-map-marker-alt"></i> العنوان / الموقع
+                            </label>
+                            <textarea class="form-control" 
+                                      id="location" 
+                                      name="location" 
+                                      rows="3"
+                                      placeholder="أدخل عنوان المتجر أو المنطقة التي تعمل منها">{{ vendor_data.location if vendor_data else '' }}</textarea>
+                            <div class="form-text text-muted">يمكن أن يكون عنوان المتجر أو المنطقة العامة</div>
+                        </div>
+                        
+                        <!-- Password Section -->
+                        <div class="mb-4">
+                            <label class="form-label">
+                                <i class="fas fa-key"></i> كلمة المرور
+                            </label>
+                            
+                            {% if not vendor_data %}
+                            <div class="mb-3">
+                                <input type="password" 
+                                       class="form-control" 
+                                       id="password" 
+                                       name="password" 
+                                       required
+                                       placeholder="كلمة المرور (8 أحرف على الأقل)"
+                                       minlength="8">
+                                <div class="password-strength" id="passwordStrength"></div>
+                                <div class="form-text text-muted" id="passwordHelp">يجب أن تحتوي على 8 أحرف على الأقل</div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <input type="password" 
+                                       class="form-control" 
+                                       id="confirm_password" 
+                                       name="confirm_password" 
+                                       required
+                                       placeholder="تأكيد كلمة المرور">
+                                <div class="password-match" id="passwordMatch"></div>
+                            </div>
+                            {% else %}
+                            <div class="alert alert-info">
+                                <i class="fas fa-key"></i> لتغيير كلمة المرور، أدخل كلمة مرور جديدة أدناه
+                            </div>
+                            <div class="mb-3">
+                                <input type="password" 
+                                       class="form-control" 
+                                       id="password" 
+                                       name="password" 
+                                       placeholder="كلمة المرور الجديدة (اختياري)"
+                                       minlength="8">
+                            </div>
+                            
+                            <div class="mb-3">
+                                <input type="password" 
+                                       class="form-control" 
+                                       id="confirm_password" 
+                                       name="confirm_password" 
+                                       placeholder="تأكيد كلمة المرور الجديدة">
+                                <div class="password-match" id="passwordMatch"></div>
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Submit Buttons -->
+                        <div class="d-flex justify-content-between mt-5">
+                            <a href="{{ url_for('vendor_dashboard') }}" class="btn btn-outline-gold">
+                                <i class="fas fa-home"></i> الرئيسية
+                            </a>
+                            <button type="submit" class="btn btn-gold" id="submitBtn">
+                                {% if vendor_data %}
+                                    <i class="fas fa-sync-alt"></i> تحديث الملف
+                                {% else %}
+                                    <i class="fas fa-check-circle"></i> إنشاء ملف البائع
+                                {% endif %}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div class="form-body">
-        <div class="vendor-badge">Vendor ID: HKO-001</div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Password strength checker
+        const passwordInput = document.getElementById('password');
+        const confirmPasswordInput = document.getElementById('confirm_password');
+        const passwordStrength = document.getElementById('passwordStrength');
+        const passwordMatch = document.getElementById('passwordMatch');
+        const submitBtn = document.getElementById('submitBtn');
         
-        <form action="/vendor/create-profile" method="POST" enctype="multipart/form-data">
-            <div class="form-group">
-                <label><i class="fas fa-store"></i> Shop Name (English)</label>
-                <input type="text" name="shop_name_en" class="form-control" placeholder="Enter shop name" required>
-            </div>
-
-            <div class="form-group">
-                <label><i class="fas fa-store"></i> اسم المحل (Arabic)</label>
-                <input type="text" name="shop_name_ar" class="form-control" placeholder="أدخل اسم المحل" required dir="rtl">
-            </div>
-
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                <div class="form-group">
-                    <label><i class="fas fa-phone"></i> WhatsApp Number</label>
-                    <input type="text" name="phone" class="form-control" placeholder="+965XXXXXXXX" required>
-                </div>
-                <div class="form-group">
-                    <label><i class="fas fa-map-marker-alt"></i> Location (Kuwait)</label>
-                    <input type="text" name="location" class="form-control" placeholder="e.g. Hawally">
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label><i class="fas fa-image"></i> Shop Logo / Profile Photo</label>
-                <input type="file" name="shop_logo" class="form-control" accept="image/*">
-            </div>
-
-            <div class="form-group">
-                <label><i class="fas fa-info-circle"></i> About Your Shop</label>
-                <textarea name="bio" class="form-control" rows="4" placeholder="Tell customers about your products..."></textarea>
-            </div>
-
-            <button type="submit" class="btn-save">
-                <i class="fas fa-check-circle"></i> Save Profile & Enter Dashboard
-            </button>
-        </form>
-    </div>
-</div>
-
+        if (passwordInput && confirmPasswordInput) {
+            passwordInput.addEventListener('input', function() {
+                const password = this.value;
+                let strength = '';
+                
+                if (password.length === 0) {
+                    strength = '';
+                    passwordStrength.className = 'password-strength';
+                } else if (password.length < 8) {
+                    strength = 'weak';
+                    passwordStrength.className = 'password-strength strength-weak';
+                } else if (password.length < 12) {
+                    strength = 'medium';
+                    passwordStrength.className = 'password-strength strength-medium';
+                } else {
+                    strength = 'strong';
+                    passwordStrength.className = 'password-strength strength-strong';
+                }
+                
+                checkPasswordMatch();
+            });
+            
+            confirmPasswordInput.addEventListener('input', checkPasswordMatch);
+            
+            function checkPasswordMatch() {
+                if (!passwordInput || !confirmPasswordInput) return;
+                
+                const password = passwordInput.value;
+                const confirmPassword = confirmPasswordInput.value;
+                
+                if (confirmPassword.length === 0) {
+                    passwordMatch.innerHTML = '';
+                    passwordMatch.className = 'password-match';
+                    submitBtn.disabled = password.length > 0;
+                } else if (password === confirmPassword) {
+                    passwordMatch.innerHTML = '<i class="fas fa-check-circle"></i> كلمات المرور متطابقة';
+                    passwordMatch.className = 'password-match match-valid';
+                    submitBtn.disabled = false;
+                } else {
+                    passwordMatch.innerHTML = '<i class="fas fa-times-circle"></i> كلمات المرور غير متطابقة';
+                    passwordMatch.className = 'password-match match-invalid';
+                    submitBtn.disabled = true;
+                }
+            }
+            
+            // Form validation
+            document.getElementById('vendorForm').addEventListener('submit', function(e) {
+                const password = passwordInput.value;
+                const confirmPassword = confirmPasswordInput.value;
+                
+                // Only validate if vendor is new (password required)
+                const isNewVendor = {{ 'false' if vendor_data else 'true' }};
+                
+                if (isNewVendor) {
+                    if (password.length < 8) {
+                        e.preventDefault();
+                        alert('كلمة المرور يجب أن تكون 8 أحرف على الأقل');
+                        return false;
+                    }
+                    
+                    if (password !== confirmPassword) {
+                        e.preventDefault();
+                        alert('كلمات المرور غير متطابقة');
+                        return false;
+                    }
+                } else if (password.length > 0) {
+                    // For existing vendor, if password is entered, validate it
+                    if (password.length < 8) {
+                        e.preventDefault();
+                        alert('كلمة المرور يجب أن تكون 8 أحرف على الأقل');
+                        return false;
+                    }
+                    
+                    if (password !== confirmPassword) {
+                        e.preventDefault();
+                        alert('كلمات المرور غير متطابقة');
+                        return false;
+                    }
+                }
+            });
+        }
+    </script>
 </body>
 </html>
-

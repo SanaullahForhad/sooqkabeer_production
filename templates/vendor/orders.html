@@ -3,60 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>إدارة orders - سوق كبير</title>
+    <title>إدارة الطلبات - سوق كبير</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <style>
-        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background: #f5f5f5; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 20px; background: #f5f5f5; direction: rtl; }
         .container { max-width: 1200px; margin: 0 auto; }
-        .header { background: #2c3e50; color: white; padding: 20px; border-radius: 10px; margin-bottom: 20px; }
-        .table-container { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 12px; text-align: right; border-bottom: 1px solid #ddd; }
-        th { background: #f8f9fa; }
-        .nav { margin-bottom: 20px; }
-        .nav a { margin-left: 10px; padding: 10px 15px; background: #3498db; color: white; text-decoration: none; border-radius: 5px; }
+        .header { background: #2c3e50; color: white; padding: 20px; border-radius: 10px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
+        .table-container { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 15px; text-align: center; border-bottom: 1px solid #ddd; }
+        th { background: #34495e; color: white; }
+        .status-pending { color: #f39c12; font-weight: bold; }
+        .nav { margin-bottom: 20px; display: flex; gap: 10px; flex-wrap: wrap; }
+        .nav a { padding: 10px 20px; background: #3498db; color: white; text-decoration: none; border-radius: 5px; transition: 0.3s; }
+        .nav a:hover { background: #2980b9; }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>إدارة orders</h1>
-            <a href="/admin/dashboard" style="color: white; text-decoration: none;">← العودة للوحة التحكم</a>
+            <h1>إدارة الطلبات (Orders)</h1>
+            <a href="/vendor/dashboard" style="color: white; background: #e74c3c; padding: 8px 15px; border-radius: 5px; text-decoration: none;">← العودة للوحة التحكم</a>
         </div>
-        
+
         <div class="nav">
-            <a href="/admin/vendors">البائعين</a>
-            <a href="/admin/referrals">الإحالات</a>
-            <a href="/admin/products">المنتجات</a>
-            <a href="/admin/orders">الطلبات</a>
-            <a href="/admin/users">المستخدمين</a>
-            <a href="/admin/settings">الإعدادات</a>
+            <a href="/vendor/products">المنتجات</a>
+            <a href="/vendor/orders">الطلبات</a>
+            <a href="/vendor/profile">الملف الشخصي</a>
         </div>
-        
+
         <div class="table-container">
-            <h2>قائمة orders</h2>
+            <h2>قائمة الطلبات الجديدة</h2>
             {% if orders %}
                 <table>
                     <thead>
                         <tr>
-                            {% for i in range(orders[0]|length) %}
-                            <th>Column {{ i+1 }}</th>
-                            {% endfor %}
+                            <th>رقم الطلب (Order #)</th>
+                            <th>المنتج (Product)</th>
+                            <th>الكمية (Qty)</th>
+                            <th>السعر (Price)</th>
+                            <th>الحالة (Status)</th>
+                            <th>التاريخ (Date)</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {% for item in orders %}
+                        {% for order in orders %}
                         <tr>
-                            {% for value in item %}
-                            <td>{{ value }}</td>
-                            {% endfor %}
+                            <td><strong>{{ order.order_number }}</strong></td>
+                            <td>{{ order.product_name }}</td>
+                            <td>{{ order.quantity }}</td>
+                            <td>{{ order.price }} KD</td>
+                            <td><span class="status-pending">{{ order.order_status }}</span></td>
+                            <td>{{ order.created_at }}</td>
                         </tr>
                         {% endfor %}
                     </tbody>
                 </table>
             {% else %}
-                <p style="text-align: center; padding: 40px; color: #666;">لا توجد بيانات</p>
+                <div style="text-align: center; padding: 50px;">
+                    <p style="font-size: 18px; color: #666;">لا توجد طلبات حالياً</p>
+                </div>
             {% endif %}
         </div>
     </div>
 </body>
 </html>
+
