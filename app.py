@@ -1548,8 +1548,8 @@ def verify_email(token):
         return redirect(url_for('login'))
 # ========================= VENDOR ROUTES ===============
 
-#@app.route('/vendor/register', methods=['GET', 'POST'])
-#def vendor_register():
+@app.route('/vendor/register', methods=['GET', 'POST'])
+def vendor_register():
     """Vendor registration page"""
     if request.method == 'POST':
         try:
@@ -1560,14 +1560,14 @@ def verify_email(token):
             phone = request.form.get('phone', '').strip()
             country_code = request.form.get('country_code', '+965')
             nationality = request.form.get('nationality', '').strip()
-            
+
             # Business Information
             shop_name = request.form.get('shop_name', '').strip()
             business_name = request.form.get('business_name', shop_name)
             business_type = request.form.get('business_type', '').strip()
             cr_number = request.form.get('cr_number', '').strip()
             vat_number = request.form.get('vat_number', '').strip()
-            
+
             # Address Information
             governorate = request.form.get('governorate', '').strip()
             block = request.form.get('block', '').strip()
@@ -1576,442 +1576,114 @@ def verify_email(token):
             floor = request.form.get('floor', '').strip()
             unit = request.form.get('unit', '').strip()
             business_description = request.form.get('business_description', '').strip()
-            
-            # Account Information
-            password = request.form.get('password', '')
-            confirm_password = request.form.get('confirm_password', '')
-            civil_id = request.form.get('civil_id', '').strip()
-            agree_terms = request.form.get('agree_terms')
-            
-            # ============ STEP 2: VALIDATION ============
-            required_fields = ['name', 'email', 'phone', 'shop_name', 'password', 
-                             'confirm_password', 'civil_id', 'agree_terms']
-            
-            for field in required_fields:
-                if not locals().get(field):
-                    flash(f'{field.replace("_", " ").title()} is required', 'warning')
-                    return render_template('vendor/vendor_register.html')
-            
-            if password != confirm_password:
-                flash('Passwords do not match', 'danger')
-                return render_template('vendor/vendor_register.html')
-            
-            if len(password) < 8:
-                flash('Password must be at least 8 characters', 'warning')
-                return render_template('vendor/vendor_register.html')
-            
-            # ============ STEP 3: CHECK EXISTING ACCOUNTS ============
-            db = get_db()
-            cursor = db.cursor()
-            
-            # Check email
-            cursor.execute("SELECT id FROM vendors WHERE email = ?", (email,))
-            if cursor.fetchone():
-                flash('Email already registered', 'danger')
-                return render_template('vendor/register.html')
-            
-            # Check CR number if provided
-            if cr_number:
-                cursor.execute("SELECT id FROM vendors WHERE cr_number = ?", (cr_number,))
-                if cursor.fetchone():
-                    flash('Commercial Registration number already registered', 'danger')
-                    return render_template('vendor/vendor_register.html')
-            
-            # ============ STEP 4: HANDLE FILE UPLOADS ============
-            # Civil ID Front
-            civil_id_front = request.files.get('civil_id_front')
-            civil_id_front_path = save_uploaded_file(civil_id_front, 'kyc/civil_id', 
-                                                   f'{email}_civil_front')
-            
-            # Civil ID Back
-            civil_id_back = request.files.get('civil_id_back')
-            civil_id_back_path = save_uploaded_file(civil_id_back, 'kyc/civil_id',
-                                                  f'{email}_civil_back')
-            
-            # Commercial License
-            commercial_license = request.files.get('commercial_license')
-            commercial_license_path = save_uploaded_file(commercial_license, 'documents',
-                                                       f'{email}_commercial_license')
-            
-            # Profile Image (optional)
-            profile_image = request.files.get('profile_image')
-            profile_image_path = save_uploaded_file(profile_image, 'profile',
-                                                  f'{email}_profile')
-            
-            # Banner Image (optional)
-            banner_image = request.files.get('banner_image')
-            banner_image_path = save_uploaded_file(banner_image, 'banners',
-                                                 f'{email}_banner')
-            
-            # Check required files
-            if not civil_id_front_path or not civil_id_back_path:
-                flash('Civil ID documents are required', 'danger')
-                return render_template('vendor/vendor_register.html')
-            
-            if not commercial_license_path:
-                flash('Commercial license is required', 'danger')
-                return render_template('vendor/vendor_register.html')
-            
-            # ============ STEP 5: GENERATE VENDOR CODE ============
-            vendor_code = generate_vendor_code()
-            
-            # ============ STEP 6: HASH PASSWORD ============
-            hashed_password = hash_password(password)
-            
-            # ============ STEP 7: CONSTRUCT ADDRESS ============
-            address_parts = []
-            if building: address_parts.append(f"Building: {building}")
-            if street: address_parts.append(f"Street: {street}")
-            if block: address_parts.append(f"Block: {block}")
-            if unit: address_parts.append(f"Unit: {unit}")
-            if floor: address_parts.append(f"Floor: {floor}")
-            if governorate: address_parts.append(governorate)
-            
-            address = ", ".join(address_parts)
-            
-            # ============ STEP 8: SAVE TO DATABASE ============
-            cursor.execute('''
-                INSERT INTO vendors (
-                    
-                    name, email, password, phone, country_code, nationality,
-                    shop_name, business_name, business_type, cr_number, vat_number,
-                    address, governorate, block, street, building, floor, unit,
-                    business_description, civil_id, civil_id_front, civil_id_back,
-                    commercial_license, vendor_code, status, kyc_status,
-                    profile_image, banner_image, balance, agree_terms,
-                    created_at, updated_at
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 
-                         ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            ''', (
-                name, email, hashed_password, phone, country_code, nationality,
-                shop_name, business_name, business_type, cr_number, vat_number,
-                address, governorate, block, street, building, floor, unit,
-                business_description, civil_id, civil_id_front_path, civil_id_back_path,
-                commercial_license_path, vendor_code, 'pending', 'pending',
-                profile_image_path, banner_image_path, 0.0, 'yes',
-                datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-                datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-            ))
-            
-            vendor_id = cursor.lastrowid
-            
-            # ============ STEP 9: CREATE USER ACCOUNT ============
-            username = email.split('@')[0]
-            cursor.execute('''
-                INSERT INTO users (username, email, password, full_name, phone, role, is_active)
-                VALUES (?, ?, ?, ?, ?, ?, ?)
-            ''', (username, email, hashed_password, name, phone, 'vendor', 1))
-            
-            user_id = cursor.lastrowid
-            
-            # Link vendor to user
-            cursor.execute('UPDATE vendors SET user_id = ? WHERE id = ?', 
-                         (user_id, vendor_id))
-            
-            db.commit()
-            
-            # ============ STEP 10: SET SESSION & REDIRECT ============
-            session['vendor_code'] = vendor_code
-            session['business_name'] = business_name
-            session['shop_name'] = shop_name
-            
-            flash('Vendor registration submitted successfully! Awaiting admin approval.', 'success')
-            return redirect(url_for('vendor_welcome_pending'))
-            
-        except Exception as e:
-            print(f"Vendor registration error: {e}")
-            flash(f'Registration failed: {str(e)}', 'danger')
-    
-    return render_template('vendor/vendor_register.html')
-
-
-@app.route('/vendor/register', methods=['GET', 'POST'])
-def vendor_register():
-    """Vendor registration page - 4 Step Process"""
-    db = None
-    if request.method == 'POST':
-        try:
-            # ============ STEP 1: COLLECT FORM DATA ============
-            # Personal Information (Step 1)
-            name = request.form.get('name', '').strip()
-            email = request.form.get('email', '').strip().lower()
-            phone = request.form.get('phone', '').strip()
-            country_code = request.form.get('country_code', '+965')
-            nationality = request.form.get('nationality', '').strip()
-            password = request.form.get('password', '')
-            confirm_password = request.form.get('confirm_password', '')
-
-            # Business Information (Step 2)
-            business_name = request.form.get('business_name', '').strip()
-            business_type = request.form.get('business_type', '').strip()
-            cr_number = request.form.get('cr_number', '').strip()
-            vat_number = request.form.get('vat_number', '').strip()
-            
-            # Address Information (Step 2)
-            governorate = request.form.get('governorate', '').strip()
-            block = request.form.get('block', '').strip()
-            street = request.form.get('street', '').strip()
-            building = request.form.get('building', '').strip()
-            floor = request.form.get('floor', '').strip()
-            unit = request.form.get('unit', '').strip()
-            business_description = request.form.get('business_description', '').strip()
-
-            # Terms Agreement (Step 4)
-            agree_terms = request.form.get('agree_terms')
 
             # ============ STEP 2: VALIDATION ============
-            # Required fields validation
+            # Check required fields
             required_fields = {
-                'name': 'Full Name',
-                'email': 'Email Address',
-                'phone': 'Phone Number',
-                'business_name': 'Business Name',
-                'business_type': 'Business Type',
-                'cr_number': 'Commercial Registration Number',
-                'governorate': 'Governorate',
-                'block': 'Block Number',
-                'street': 'Street Name',
-                'building': 'Building Name/Number',
-                'password': 'Password',
-                'confirm_password': 'Confirm Password',
-                'agree_terms': 'Terms & Conditions'
+                'name': name,
+                'email': email,
+                'phone': phone,
+                'shop_name': shop_name,
+                'business_type': business_type
             }
-
-            for field, field_name in required_fields.items():
-                value = locals().get(field)
-                if not value and field != 'agree_terms':
-                    flash(f'{field_name} is required', 'warning')
-                    return render_template('vendor/vendor_register.html')
-                elif field == 'agree_terms' and not value:
-                    flash('You must agree to the Terms & Conditions', 'warning')
-                    return render_template('vendor/vendor_register.html')
-
-            # Password validation
-            if password != confirm_password:
-                flash('Passwords do not match', 'danger')
-                return render_template('vendor/vendor_register.html')
-
-            if len(password) < 8:
-                flash('Password must be at least 8 characters', 'warning')
-                return render_template('vendor/vendor_register.html')
-
+            
+            missing_fields = [field for field, value in required_fields.items() if not value]
+            if missing_fields:
+                flash(f"Please fill in all required fields: {', '.join(missing_fields)}", "danger")
+                return redirect(url_for('vendor_register'))
+            
             # Email validation
             if not re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', email):
-                flash('Invalid email address', 'danger')
-                return render_template('vendor/vendor_register.html')
-
-            # Phone validation (Kuwaiti number)
-            if not re.match(r'^[569]\d{7}$', phone):
-                flash('Invalid Kuwaiti phone number. Must start with 5, 6, or 9 and be 8 digits', 'danger')
-                return render_template('vendor/vendor_register.html')
-
-            # ============ STEP 3: CHECK EXISTING ACCOUNTS ============
-            db = get_db()
-            cursor = db.cursor()
-
-            # Check if email already exists
-            cursor.execute("SELECT id FROM vendors WHERE email = ?", (email,))
-            if cursor.fetchone():
-                flash('Email already registered. Please use a different email or login.', 'danger')
-                return render_template('vendor/vendor_register.html')
-
-            # Check if business name already exists
-            cursor.execute("SELECT id FROM vendors WHERE business_name = ?", (business_name,))
-            if cursor.fetchone():
-                flash('Business name already registered', 'danger')
-                return render_template('vendor/vendor_register.html')
-
-            # Check CR number if provided
-            if cr_number:
-                cursor.execute("SELECT id FROM vendors WHERE cr_number = ?", (cr_number,))
-                if cursor.fetchone():
-                    flash('Commercial Registration number already registered', 'danger')
-                    return render_template('vendor/vendor_register.html')
-
-            # ============ STEP 4: HANDLE FILE UPLOADS ============
-            upload_dir = 'static/uploads/vendors'
-            os.makedirs(upload_dir, exist_ok=True)
+                flash("Please enter a valid email address", "danger")
+                return redirect(url_for('vendor_register'))
             
-            # Civil ID Front (required)
-            civil_id_front = request.files.get('civil_id_front')
-            if not civil_id_front or civil_id_front.filename == '':
-                flash('Civil ID (Front) is required', 'danger')
-                return render_template('vendor/vendor_register.html')
+            # Phone validation
+            if not re.match(r'^\+?[0-9\s\-\(\)]{8,}$', phone):
+                flash("Please enter a valid phone number", "danger")
+                return redirect(url_for('vendor_register'))
             
-            civil_id_front_filename = secure_filename(f"{email}_civil_front_{datetime.now().strftime('%Y%m%d_%H%M%S')}{os.path.splitext(civil_id_front.filename)[1]}")
-            civil_id_front_path = os.path.join(upload_dir, civil_id_front_filename)
-            civil_id_front.save(civil_id_front_path)
-
-            # Civil ID Back (required)
-            civil_id_back = request.files.get('civil_id_back')
-            if not civil_id_back or civil_id_back.filename == '':
-                flash('Civil ID (Back) is required', 'danger')
-                return render_template('vendor/vendor_register.html')
+            # ============ STEP 3: GENERATE VENDOR CODE ============
+            vendor_code = "HKO-" + str(random.randint(1000, 9999))
             
-            civil_id_back_filename = secure_filename(f"{email}_civil_back_{datetime.now().strftime('%Y%m%d_%H%M%S')}{os.path.splitext(civil_id_back.filename)[1]}")
-            civil_id_back_path = os.path.join(upload_dir, civil_id_back_filename)
-            civil_id_back.save(civil_id_back_path)
-
-            # Commercial License (required)
-            commercial_license = request.files.get('commercial_license')
-            if not commercial_license or commercial_license.filename == '':
-                flash('Commercial License is required', 'danger')
-                return render_template('vendor/vendor_register.html')
+            # Check if vendor code already exists
+            while True:
+                cur = mysql.connection.cursor()
+                cur.execute("SELECT id FROM vendors WHERE vendor_code = %s", (vendor_code,))
+                if cur.fetchone():
+                    vendor_code = "HKO-" + str(random.randint(1000, 9999))
+                else:
+                    break
+                cur.close()
             
-            commercial_license_filename = secure_filename(f"{email}_commercial_license_{datetime.now().strftime('%Y%m%d_%H%M%S')}{os.path.splitext(commercial_license.filename)[1]}")
-            commercial_license_path = os.path.join(upload_dir, commercial_license_filename)
-            commercial_license.save(commercial_license_path)
-
-            # Additional Documents (optional)
-            additional_docs = request.files.getlist('additional_docs[]')
-            additional_docs_paths = []
+            # ============ STEP 4: SAVE TO DATABASE ============
+            cur = mysql.connection.cursor()
+            query = """
+                INSERT INTO vendors
+                (vendor_code, name, email, phone, country_code, nationality,
+                 shop_name, business_name, business_type, cr_number, vat_number,
+                 governorate, block, street, building, floor, unit, business_description,
+                 status, created_at)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 'pending', NOW())
+            """
             
-            for doc in additional_docs:
-                if doc and doc.filename != '':
-                    doc_filename = secure_filename(f"{email}_additional_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{doc.filename}")
-                    doc_path = os.path.join(upload_dir, doc_filename)
-                    doc.save(doc_path)
-                    additional_docs_paths.append(doc_path)
-
-            # ============ STEP 5: GENERATE VENDOR CODE ============
-            # Generate HKO-xxx format vendor code
-            cursor.execute("SELECT COUNT(*) FROM vendors")
-            vendor_count = cursor.fetchone()[0] + 1
-            vendor_code = f"HKO-{vendor_count:03d}"
-
-            # ============ STEP 6: HASH PASSWORD ============
-            hashed_password = generate_password_hash(password)
-
-      # ============ STEP 7: CONSTRUCT ADDRESS ============
-            address_parts = []
-            if building:
-                address_parts.append(building)
-            if street:
-                address_parts.append(street)
-            if block:
-                address_parts.append(f"Block {block}")
-            if unit:
-                address_parts.append(f"Unit {unit}")
-            if floor:
-                address_parts.append(f"Floor {floor}")
-            if governorate:
-                address_parts.append(governorate)
-            
-            address = ", ".join(address_parts)
-
-            # ============ STEP 8: SAVE TO DATABASE ============
-            cursor.execute('''
-                INSERT INTO vendors (
-                    
-                    vendor_code, name, email, password, phone, country_code, nationality,
-                    business_name, business_type, cr_number, vat_number,
-                    address, governorate, block, street, building, floor, unit,
-                    business_description, civil_id_front, civil_id_back,
-                    commercial_license, additional_docs, status, kyc_status,
-                    balance, agree_terms, created_at, updated_at
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
-                         ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            ''', (
-                vendor_code, name, email, hashed_password, phone, country_code, nationality,
-                business_name, business_type, cr_number, vat_number,
-                address, governorate, block, street, building, floor, unit,
-                business_description, civil_id_front_path, civil_id_back_path,
-                commercial_license_path, ','.join(additional_docs_paths) if additional_docs_paths else '',
-                'pending', 'pending', 0.0, 'yes',
-                datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-                datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            cur.execute(query, (
+                vendor_code, name, email, phone, country_code, nationality,
+                shop_name, business_name, business_type, cr_number, vat_number,
+                governorate, block, street, building, floor, unit, business_description
             ))
-
-            vendor_id = cursor.lastrowid
-
-            # ============ STEP 9: CREATE USER ACCOUNT ============
-            username = email.split('@')[0]
+            mysql.connection.commit()
+            cur.close()
             
-            cursor.execute('''
-                INSERT INTO users (username, email, password, full_name, phone, role, vendor_id, is_active)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-            ''', (username, email, hashed_password, name, f"{country_code}{phone}", 'vendor', vendor_id, 0))
-
-            user_id = cursor.lastrowid
-
-            # Link vendor to user
-            cursor.execute('UPDATE vendors SET user_id = ? WHERE id = ?', (user_id, vendor_id))
-
-            # ============ STEP 10: CREATE INITIAL BALANCE RECORD ============
-            cursor.execute('''
-                INSERT INTO vendor_balance (vendor_id, balance, created_at)
-                VALUES (?, ?, ?)
-            ''', (vendor_id, 0.0, datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
-
-            # ============ STEP 11: CREATE DOCUMENTS RECORDS ============
-            cursor.execute('''
-                INSERT INTO vendor_documents (vendor_id, document_type, document_path, status)
-                VALUES (?, ?, ?, ?)
-            ''', (vendor_id, 'Civil ID Front', civil_id_front_path, 'pending'))
-            
-            cursor.execute('''
-                INSERT INTO vendor_documents (vendor_id, document_type, document_path, status)
-                VALUES (?, ?, ?, ?)
-            ''', (vendor_id, 'Civil ID Back', civil_id_back_path, 'pending'))
-            
-            cursor.execute('''
-                INSERT INTO vendor_documents (vendor_id, document_type, document_path, status)
-                VALUES (?, ?, ?, ?)
-            ''', (vendor_id, 'Commercial License', commercial_license_path, 'pending'))
-            
-            for doc_path in additional_docs_paths:
-                cursor.execute('''
-                    INSERT INTO vendor_documents (vendor_id, document_type, document_path, status)
-                    VALUES (?, ?, ?, ?)
-                ''', (vendor_id, 'Additional Document', doc_path, 'pending'))
-
-            db.commit()
-
-            # ============ STEP 12: SEND NOTIFICATION EMAIL ============
-            try:
-                # Send confirmation email to vendor
-                send_vendor_registration_email(email, name, business_name, vendor_code)
-                
-                # Send notification to admin
-                send_admin_notification_email(name, business_name, vendor_code, email, phone)
-            except Exception as email_error:
-                print(f"Email sending failed: {email_error}")
-                # Continue even if email fails
-
-            # ============ STEP 13: SET SESSION & REDIRECT ============
-            session['vendor_id'] = vendor_id
+            # ============ STEP 5: STORE IN SESSION ============
             session['vendor_code'] = vendor_code
             session['business_name'] = business_name
-            session['email'] = email
-
-            flash(f'🎉 Registration successful! Your Vendor Code: {vendor_code}. Your application is under review and you will be notified within 3-5 business days.', 'success')
             
-            # Redirect to thank you page
+            flash("Registration successful! Your vendor code is: " + vendor_code, "success")
+            
+            # ============ STEP 6: SEND EMAIL NOTIFICATION ============
+            try:
+                msg = Message('Vendor Registration - Sooq Kabeer',
+                              sender='noreply@sooqkabeer.com',
+                              recipients=[email])
+                msg.body = f"""
+                Dear {name},
+                
+                Thank you for registering as a vendor with Sooq Kabeer!
+                
+                Your Vendor Code: {vendor_code}
+                Business Name: {business_name}
+                Registration Date: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+                
+                Our team will review your application and contact you within 24-48 hours.
+                
+                Best regards,
+                Sooq Kabeer Team
+                """
+                mail.send(msg)
+            except Exception as e:
+                print(f"Email sending failed: {e}")
+            
             return redirect(url_for('vendor_thank_you'))
-
+            
         except Exception as e:
-            db.rollback()
-            print(f"Vendor registration error: {str(e)}")
-            flash(f'Registration failed: {str(e)}', 'danger')
-            return render_template('vendor/vendor_register.html')
+            flash(f"Registration failed: {str(e)}", "danger")
+            return redirect(url_for('vendor_register'))
 
     # GET request - show registration form
-    return render_template('vendor/vendor_register.html')
+    return render_template('vendor/register.html')
 
 
-@app.route('/vendor/thank-you')
 def vendor_thank_you():
-    """Thank you page after registration"""
-    if 'vendor_code' not in session:
-        return redirect(url_for('vendor_register'))
-    
+    """Thank you page after vendor registration"""
     vendor_code = session.get('vendor_code')
     business_name = session.get('business_name')
+    
+    if not vendor_code:
+        return redirect(url_for('vendor_register'))
     
     return render_template('vendor/thank_you.html',
                          vendor_code=vendor_code,
                          business_name=business_name)
-
 
 @app.route('/vendor/welcome-pending')
 def vendor_welcome_pending():
