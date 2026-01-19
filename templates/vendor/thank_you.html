@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+
+{% block title %}Registration Successful - SooqKabeer{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card border-0 shadow-lg" style="border-radius: 20px; overflow: hidden;">
+                <!-- Header -->
+                <div class="card-header text-white text-center py-4" 
+                     style="background: linear-gradient(135deg, #0a192f 0%, #1a2c4f 100%);">
+                    <h1 class="display-4 mb-3">🎉 Registration Successful!</h1>
+                    <p class="lead mb-0">Thank you for joining SooqKabeer B2B Marketplace</p>
+                </div>
+
+                <!-- Body -->
+                <div class="card-body p-5">
+                    <div class="text-center mb-5">
+                        <div class="mb-4">
+                            <i class="fas fa-check-circle fa-5x text-success"></i>
+                        </div>
+                        
+                        <h2 class="mb-3">Welcome to SooqKabeer!</h2>
+                        <p class="text-muted mb-4">
+                            Your vendor registration has been submitted successfully. Our team will review your application shortly.
+                        </p>
+                    </div>
+
+                    <!-- Vendor Details Card -->
+                    <div class="card border-left-success border-left-3 mb-4">
+                        <div class="card-body">
+                            <h5 class="card-title text-success mb-3">
+                                <i class="fas fa-id-card me-2"></i>Your Vendor Details
+                            </h5>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <strong>Vendor Code:</strong><br>
+                                    <span class="badge bg-primary fs-5">{{ vendor_code }}</span>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <strong>Business Name:</strong><br>
+                                    <span class="fs-5">{{ business_name }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Next Steps -->
+                    <div class="card border-left-info border-left-3 mb-4">
+                        <div class="card-body">
+                            <h5 class="card-title text-info mb-3">
+                                <i class="fas fa-list-check me-2"></i>What Happens Next?
+                            </h5>
+                            
+                            <div class="row">
+                                <div class="col-md-4 text-center mb-3">
+                                    <div class="p-3 rounded-circle bg-info bg-opacity-10 d-inline-block mb-2">
+                                        <i class="fas fa-clock fa-2x text-info"></i>
+                                    </div>
+                                    <h6>Review Process</h6>
+                                    <p class="small text-muted">Our team will review your application within 3-5 business days</p>
+                                </div>
+                                
+                                <div class="col-md-4 text-center mb-3">
+                                    <div class="p-3 rounded-circle bg-warning bg-opacity-10 d-inline-block mb-2">
+                                        <i class="fas fa-file-check fa-2x text-warning"></i>
+                                    </div>
+                                    <h6>Document Verification</h6>
+                                    <p class="small text-muted">We'll verify your business documents and information</p>
+                                </div>
+                                
+                                <div class="col-md-4 text-center mb-3">
+                                    <div class="p-3 rounded-circle bg-success bg-opacity-10 d-inline-block mb-2">
+                                        <i class="fas fa-envelope fa-2x text-success"></i>
+                                    </div>
+                                    <h6>Approval Notification</h6>
+                                    <p class="small text-muted">You'll receive an email once your account is approved</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Important Notes -->
+                    <div class="alert alert-warning">
+                        <h5><i class="fas fa-exclamation-triangle me-2"></i>Important Notes</h5>
+                        <ul class="mb-0">
+                            <li>Keep your vendor code <strong>{{ vendor_code }}</strong> safe for future reference</li>
+                            <li>Check your email regularly for updates regarding your application</li>
+                            <li>You can contact support at <strong>support@sooqkabeer.com</strong> if you have questions</li>
+                            <li>Do not share your login credentials with anyone</li>
+                        </ul>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="text-center mt-5">
+                        <div class="row g-3 justify-content-center">
+                            <div class="col-auto">
+                                <a href="{{ url_for('index') }}" class="btn btn-outline-primary px-4">
+                                    <i class="fas fa-home me-2"></i>Back to Home
+                                </a>
+                            </div>
+                            <div class="col-auto">
+                                <a href="{{ url_for('vendor_login') }}" class="btn btn-primary px-4">
+                                    <i class="fas fa-sign-in-alt me-2"></i>Go to Login
+                                </a>
+                            </div>
+                            <div class="col-auto">
+                                <a href="mailto:support@sooqkabeer.com" class="btn btn-outline-success px-4">
+                                    <i class="fas fa-envelope me-2"></i>Contact Support
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer -->
+                <div class="card-footer text-center py-3 bg-light">
+                    <p class="mb-0 text-muted">
+                        <i class="fas fa-info-circle me-1"></i>
+                        For any queries, call us at <strong>+965 1234 5678</strong> or email <strong>support@sooqkabeer.com</strong>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

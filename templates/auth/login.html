@@ -1,199 +1,638 @@
-{% extends "base.html" %}
-
-{% block title %}تسجيل الدخول - سوق كبير{% endblock %}
-
-{% block content %}
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6 col-lg-5">
-            <div class="card shadow border-0">
-                <div class="card-header bg-warning text-dark text-center py-3">
-                    <h3 class="mb-0">
-                        <i class="fas fa-sign-in-alt ms-2"></i>تسجيل الدخول
-                    </h3>
-                </div>
-                
-                <div class="card-body p-4">
-                    <!-- Login Form -->
-                    <form method="POST" action="{{ url_for('login') }}" id="loginForm" class="needs-validation" novalidate>
-                        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-                        
-                        <!-- Email Field -->
-                        <div class="mb-4">
-                            <label for="email" class="form-label fw-bold">
-                                <i class="fas fa-envelope ms-2"></i>البريد الإلكتروني
-                            </label>
-                            <div class="input-group">
-                                <input type="email" class="form-control text-end" id="email" name="email" 
-                                       value="{{ request.form.email if request.form }}" 
-                                       required autocomplete="email" 
-                                       placeholder="أدخل بريدك الإلكتروني"
-                                       style="font-family: 'Cairo', sans-serif;">
-                                <span class="input-group-text bg-light">
-                                    <i class="fas fa-user"></i>
-                                </span>
-                            </div>
-                            <div class="invalid-feedback text-end">
-                                الرجاء إدخال بريد إلكتروني صحيح
-                            </div>
-                        </div>
-                        
-                        <!-- Password Field -->
-                        <div class="mb-4">
-                            <label for="password" class="form-label fw-bold">
-                                <i class="fas fa-lock ms-2"></i>كلمة المرور
-                            </label>
-                            <div class="input-group">
-                                <input type="password" class="form-control text-end" id="password" name="password" 
-                                       required autocomplete="current-password" 
-                                       placeholder="أدخل كلمة المرور"
-                                       style="font-family: 'Cairo', sans-serif;">
-                                <button type="button" class="input-group-text bg-light" 
-                                        onclick="togglePassword('password')">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                            </div>
-                            <div class="invalid-feedback text-end">
-                                الرجاء إدخال كلمة المرور
-                            </div>
-                            <div class="form-text text-end mt-1">
-                                <a href="{{ url_for('forgot_password') }}" class="text-decoration-none">
-                                    <i class="fas fa-key ms-2"></i>نسيت كلمة المرور؟
-                                </a>
-                            </div>
-                        </div>
-                        
-                        <!-- Remember Me -->
-                        <div class="mb-4 form-check text-end">
-                            <input type="checkbox" class="form-check-input ms-2" id="remember" name="remember">
-                            <label class="form-check-label" for="remember">
-                                تذكرني لمدة 30 يوم
-                            </label>
-                        </div>
-                        
-                        <!-- Submit Button -->
-                        <div class="d-grid mb-4">
-                            <button type="submit" class="btn btn-warning btn-lg py-3">
-                                <i class="fas fa-sign-in-alt ms-2"></i>تسجيل الدخول
-                            </button>
-                        </div>
-                        
-                        <!-- Divider -->
-                        <div class="text-center mb-4">
-                            <hr class="my-4">
-                            <span class="bg-white px-3 text-muted">أو سجل الدخول باستخدام</span>
-                        </div>
-                        
-                        <!-- Social Login -->
-                        <div class="row g-2 mb-4">
-                            <div class="col-6">
-                                <button type="button" class="btn btn-outline-danger w-100 py-2">
-                                    <i class="fab fa-google ms-2"></i> جوجل
-                                </button>
-                            </div>
-                            <div class="col-6">
-                                <button type="button" class="btn btn-outline-dark w-100 py-2">
-                                    <i class="fab fa-apple ms-2"></i> أبل
-                                </button>
-                            </div>
-                        </div>
-                        
-                        <!-- Register Link -->
-                        <div class="text-center">
-                            <p class="mb-0">
-                                ليس لديك حساب؟ 
-                                <a href="{{ url_for('register') }}" class="text-decoration-none fw-bold text-warning">
-                                    سجل الآن
-                                </a>
-                            </p>
-                            <p class="mt-2">
-                                <a href="{{ url_for('vendor_login') }}" class="text-decoration-none">
-                                    <i class="fas fa-store ms-2"></i>تسجيل دخول البائعين
-                                </a>
-                            </p>
-                        </div>
-                    </form>
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if login_type == 'vendor' %}تسجيل دخول التاجر{% elif login_type == 'admin' %}تسجيل دخول المسؤول{% else %}تسجيل الدخول{% endif %} - سوق كبير</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --navy: #0a192f;
+            --gold: #d4af37;
+            --light-gold: #e6c158;
+            --green: #28a745;
+            --red: #dc3545;
+            --white: #ffffff;
+            --gray-light: #b0b7c3;
+            --card-bg: rgba(255, 255, 255, 0.08);
+            --bg-gradient: linear-gradient(135deg, #0a192f 0%, #0d2240 100%);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background: var(--bg-gradient);
+            color: var(--white);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .login-container {
+            width: 100%;
+            max-width: 420px;
+            margin: 0 auto;
+        }
+        
+        .login-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px 35px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.5s ease;
+        }
+        
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .logo-section {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+        
+        .logo-circle {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, var(--gold), var(--light-gold));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            color: var(--navy);
+            font-size: 28px;
+            font-weight: bold;
+            box-shadow: 0 10px 25px rgba(212, 175, 55, 0.4);
+        }
+        
+        .logo-text h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            background: linear-gradient(to right, var(--gold), var(--light-gold));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 8px;
+        }
+        
+        .logo-text p {
+            color: var(--gray-light);
+            font-size: 1rem;
+        }
+        
+        .login-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .login-header h2 {
+            font-size: 1.8rem;
+            color: var(--gold);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+        
+        .login-type-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            background: rgba(212, 175, 55, 0.2);
+            border: 1px solid var(--gold);
+            border-radius: 20px;
+            font-size: 0.9rem;
+            color: var(--gold);
+            margin-top: 10px;
+        }
+        
+        /* Flash Messages */
+        .flash-container {
+            margin-bottom: 25px;
+        }
+        
+        .flash-message {
+            padding: 14px 18px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1rem;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .flash-success {
+            background: rgba(40, 167, 69, 0.15);
+            border: 1px solid rgba(40, 167, 69, 0.3);
+            color: #d4edda;
+        }
+        
+        .flash-error {
+            background: rgba(220, 53, 69, 0.15);
+            border: 1px solid rgba(220, 53, 69, 0.3);
+            color: #f8d7da;
+        }
+        
+        .flash-warning {
+            background: rgba(255, 193, 7, 0.15);
+            border: 1px solid rgba(255, 193, 7, 0.3);
+            color: #fff3cd;
+        }
+        
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .input-group {
+            position: relative;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 10px;
+            color: var(--gray-light);
+            font-weight: 500;
+            font-size: 1.1rem;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 16px 20px 16px 55px;
+            background: rgba(255, 255, 255, 0.07);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: var(--white);
+            font-size: 1.1rem;
+            font-family: 'Tajawal', sans-serif;
+            transition: all 0.3s ease;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--gold);
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .input-icon {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray-light);
+            font-size: 1.2rem;
+        }
+        
+        .password-toggle {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--gray-light);
+            cursor: pointer;
+            font-size: 1.2rem;
+            z-index: 2;
+        }
+        
+        .btn-login {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, var(--gold), var(--light-gold));
+            border: none;
+            border-radius: 12px;
+            color: var(--navy);
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Tajawal', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 10px;
+            box-shadow: 0 8px 20px rgba(212, 175, 55, 0.3);
+        }
+        
+        .btn-login:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(212, 175, 55, 0.4);
+        }
+        
+        .btn-login:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        /* Login Options */
+        .login-options {
+            margin: 30px 0 25px;
+            text-align: center;
+        }
+        
+        .login-options p {
+            color: var(--gray-light);
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .login-options p:before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            right: 0;
+            width: 30%;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .login-options p:after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 30%;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .option-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .btn-option {
+            padding: 12px 25px;
+            background: rgba(255, 255, 255, 0.07);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: var(--white);
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+        
+        .btn-option:hover {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: var(--gold);
+            transform: translateY(-2px);
+        }
+        
+        .btn-option.active {
+            background: rgba(212, 175, 55, 0.2);
+            border-color: var(--gold);
+            color: var(--gold);
+        }
+        
+        /* Links */
+        .form-links {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 25px;
+            padding-top: 25px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .form-link {
+            color: var(--gold);
+            text-decoration: none;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: color 0.3s ease;
+        }
+        
+        .form-link:hover {
+            color: var(--light-gold);
+        }
+        
+        /* Footer */
+        .login-footer {
+            text-align: center;
+            margin-top: 30px;
+            color: var(--gray-light);
+            font-size: 0.9rem;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        /* Responsive */
+        @media (max-width: 480px) {
+            .login-card {
+                padding: 30px 25px;
+            }
+            
+            .logo-text h1 {
+                font-size: 1.8rem;
+            }
+            
+            .login-header h2 {
+                font-size: 1.5rem;
+            }
+            
+            .option-buttons {
+                flex-direction: column;
+            }
+            
+            .btn-option {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .form-links {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-card">
+            <!-- Logo Section -->
+            <div class="logo-section">
+                <div class="logo-circle">SK</div>
+                <div class="logo-text">
+                    <h1>سوق كبير</h1>
+                    <p>SooqKabeer Marketplace</p>
                 </div>
             </div>
+            
+            <!-- Login Header -->
+            <div class="login-header">
+                <h2>
+                    {% if login_type == 'vendor' %}
+                        <i class="fas fa-store"></i> دخول التاجر
+                    {% elif login_type == 'admin' %}
+                        <i class="fas fa-user-shield"></i> دخول المسؤول
+                    {% else %}
+                        <i class="fas fa-sign-in-alt"></i> تسجيل الدخول
+                    {% endif %}
+                </h2>
+                <div class="login-type-badge">
+                    {% if login_type == 'vendor' %}
+                        لوحة تحكم التاجر
+                    {% elif login_type == 'admin' %}
+                        لوحة تحكم المسؤول
+                    {% else %}
+                        عميل
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Flash Messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="flash-container">
+                        {% for category, message in messages %}
+                            <div class="flash-message flash-{{ category }}">
+                                {% if category == 'success' %}
+                                    <i class="fas fa-check-circle"></i>
+                                {% elif category == 'error' %}
+                                    <i class="fas fa-exclamation-circle"></i>
+                                {% elif category == 'warning' %}
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                {% else %}
+                                    <i class="fas fa-info-circle"></i>
+                                {% endif %}
+                                <span>{{ message }}</span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+            
+            <!-- Login Form -->
+            <form method="POST" id="loginForm">
+                <div class="form-group">
+                    <label class="form-label" for="email">
+                        {% if login_type == 'vendor' %}
+                            بريد التاجر الإلكتروني
+                        {% elif login_type == 'admin' %}
+                            اسم المستخدم
+                        {% else %}
+                            البريد الإلكتروني
+                        {% endif %}
+                    </label>
+                    <div class="input-group">
+                        <input type="text" 
+                               class="form-input" 
+                               id="email" 
+                               name="email" 
+                               placeholder="{% if login_type == 'admin' %}اسم المستخدم{% else %}ادخل بريدك الإلكتروني{% endif %}"
+                               required
+                               autofocus>
+                        <div class="input-icon">
+                            <i class="fas fa-user"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="password">كلمة المرور</label>
+                    <div class="input-group">
+                        <input type="password" 
+                               class="form-input" 
+                               id="password" 
+                               name="password" 
+                               placeholder="ادخل كلمة المرور"
+                               required>
+                        <div class="input-icon">
+                            <i class="fas fa-lock"></i>
+                        </div>
+                        <button type="button" class="password-toggle" onclick="togglePassword()">
+                            <i class="fas fa-eye" id="password-eye"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                {% if login_type == 'customer' %}
+                <div class="form-group" style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <input type="checkbox" id="remember" name="remember" style="margin-left: 8px;">
+                        <label for="remember" style="color: var(--gray-light);">تذكرني</label>
+                    </div>
+                    <a href="{{ url_for('forgot_password') }}" class="form-link" style="font-size: 0.9rem;">
+                        <i class="fas fa-key"></i>
+                        نسيت كلمة المرور؟
+                    </a>
+                </div>
+                {% endif %}
+                
+                <button type="submit" class="btn-login" id="loginBtn">
+                    <i class="fas fa-sign-in-alt"></i>
+                    <span id="loginText">
+                        {% if login_type == 'vendor' %}
+                            دخول التاجر
+                        {% elif login_type == 'admin' %}
+                            دخول المسؤول
+                        {% else %}
+                            تسجيل الدخول
+                        {% endif %}
+                    </span>
+                </button>
+            </form>
+            
+            <!-- Login Options -->
+            <div class="login-options">
+                <p>أو تسجيل الدخول كـ</p>
+                <div class="option-buttons">
+                    <a href="{{ url_for('login') }}?type=customer" class="btn-option {% if login_type == 'customer' or not login_type %}active{% endif %}">
+                        <i class="fas fa-user"></i>
+                        عميل
+                    </a>
+                    <a href="{{ url_for('login') }}?type=vendor" class="btn-option {% if login_type == 'vendor' %}active{% endif %}">
+                        <i class="fas fa-store"></i>
+                        تاجر
+                    </a>
+                    <a href="{{ url_for('login') }}?type=admin" class="btn-option {% if login_type == 'admin' %}active{% endif %}">
+                        <i class="fas fa-user-shield"></i>
+                        مسؤول
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Registration Link -->
+            <div class="form-links">
+                <a href="{{ url_for('home') }}" class="form-link">
+                    <i class="fas fa-home"></i>
+                    العودة للرئيسية
+                </a>
+                
+                {% if login_type != 'admin' %}
+                <a href="{{ url_for('register') }}{% if login_type == 'vendor' %}?type=vendor{% endif %}" class="form-link">
+                    <i class="fas fa-user-plus"></i>
+                    {% if login_type == 'vendor' %}
+                        تسجيل تاجر جديد
+                    {% else %}
+                        إنشاء حساب جديد
+                    {% endif %}
+                </a>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <div class="login-footer">
+            <p>© 2024 سوق كبير | SooqKabeer</p>
+            <p>support@sooqkabeer.com | +965 1234 5678</p>
         </div>
     </div>
-</div>
-
-<!-- Validation Script -->
-<script>
-    // Form validation
-    (function () {
-        'use strict'
-        var forms = document.querySelectorAll('.needs-validation')
-        Array.prototype.slice.call(forms)
-            .forEach(function (form) {
-                form.addEventListener('submit', function (event) {
-                    if (!form.checkValidity()) {
-                        event.preventDefault()
-                        event.stopPropagation()
-                    }
-                    form.classList.add('was-validated')
-                }, false)
-            })
-    })()
     
-    // Password visibility toggle
-    function togglePassword(inputId) {
-        const input = document.getElementById(inputId);
-        const icon = input.parentElement.querySelector('i');
-        
-        if (input.type === 'password') {
-            input.type = 'text';
-            icon.classList.remove('fa-eye');
-            icon.classList.add('fa-eye-slash');
-        } else {
-            input.type = 'password';
-            icon.classList.remove('fa-eye-slash');
-            icon.classList.add('fa-eye');
+    <script>
+        // Toggle Password Visibility
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const eyeIcon = document.getElementById('password-eye');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                eyeIcon.classList.remove('fa-eye');
+                eyeIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                eyeIcon.classList.remove('fa-eye-slash');
+                eyeIcon.classList.add('fa-eye');
+            }
         }
-    }
-    
-    // Auto-focus on email field
-    document.addEventListener('DOMContentLoaded', function() {
-        document.getElementById('email').focus();
-    });
-</script>
+        
+        // Form Submission
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const loginBtn = document.getElementById('loginBtn');
+            const loginText = document.getElementById('loginText');
+            
+            if (!email || !password) {
+                e.preventDefault();
+                showMessage('يرجى ملء جميع الحقول المطلوبة', 'error');
+                return false;
+            }
+            
+            // Show loading state
+            loginBtn.disabled = true;
+            loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري التحقق...';
+            
+            // Re-enable after 5 seconds if no response
+            setTimeout(() => {
+                loginBtn.disabled = false;
+                loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i><span>' + loginText.textContent + '</span>';
+            }, 5000);
+        });
+        
+        // Auto-focus on email input
+        document.addEventListener('DOMContentLoaded', function() {
+            const emailInput = document.getElementById('email');
+            if (emailInput) {
+                emailInput.focus();
+            }
+        });
+        
+        // Simple message display (you can replace with actual flash messages)
+        function showMessage(message, type) {
+            // Remove existing messages
+            const existingMessages = document.querySelectorAll('.flash-message');
+            existingMessages.forEach(msg => msg.remove());
+            
+            // Create new message
+            const flashContainer = document.querySelector('.flash-container') || createFlashContainer();
+            const flashDiv = document.createElement('div');
+            flashDiv.className = `flash-message flash-${type}`;
+            
+            let icon = 'info-circle';
+            if (type === 'success') icon = 'check-circle';
+            else if (type === 'error') icon = 'exclamation-circle';
+            else if (type === 'warning') icon = 'exclamation-triangle';
+            
+            flashDiv.innerHTML = `
+                <i class="fas fa-${icon}"></i>
+                <span>${message}</span>
+            `;
+            
+            flashContainer.appendChild(flashDiv);
+        }
+        
+        function createFlashContainer() {
+            const container = document.createElement('div');
+            container.className = 'flash-container';
+            const form = document.getElementById('loginForm');
+            form.parentNode.insertBefore(container, form);
+            return container;
+        }
+    </script>
+</body>
+</html>
 
-<!-- RTL Specific Styles -->
-<style>
-    .card {
-        border-radius: 15px;
-    }
-    
-    .input-group-text {
-        border-left: none;
-        border-right: 1px solid #ced4da;
-    }
-    
-    .form-control {
-        border-right: none;
-        border-left: 1px solid #ced4da;
-    }
-    
-    .form-control:focus {
-        box-shadow: 0 0 0 0.25rem rgba(255, 193, 7, 0.25);
-        border-color: #ffc107;
-    }
-    
-    .btn-warning {
-        background: linear-gradient(135deg, #ffc107, #ff9800);
-        border: none;
-        font-weight: 600;
-        transition: all 0.3s ease;
-    }
-    
-    .btn-warning:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(255, 193, 7, 0.4);
-    }
-    
-    .invalid-feedback {
-        font-size: 14px;
-    }
-</style>
-{% endblock %}

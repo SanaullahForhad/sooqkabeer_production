@@ -4,61 +4,154 @@
 
 {% block styles %}
 <style>
-    /* Vendor Registration Styles */
+    /* ========================
+       CORE STYLES - SOOQKABEER
+    ======================== */
     :root {
-        --reg-primary: #f5576c;
-        --reg-secondary: #f093fb;
-        --reg-success: #4cd964;
-        --reg-warning: #ff9500;
-        --reg-info: #5ac8fa;
+        --navy-primary: #0a192f;
+        --gold-primary: #d4af37;
+        --gold-light: #e8c974;
+        --gold-dark: #b8941a;
+        --error-red: #ff4d4d;
+        --success-green: #4cd964;
+        --warning-orange: #ff9500;
+        --gray-light: #f8f9fa;
+        --gray-medium: #6c757d;
+        --gray-dark: #343a40;
     }
 
-    .registration-hero {
-        background: linear-gradient(135deg, var(--reg-primary) 0%, var(--reg-secondary) 100%);
-        color: white;
-        padding: 40px 0;
-        border-radius: 20px;
-        margin-bottom: 30px;
+    /* Font Setup */
+    * {
+        font-family: 'Inter', 'Cairo', sans-serif;
     }
 
-    .registration-container {
-        max-width: 800px;
+    .arabic-text {
+        font-family: 'Cairo', sans-serif;
+        direction: rtl;
+        text-align: right;
+    }
+
+    /* Registration Container */
+    .vendor-registration {
+        min-height: 100vh;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        padding: 40px 20px;
+    }
+
+    .registration-wrapper {
+        max-width: 1000px;
         margin: 0 auto;
-        padding: 20px;
-    }
-
-    .registration-card {
         background: white;
         border-radius: 20px;
-        box-shadow: 0 15px 35px rgba(50, 50, 93, 0.1), 0 5px 15px rgba(0, 0, 0, 0.07);
+        box-shadow: 0 20px 60px rgba(10, 25, 47, 0.15);
         overflow: hidden;
-        margin-bottom: 30px;
     }
 
-    /* Progress Steps */
+    /* Header Section */
+    .registration-header {
+        background: linear-gradient(135deg, var(--navy-primary) 0%, #1a2c4f 100%);
+        color: white;
+        padding: 40px;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .registration-header::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -20%;
+        width: 300px;
+        height: 300px;
+        background: radial-gradient(circle, var(--gold-primary) 0%, transparent 70%);
+        opacity: 0.1;
+        border-radius: 50%;
+    }
+
+    .registration-header h1 {
+        font-size: 2.5rem;
+        margin-bottom: 15px;
+        font-weight: 700;
+        position: relative;
+        z-index: 2;
+    }
+
+    .registration-header .gold-text {
+        color: var(--gold-primary);
+    }
+
+    .registration-subtitle {
+        font-size: 1.1rem;
+        opacity: 0.9;
+        max-width: 600px;
+        margin: 0 auto;
+        position: relative;
+        z-index: 2;
+    }
+
+    .header-badges {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin-top: 25px;
+        flex-wrap: wrap;
+        position: relative;
+        z-index: 2;
+    }
+
+    .badge {
+        background: rgba(212, 175, 55, 0.15);
+        border: 1px solid var(--gold-primary);
+        color: var(--gold-primary);
+        padding: 8px 20px;
+        border-radius: 50px;
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    /* Progress Steps - Updated Design */
+    .progress-steps-container {
+        background: white;
+        padding: 30px 40px;
+        border-bottom: 1px solid #eaeaea;
+    }
+
     .progress-steps {
         display: flex;
         justify-content: space-between;
-        align-items: center;
-        padding: 30px 40px;
-        background: #f8f9fa;
         position: relative;
+        margin: 0 20px;
     }
 
     .progress-steps::before {
         content: '';
         position: absolute;
         top: 50%;
-        left: 50px;
-        right: 50px;
+        left: 0;
+        right: 0;
         height: 2px;
-        background: #e3e6f0;
+        background: #eaeaea;
+        transform: translateY(-50%);
         z-index: 1;
+    }
+
+    .progress-bar {
+        position: absolute;
+        top: 50%;
+        left: 0;
+        height: 2px;
+        background: var(--gold-primary);
+        transform: translateY(-50%);
+        z-index: 2;
+        transition: width 0.5s ease;
     }
 
     .step {
         position: relative;
-        z-index: 2;
+        z-index: 3;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -66,47 +159,69 @@
     }
 
     .step-circle {
-        width: 50px;
-        height: 50px;
+        width: 60px;
+        height: 60px;
         border-radius: 50%;
         background: white;
-        border: 2px solid #e3e6f0;
+        border: 2px solid #eaeaea;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-weight: bold;
-        color: #6e707e;
+        font-weight: 600;
+        color: var(--gray-medium);
         margin-bottom: 10px;
-        transition: all 0.3s;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
     }
 
     .step.active .step-circle {
-        background: var(--reg-primary);
-        border-color: var(--reg-primary);
+        background: var(--navy-primary);
+        border-color: var(--gold-primary);
         color: white;
-        box-shadow: 0 5px 15px rgba(245, 87, 108, 0.3);
+        transform: scale(1.1);
+        box-shadow: 0 5px 20px rgba(212, 175, 55, 0.3);
     }
 
     .step.completed .step-circle {
-        background: var(--reg-success);
-        border-color: var(--reg-success);
+        background: var(--gold-primary);
+        border-color: var(--gold-primary);
         color: white;
     }
 
+    .step.completed .step-circle::after {
+        content: '✓';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 1.2rem;
+    }
+
     .step-label {
-        font-size: 0.875rem;
-        color: #6e707e;
+        font-size: 0.85rem;
+        color: var(--gray-medium);
         font-weight: 500;
+        margin-top: 5px;
+        min-width: 100px;
     }
 
     .step.active .step-label {
-        color: var(--reg-primary);
+        color: var(--navy-primary);
         font-weight: 600;
+    }
+
+    .step-icon {
+        font-size: 1.2rem;
+    }
+
+    /* Form Container */
+    .form-container {
+        padding: 40px;
     }
 
     /* Form Sections */
     .form-section {
-        padding: 40px;
         display: none;
         animation: fadeIn 0.5s ease;
     }
@@ -123,54 +238,53 @@
     .section-header {
         margin-bottom: 30px;
         padding-bottom: 20px;
-        border-bottom: 1px solid #e3e6f0;
+        border-bottom: 1px solid #eaeaea;
     }
 
     .section-header h3 {
-        color: #5a5c69;
+        color: var(--navy-primary);
+        font-size: 1.5rem;
         margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
     }
 
     .section-header p {
-        color: #858796;
+        color: var(--gray-medium);
         margin: 0;
+        font-size: 0.95rem;
     }
 
-    /* Form Groups */
-    .form-row {
-        display: flex;
-        flex-wrap: wrap;
-        margin: 0 -15px;
-    }
-
-    .form-col {
-        flex: 1;
-        padding: 0 15px;
-        min-width: 300px;
+    /* Form Layout */
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 25px;
+        margin-bottom: 30px;
     }
 
     .form-group {
-        margin-bottom: 25px;
+        margin-bottom: 20px;
     }
 
     .form-label {
         display: block;
         margin-bottom: 8px;
         font-weight: 600;
-        color: #5a5c69;
-        display: flex;
-        align-items: center;
+        color: var(--navy-primary);
+        font-size: 0.9rem;
     }
 
-    .form-label .required {
-        color: var(--reg-primary);
+    .required-star {
+        color: var(--error-red);
         margin-left: 4px;
     }
 
     .form-control {
         width: 100%;
         padding: 12px 15px;
-        border: 2px solid #e3e6f0;
+        border: 2px solid #eaeaea;
         border-radius: 10px;
         font-size: 0.95rem;
         transition: all 0.3s;
@@ -178,17 +292,62 @@
     }
 
     .form-control:focus {
-        border-color: var(--reg-primary);
-        box-shadow: 0 0 0 0.2rem rgba(245, 87, 108, 0.25);
+        border-color: var(--gold-primary);
+        box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
         outline: none;
     }
 
     .form-control.has-error {
-        border-color: var(--reg-primary);
+        border-color: var(--error-red);
     }
 
+    .form-control.has-success {
+        border-color: var(--success-green);
+    }
+
+    /* Input Groups */
+    .input-group {
+        display: flex;
+        gap: 10px;
+    }
+
+    .input-group .form-control {
+        flex: 1;
+    }
+
+    .input-group-prepend {
+        flex: 0 0 auto;
+    }
+
+    .input-group-prepend .form-control {
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+    }
+
+    .input-group-append {
+        position: relative;
+        flex: 0 0 auto;
+    }
+
+    .toggle-password {
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        color: var(--gray-medium);
+        cursor: pointer;
+        padding: 5px;
+    }
+
+    .toggle-password:hover {
+        color: var(--navy-primary);
+    }
+
+    /* Error Messages */
     .error-message {
-        color: var(--reg-primary);
+        color: var(--error-red);
         font-size: 0.8rem;
         margin-top: 5px;
         display: none;
@@ -198,56 +357,78 @@
         display: block;
     }
 
+    .success-message {
+        color: var(--success-green);
+        font-size: 0.8rem;
+        margin-top: 5px;
+        display: none;
+    }
+
+    .success-message.show {
+        display: block;
+    }
+
     /* Password Strength Meter */
     .password-strength {
         margin-top: 10px;
     }
 
-    .strength-bar {
-        height: 5px;
-        background: #e3e6f0;
-        border-radius: 3px;
+    .strength-meter {
+        height: 4px;
+        background: #eaeaea;
+        border-radius: 2px;
         overflow: hidden;
         margin-bottom: 5px;
     }
 
     .strength-fill {
         height: 100%;
-        width: 0;
-        border-radius: 3px;
+        width: 0%;
+        border-radius: 2px;
         transition: all 0.3s;
     }
 
     .strength-text {
         font-size: 0.75rem;
-        color: #6e707e;
+        color: var(--gray-medium);
     }
 
     /* File Upload */
     .file-upload-area {
-        border: 2px dashed #e3e6f0;
+        border: 2px dashed #eaeaea;
         border-radius: 10px;
-        padding: 40px;
+        padding: 30px;
         text-align: center;
         cursor: pointer;
         transition: all 0.3s;
-        background: #f8f9fc;
+        background: var(--gray-light);
     }
 
     .file-upload-area:hover {
-        border-color: var(--reg-primary);
-        background: rgba(245, 87, 108, 0.05);
+        border-color: var(--gold-primary);
+        background: rgba(212, 175, 55, 0.05);
     }
 
     .file-upload-area.drag-over {
-        border-color: var(--reg-primary);
-        background: rgba(245, 87, 108, 0.1);
+        border-color: var(--gold-primary);
+        background: rgba(212, 175, 55, 0.1);
     }
 
     .upload-icon {
         font-size: 48px;
-        color: #dddfeb;
+        color: var(--gold-primary);
         margin-bottom: 15px;
+    }
+
+    .upload-text h5 {
+        color: var(--navy-primary);
+        margin-bottom: 5px;
+    }
+
+    .upload-text p {
+        color: var(--gray-medium);
+        margin: 5px 0;
+        font-size: 0.9rem;
     }
 
     .file-preview {
@@ -261,8 +442,9 @@
         position: relative;
         width: 120px;
         height: 120px;
-        border-radius: 10px;
+        border-radius: 8px;
         overflow: hidden;
+        border: 1px solid #eaeaea;
     }
 
     .file-preview-item img {
@@ -275,23 +457,42 @@
         position: absolute;
         top: 5px;
         right: 5px;
-        background: rgba(231, 74, 59, 0.9);
+        background: var(--error-red);
         color: white;
         border: none;
         border-radius: 50%;
-        width: 25px;
-        height: 25px;
+        width: 24px;
+        height: 24px;
         display: flex;
         align-items: center;
         justify-content: center;
         cursor: pointer;
         font-size: 12px;
+        opacity: 0.9;
+    }
+
+    .remove-file:hover {
+        opacity: 1;
+    }
+
+    /* Kuwait Specific Fields */
+    .phone-input-group {
+        display: flex;
+        gap: 10px;
+    }
+
+    .country-code {
+        flex: 0 0 120px;
+    }
+
+    .phone-number {
+        flex: 1;
     }
 
     /* Terms & Conditions */
     .terms-box {
-        background: #f8f9fc;
-        border: 1px solid #e3e6f0;
+        background: var(--gray-light);
+        border: 1px solid #eaeaea;
         border-radius: 10px;
         padding: 20px;
         max-height: 200px;
@@ -299,10 +500,35 @@
         margin-bottom: 20px;
     }
 
-    .terms-box p {
+    .terms-box h6 {
+        color: var(--navy-primary);
         margin-bottom: 15px;
-        color: #5a5c69;
+    }
+
+    .terms-box p {
+        color: var(--gray-dark);
         line-height: 1.6;
+        margin-bottom: 10px;
+        font-size: 0.9rem;
+    }
+
+    .form-check {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+
+    .form-check-input {
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
+    }
+
+    .form-check-label {
+        color: var(--gray-dark);
+        font-size: 0.9rem;
+        cursor: pointer;
     }
 
     /* Form Actions */
@@ -310,7 +536,7 @@
         display: flex;
         justify-content: space-between;
         padding-top: 30px;
-        border-top: 1px solid #e3e6f0;
+        border-top: 1px solid #eaeaea;
         margin-top: 30px;
     }
 
@@ -325,53 +551,156 @@
         align-items: center;
         justify-content: center;
         gap: 8px;
+        font-size: 0.95rem;
+        min-width: 150px;
     }
 
     .btn-prev {
-        background: #f8f9fc;
-        color: #5a5c69;
-        border: 1px solid #e3e6f0;
+        background: white;
+        color: var(--navy-primary);
+        border: 2px solid var(--navy-primary);
     }
 
     .btn-prev:hover {
-        background: #e3e6f0;
+        background: var(--navy-primary);
+        color: white;
     }
 
     .btn-next {
-        background: linear-gradient(135deg, var(--reg-primary) 0%, var(--reg-secondary) 100%);
+        background: linear-gradient(135deg, var(--navy-primary) 0%, #1a2c4f 100%);
         color: white;
     }
 
     .btn-next:hover {
+        background: linear-gradient(135deg, #1a2c4f 0%, var(--navy-primary) 100%);
         transform: translateY(-2px);
-        box-shadow: 0 7px 14px rgba(245, 87, 108, 0.2);
+        box-shadow: 0 5px 15px rgba(10, 25, 47, 0.3);
     }
 
     .btn-submit {
-        background: var(--reg-success);
+        background: linear-gradient(135deg, var(--gold-primary) 0%, var(--gold-dark) 100%);
         color: white;
         width: 100%;
     }
 
     .btn-submit:hover {
-        background: #2ecc71;
+        background: linear-gradient(135deg, var(--gold-dark) 0%, var(--gold-primary) 100%);
         transform: translateY(-2px);
-        box-shadow: 0 7px 14px rgba(46, 204, 113, 0.2);
+        box-shadow: 0 5px 15px rgba(212, 175, 55, 0.3);
     }
 
-    /* Responsive */
+    /* Review Summary */
+    .review-summary {
+        background: var(--gray-light);
+        border-radius: 10px;
+        padding: 25px;
+    }
+
+    .review-section {
+        margin-bottom: 25px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid #eaeaea;
+    }
+
+    .review-section:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+    }
+
+    .review-section h5 {
+        color: var(--navy-primary);
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .review-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    .review-item {
+        flex: 1;
+        min-width: 250px;
+    }
+
+    .review-item strong {
+        color: var(--navy-primary);
+        display: block;
+        margin-bottom: 5px;
+        font-size: 0.9rem;
+    }
+
+    .review-item span {
+        color: var(--gray-dark);
+        font-size: 0.95rem;
+    }
+
+    /* Success Message */
+    .success-message-container {
+        text-align: center;
+        padding: 60px 40px;
+    }
+
+    .success-icon {
+        font-size: 80px;
+        color: var(--success-green);
+        margin-bottom: 20px;
+    }
+
+    .success-message-container h3 {
+        color: var(--navy-primary);
+        margin-bottom: 15px;
+    }
+
+    .success-message-container p {
+        color: var(--gray-medium);
+        margin-bottom: 30px;
+        max-width: 500px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    /* Responsive Design */
     @media (max-width: 768px) {
-        .progress-steps::before {
-            left: 30px;
-            right: 30px;
+        .vendor-registration {
+            padding: 20px 10px;
         }
 
-        .form-section {
+        .registration-wrapper {
+            border-radius: 15px;
+        }
+
+        .registration-header {
+            padding: 30px 20px;
+        }
+
+        .registration-header h1 {
+            font-size: 2rem;
+        }
+
+        .progress-steps-container {
             padding: 20px;
         }
 
-        .form-col {
-            min-width: 100%;
+        .progress-steps {
+            margin: 0;
+        }
+
+        .step-circle {
+            width: 50px;
+            height: 50px;
+        }
+
+        .form-container {
+            padding: 25px;
+        }
+
+        .form-grid {
+            grid-template-columns: 1fr;
+            gap: 15px;
         }
 
         .form-actions {
@@ -382,191 +711,238 @@
         .form-actions .btn {
             width: 100%;
         }
+
+        .phone-input-group {
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .country-code {
+            width: 100%;
+        }
     }
 
-    /* Success Message */
-    .success-message {
-        text-align: center;
-        padding: 60px 40px;
+    /* Loading Spinner */
+    .loading-spinner {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        border-top-color: white;
+        animation: spin 1s ease-in-out infinite;
     }
 
-    .success-icon {
-        font-size: 80px;
-        color: var(--reg-success);
-        margin-bottom: 20px;
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+
+    /* Form Note */
+    .form-note {
+        background: rgba(212, 175, 55, 0.1);
+        border-left: 3px solid var(--gold-primary);
+        padding: 15px;
+        border-radius: 5px;
+        margin-top: 20px;
+        font-size: 0.9rem;
+        color: var(--gray-dark);
+    }
+
+    /* Help Text */
+    .help-text {
+        font-size: 0.8rem;
+        color: var(--gray-medium);
+        margin-top: 5px;
+        display: block;
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="registration-container">
-    <!-- Hero Section -->
-    <div class="registration-hero text-center">
-        <h1 class="mb-3">Become a Vendor on SooqKabeer</h1>
-        <p class="lead mb-0">Join Kuwait's premier B2B wholesale marketplace. Grow your business with us.</p>
-    </div>
-
-    <!-- Registration Form -->
-    <div class="registration-card">
-        <!-- Progress Steps -->
-        <div class="progress-steps">
-            <div class="step active" data-step="1">
-                <div class="step-circle">
-                    <i class="fas fa-user"></i>
+<div class="vendor-registration">
+    <div class="registration-wrapper">
+        <!-- Header Section -->
+        <div class="registration-header">
+            <h1>Join <span class="gold-text">SooqKabeer</span> B2B Marketplace</h1>
+            <p class="registration-subtitle">
+                Register your business on Kuwait's premier wholesale platform. Reach thousands of buyers and grow your business.
+            </p>
+            <div class="header-badges">
+                <div class="badge">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Secure Registration</span>
                 </div>
-                <span class="step-label">Account Info</span>
-            </div>
-            <div class="step" data-step="2">
-                <div class="step-circle">
-                    <i class="fas fa-store"></i>
+                <div class="badge">
+                    <i class="fas fa-clock"></i>
+                    <span>3-5 Day Verification</span>
                 </div>
-                <span class="step-label">Business Info</span>
-            </div>
-            <div class="step" data-step="3">
-                <div class="step-circle">
-                    <i class="fas fa-file-alt"></i>
+                <div class="badge">
+                    <i class="fas fa-users"></i>
+                    <span>Access 10,000+ Buyers</span>
                 </div>
-                <span class="step-label">Documents</span>
-            </div>
-            <div class="step" data-step="4">
-                <div class="step-circle">
-                    <i class="fas fa-check-circle"></i>
-                </div>
-                <span class="step-label">Review & Submit</span>
             </div>
         </div>
 
-        <form id="vendorRegForm" action="/vendor/register" method="POST" enctype="multipart/form-data">
-            <!-- Step 1: Account Information -->
-            <div class="form-section active" id="section1">
-                <div class="section-header">
-                    <h3><i class="fas fa-user text-primary me-2"></i> Account Information</h3>
-                    <p>Create your vendor account with personal details</p>
+        <!-- Progress Steps -->
+        <div class="progress-steps-container">
+            <div class="progress-steps">
+                <div class="progress-bar" id="progressBar"></div>
+                <div class="step active" data-step="1">
+                    <div class="step-circle">
+                        <i class="fas fa-user step-icon"></i>
+                    </div>
+                    <span class="step-label">Account Info</span>
                 </div>
+                <div class="step" data-step="2">
+                    <div class="step-circle">
+                        <i class="fas fa-store step-icon"></i>
+                    </div>
+                    <span class="step-label">Business Details</span>
+                </div>
+                <div class="step" data-step="3">
+                    <div class="step-circle">
+                        <i class="fas fa-file-alt step-icon"></i>
+                    </div>
+                    <span class="step-label">Documents</span>
+                </div>
+                <div class="step" data-step="4">
+                    <div class="step-circle">
+                        <i class="fas fa-check-circle step-icon"></i>
+                    </div>
+                    <span class="step-label">Review & Submit</span>
+                </div>
+            </div>
+        </div>
 
-                <div class="form-row">
-                    <div class="form-col">
+        <!-- Registration Form -->
+        <div class="form-container">
+            <form id="vendorRegForm" action="/vendor/register" method="POST" enctype="multipart/form-data">
+                <!-- Step 1: Account Information -->
+                <div class="form-section active" id="section1">
+                    <div class="section-header">
+                        <h3><i class="fas fa-user text-primary"></i> Account Information</h3>
+                        <p>Create your personal account to manage your business profile</p>
+                    </div>
+
+                    <div class="form-grid">
                         <div class="form-group">
                             <label class="form-label">
-                                Full Name <span class="required">*</span>
+                                Full Name <span class="required-star">*</span>
                             </label>
                             <input type="text" name="name" class="form-control" 
-                                   placeholder="Example: Ahmed Al-Salem" required
+                                   placeholder="Enter your full name" required
                                    data-validation="name">
                             <div class="error-message" id="name-error"></div>
                         </div>
-                    </div>
-                    
-                    <div class="form-col">
+
                         <div class="form-group">
                             <label class="form-label">
-                                Email Address <span class="required">*</span>
+                                Email Address <span class="required-star">*</span>
                             </label>
                             <input type="email" name="email" class="form-control" 
-                                   placeholder="ahmed@example.com" required
+                                   placeholder="business@example.com" required
                                    data-validation="email">
                             <div class="error-message" id="email-error"></div>
                         </div>
-                    </div>
-                </div>
 
-                <div class="form-row">
-                    <div class="form-col">
                         <div class="form-group">
                             <label class="form-label">
-                                Phone Number <span class="required">*</span>
+                                Mobile Number <span class="required-star">*</span>
                             </label>
-                            <div class="input-group">
-                                <div style="flex: 0 0 100px;">
-                                    <select name="country_code" class="form-control">
-                                        <option value="+965">+965 (Kuwait)</option>
-                                        <option value="+966">+966 (KSA)</option>
-                                        <option value="+971">+971 (UAE)</option>
-                                        <option value="+973">+973 (Bahrain)</option>
+                            <div class="phone-input-group">
+                                <div class="country-code">
+                                    <select name="country_code" class="form-control" disabled>
+                                        <option value="+965" selected>+965 (Kuwait)</option>
                                     </select>
                                 </div>
-                                <input type="tel" name="phone" class="form-control" 
-                                       placeholder="5XX XXXXXX" required
-                                       data-validation="phone">
+                                <div class="phone-number">
+                                    <input type="tel" name="phone" class="form-control" 
+                                           placeholder="5XX XXXXXX" pattern="[569][0-9]{7}" required
+                                           data-validation="phone">
+                                </div>
                             </div>
+                            <small class="help-text">Enter your Kuwaiti mobile number starting with 5, 6, or 9</small>
                             <div class="error-message" id="phone-error"></div>
                         </div>
-                    </div>
-                    
-                    <div class="form-col">
+
                         <div class="form-group">
                             <label class="form-label">
-                                Nationality
+                                Nationality <span class="required-star">*</span>
                             </label>
-                            <select name="nationality" class="form-control">
+                            <select name="nationality" class="form-control" required>
                                 <option value="">Select Nationality</option>
                                 <option value="kuwaiti">Kuwaiti</option>
                                 <option value="saudi">Saudi</option>
                                 <option value="emirati">Emirati</option>
-                                <option value="other_arab">Other Arab</option>
+                                <option value="other_arab">Other Arab National</option>
                                 <option value="asian">Asian</option>
                                 <option value="european">European</option>
                                 <option value="other">Other</option>
                             </select>
                         </div>
-                    </div>
-                </div>
 
-                <div class="form-row">
-                    <div class="form-col">
                         <div class="form-group">
                             <label class="form-label">
-                                Password <span class="required">*</span>
+                                Password <span class="required-star">*</span>
                             </label>
-                            <input type="password" name="password" id="password" class="form-control" 
-                                   placeholder="Minimum 8 characters" required
-                                   data-validation="password">
+                            <div class="input-group">
+                                <input type="password" name="password" id="password" class="form-control" 
+                                       placeholder="Minimum 8 characters" required
+                                       data-validation="password">
+                                <button type="button" class="toggle-password" onclick="togglePassword('password')">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
                             <div class="password-strength">
-                                <div class="strength-bar">
-                                    <div class="strength-fill" id="strength-fill"></div>
+                                <div class="strength-meter">
+                                    <div class="strength-fill" id="strengthFill"></div>
                                 </div>
-                                <div class="strength-text" id="strength-text">Password strength</div>
+                                <div class="strength-text" id="strengthText">Password strength</div>
                             </div>
                             <div class="error-message" id="password-error"></div>
                         </div>
-                    </div>
-                    
-                    <div class="form-col">
+
                         <div class="form-group">
                             <label class="form-label">
-                                Confirm Password <span class="required">*</span>
+                                Confirm Password <span class="required-star">*</span>
                             </label>
-                            <input type="password" name="confirm_password" id="confirm_password" 
-                                   class="form-control" placeholder="Re-enter your password" required>
-                            <div class="error-message" id="confirm-password-error"></div>
+                            <div class="input-group">
+                                <input type="password" name="confirm_password" id="confirm_password" 
+                                       class="form-control" placeholder="Re-enter your password" required
+                                       onkeyup="validatePasswords()">
+                                <button type="button" class="toggle-password" onclick="togglePassword('confirm_password')">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                            <div class="error-message" id="passError"></div>
                         </div>
                     </div>
-                </div>
-            </div>
 
-            <!-- Step 2: Business Information -->
-            <div class="form-section" id="section2">
-                <div class="section-header">
-                    <h3><i class="fas fa-store text-primary me-2"></i> Business Information</h3>
-                    <p>Tell us about your business</p>
+                    <div class="form-note">
+                        <i class="fas fa-info-circle"></i> Your account will be used to manage your business profile, products, and orders on SooqKabeer.
+                    </div>
                 </div>
 
-                <div class="form-row">
-                    <div class="form-col">
+                <!-- Step 2: Business Information -->
+                <div class="form-section" id="section2">
+                    <div class="section-header">
+                        <h3><i class="fas fa-store text-primary"></i> Business Information</h3>
+                        <p>Tell us about your business for verification</p>
+                    </div>
+
+                    <div class="form-grid">
                         <div class="form-group">
                             <label class="form-label">
-                                Business Name <span class="required">*</span>
+                                Business Name <span class="required-star">*</span>
                             </label>
                             <input type="text" name="business_name" class="form-control" 
-                                   placeholder="Example: Al-Salem Trading Co." required>
-                            <small class="text-muted">This will be displayed to customers</small>
+                                   placeholder="Al-Salem Trading Company" required>
+                            <small class="help-text">Official registered business name</small>
                         </div>
-                    </div>
-                    
-                    <div class="form-col">
+
                         <div class="form-group">
                             <label class="form-label">
-                                Business Type <span class="required">*</span>
+                                Business Type <span class="required-star">*</span>
                             </label>
                             <select name="business_type" class="form-control" required>
                                 <option value="">Select Business Type</option>
@@ -579,22 +955,16 @@
                                 <option value="service_provider">Service Provider</option>
                             </select>
                         </div>
-                    </div>
-                </div>
 
-                <div class="form-row">
-                    <div class="form-col">
                         <div class="form-group">
                             <label class="form-label">
-                                Commercial Registration Number <span class="required">*</span>
+                                Commercial Registration (CR) Number <span class="required-star">*</span>
                             </label>
                             <input type="text" name="cr_number" class="form-control" 
                                    placeholder="e.g., 1234567" required>
-                            <small class="text-muted">Required for business verification</small>
+                            <small class="help-text">Required for business verification</small>
                         </div>
-                    </div>
-                    
-                    <div class="form-col">
+
                         <div class="form-group">
                             <label class="form-label">
                                 Tax/VAT Number
@@ -603,14 +973,17 @@
                                    placeholder="VAT/Tax identification number">
                         </div>
                     </div>
-                </div>
 
-                <div class="form-group">
-                    <label class="form-label">
-                        Business Address <span class="required">*</span>
-                    </label>
-                    <div class="form-row">
-                        <div class="form-col">
+                    <div class="section-header">
+                        <h3><i class="fas fa-map-marker-alt text-primary"></i> Business Location</h3>
+                        <p>Enter your business address in Kuwait</p>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">
+                                Governorate <span class="required-star">*</span>
+                            </label>
                             <select name="governorate" class="form-control" required>
                                 <option value="">Select Governorate</option>
                                 <option value="hawalli">Hawalli</option>
@@ -621,102 +994,122 @@
                                 <option value="ahmadi">Al Ahmadi</option>
                             </select>
                         </div>
-                        <div class="form-col">
-                            <input type="text" name="block" class="form-control" placeholder="Block Number" required>
+
+                        <div class="form-group">
+                            <label class="form-label">
+                                Block Number <span class="required-star">*</span>
+                            </label>
+                            <input type="text" name="block" class="form-control" 
+                                   placeholder="Block Number" required>
                         </div>
-                        <div class="form-col">
-                            <input type="text" name="street" class="form-control" placeholder="Street Name" required>
+
+                        <div class="form-group">
+                            <label class="form-label">
+                                Street Name <span class="required-star">*</span>
+                            </label>
+                            <input type="text" name="street" class="form-control" 
+                                   placeholder="Street Name" required>
                         </div>
-                    </div>
-                    <div class="form-row mt-3">
-                        <div class="form-col">
-                            <input type="text" name="building" class="form-control" placeholder="Building Name/No." required>
+
+                        <div class="form-group">
+                            <label class="form-label">
+                                Building Name/Number <span class="required-star">*</span>
+                            </label>
+                            <input type="text" name="building" class="form-control" 
+                                   placeholder="Building Name/No." required>
                         </div>
-                        <div class="form-col">
+
+                        <div class="form-group">
+                            <label class="form-label">
+                                Floor Number
+                            </label>
                             <input type="text" name="floor" class="form-control" placeholder="Floor No.">
                         </div>
-                        <div class="form-col">
+
+                        <div class="form-group">
+                            <label class="form-label">
+                                Unit/Office Number
+                            </label>
                             <input type="text" name="unit" class="form-control" placeholder="Unit/Office No.">
                         </div>
                     </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Business Description</label>
+                        <textarea name="business_description" class="form-control" rows="4" 
+                                  placeholder="Describe your business, products, services, and years of experience..."></textarea>
+                        <small class="help-text">This will appear on your vendor profile</small>
+                    </div>
                 </div>
 
-                <div class="form-group">
-                    <label class="form-label">Business Description</label>
-                    <textarea name="business_description" class="form-control" rows="4" 
-                              placeholder="Describe your business, products, and services..."></textarea>
-                    <small class="text-muted">This will appear on your vendor profile</small>
-                </div>
-            </div>
+                <!-- Step 3: Documents Upload -->
+                <div class="form-section" id="section3">
+                    <div class="section-header">
+                        <h3><i class="fas fa-file-alt text-primary"></i> Required Documents</h3>
+                        <p>Upload required documents for verification. All documents must be clear and valid.</p>
+                    </div>
 
-            <!-- Step 3: Documents -->
-            <div class="form-section" id="section3">
-                <div class="section-header">
-                    <h3><i class="fas fa-file-alt text-primary me-2"></i> Required Documents</h3>
-                    <p>Upload required documents for verification</p>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-col">
+                    <div class="form-grid">
                         <div class="form-group">
                             <label class="form-label">
-                                Civil ID (Front) <span class="required">*</span>
+                                Civil ID (Front) <span class="required-star">*</span>
                             </label>
-                            <div class="file-upload-area" id="civilIdUpload">
+                            <div class="file-upload-area" id="civilIdFrontUpload">
                                 <div class="upload-icon">
                                     <i class="fas fa-id-card"></i>
                                 </div>
-                                <h5>Upload Civil ID Front</h5>
-                                <p class="text-muted">Click to upload or drag and drop</p>
-                                <p class="text-muted">PNG, JPG, PDF up to 5MB</p>
+                                <div class="upload-text">
+                                    <h5>Upload Civil ID Front</h5>
+                                    <p>Click to upload or drag and drop</p>
+                                    <p>PNG, JPG, PDF up to 5MB</p>
+                                </div>
                                 <input type="file" name="civil_id_front" class="d-none" 
                                        accept=".png,.jpg,.jpeg,.pdf" required>
                             </div>
-                            <div class="file-preview" id="civilIdPreview"></div>
+                            <div class="file-preview" id="civilIdFrontPreview"></div>
+                            <div class="error-message" id="civil-id-front-error"></div>
                         </div>
-                    </div>
-                    
-                    <div class="form-col">
+
                         <div class="form-group">
                             <label class="form-label">
-                                Civil ID (Back) <span class="required">*</span>
+                                Civil ID (Back) <span class="required-star">*</span>
                             </label>
                             <div class="file-upload-area" id="civilIdBackUpload">
                                 <div class="upload-icon">
                                     <i class="fas fa-id-card"></i>
                                 </div>
-                                <h5>Upload Civil ID Back</h5>
-                                <p class="text-muted">Click to upload or drag and drop</p>
-                                <p class="text-muted">PNG, JPG, PDF up to 5MB</p>
+                                <div class="upload-text">
+                                    <h5>Upload Civil ID Back</h5>
+                                    <p>Click to upload or drag and drop</p>
+                                    <p>PNG, JPG, PDF up to 5MB</p>
+                                </div>
                                 <input type="file" name="civil_id_back" class="d-none" 
                                        accept=".png,.jpg,.jpeg,.pdf" required>
                             </div>
                             <div class="file-preview" id="civilIdBackPreview"></div>
+                            <div class="error-message" id="civil-id-back-error"></div>
                         </div>
-                    </div>
-                </div>
 
-                <div class="form-row">
-                    <div class="form-col">
                         <div class="form-group">
                             <label class="form-label">
-                                Commercial License <span class="required">*</span>
+                                Commercial License (CR) <span class="required-star">*</span>
                             </label>
                             <div class="file-upload-area" id="licenseUpload">
                                 <div class="upload-icon">
                                     <i class="fas fa-file-contract"></i>
                                 </div>
-                                <h5>Upload Commercial License</h5>
-                                <p class="text-muted">Click to upload or drag and drop</p>
-                                <p class="text-muted">PNG, JPG, PDF up to 10MB</p>
+                                <div class="upload-text">
+                                    <h5>Upload Commercial License</h5>
+                                    <p>Click to upload or drag and drop</p>
+                                    <p>PNG, JPG, PDF up to 10MB</p>
+                                </div>
                                 <input type="file" name="commercial_license" class="d-none" 
                                        accept=".png,.jpg,.jpeg,.pdf" required>
                             </div>
                             <div class="file-preview" id="licensePreview"></div>
+                            <div class="error-message" id="license-error"></div>
                         </div>
-                    </div>
-                    
-                    <div class="form-col">
+
                         <div class="form-group">
                             <label class="form-label">
                                 Additional Documents (Optional)
@@ -725,529 +1118,377 @@
                                 <div class="upload-icon">
                                     <i class="fas fa-folder-plus"></i>
                                 </div>
-                                <h5>Upload Additional Documents</h5>
-                                <p class="text-muted">Trade certificate, VAT certificate, etc.</p>
-                                <p class="text-muted">Multiple files allowed</p>
+                                <div class="upload-text">
+                                    <h5>Additional Documents</h5>
+                                    <p>Trade certificate, VAT certificate, etc.</p>
+                                    <p>Multiple files allowed</p>
+                                </div>
                                 <input type="file" name="additional_docs[]" class="d-none" 
                                        accept=".png,.jpg,.jpeg,.pdf,.doc,.docx" multiple>
                             </div>
                             <div class="file-preview" id="additionalPreview"></div>
                         </div>
                     </div>
-                </div>
-            </div>
 
-            <!-- Step 4: Review & Submit -->
-            <div class="form-section" id="section4">
-                <div class="section-header">
-                    <h3><i class="fas fa-check-circle text-primary me-2"></i> Review & Submit</h3>
-                    <p>Review your information before submission</p>
+                    <div class="form-note">
+                        <i class="fas fa-exclamation-circle"></i> All documents will be securely stored and only used for verification purposes. Verification typically takes 3-5 business days.
+                    </div>
                 </div>
 
-                <div class="review-summary">
-                    <div class="review-section mb-4">
-                        <h5 class="mb-3"><i class="fas fa-user me-2"></i> Account Information</h5>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <p><strong>Name:</strong> <span id="review-name">-</span></p>
-                                <p><strong>Email:</strong> <span id="review-email">-</span></p>
+                <!-- Step 4: Review & Submit -->
+                <div class="form-section" id="section4">
+                    <div class="section-header">
+                        <h3><i class="fas fa-check-circle text-primary"></i> Review & Submit Application</h3>
+                        <p>Please review all information before submitting your application</p>
+                    </div>
+
+                    <div class="review-summary">
+                        <!-- Account Information Review -->
+                        <div class="review-section">
+                            <h5><i class="fas fa-user"></i> Account Information</h5>
+                            <div class="review-row">
+                                <div class="review-item">
+                                    <strong>Full Name</strong>
+                                    <span id="review-name">-</span>
+                                </div>
+                                <div class="review-item">
+                                    <strong>Email Address</strong>
+                                    <span id="review-email">-</span>
+                                </div>
+                                <div class="review-item">
+                                    <strong>Mobile Number</strong>
+                                    <span id="review-phone">-</span>
+                                </div>
+                                <div class="review-item">
+                                    <strong>Nationality</strong>
+                                    <span id="review-nationality">-</span>
+                                </div>
                             </div>
-                            <div class="col-md-6">
-                                <p><strong>Phone:</strong> <span id="review-phone">-</span></p>
-                                <p><strong>Nationality:</strong> <span id="review-nationality">-</span></p>
+                        </div>
+
+                        <!-- Business Information Review -->
+                        <div class="review-section">
+                            <h5><i class="fas fa-store"></i> Business Information</h5>
+                            <div class="review-row">
+                                <div class="review-item">
+                                    <strong>Business Name</strong>
+                                    <span id="review-business-name">-</span>
+                                </div>
+                                <div class="review-item">
+                                    <strong>Business Type</strong>
+                                    <span id="review-business-type">-</span>
+                                </div>
+                                <div class="review-item">
+                                    <strong>CR Number</strong>
+                                    <span id="review-cr-number">-</span>
+                                </div>
+                                <div class="review-item">
+                                    <strong>VAT Number</strong>
+                                    <span id="review-vat-number">-</span>
+                                </div>
+                            </div>
+                            <div class="review-row">
+                                <div class="review-item">
+                                    <strong>Address</strong>
+                                    <span id="review-address">-</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Documents Review -->
+                        <div class="review-section">
+                            <h5><i class="fas fa-file-alt"></i> Documents</h5>
+                            <div class="review-row">
+                                <div class="review-item">
+                                    <strong>Civil ID Front</strong>
+                                    <span id="review-civil-id-front">Not uploaded</span>
+                                </div>
+                                <div class="review-item">
+                                    <strong>Civil ID Back</strong>
+                                    <span id="review-civil-id-back">Not uploaded</span>
+                                </div>
+                                <div class="review-item">
+                                    <strong>Commercial License</strong>
+                                    <span id="review-license">Not uploaded</span>
+                                </div>
+                                <div class="review-item">
+                                    <strong>Additional Documents</strong>
+                                    <span id="review-additional">0 files</span>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="review-section mb-4">
-                        <h5 class="mb-3"><i class="fas fa-store me-2"></i> Business Information</h5>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <p><strong>Business Name:</strong> <span id="review-business-name">-</span></p>
-                                <p><strong>Business Type:</strong> <span id="review-business-type">-</span></p>
-                            </div>
-                            <div class="col-md-6">
-                                <p><strong>CR Number:</strong> <span id="review-cr-number">-</span></p>
-                                <p><strong>Address:</strong> <span id="review-address">-</span></p>
-                            </div>
-                        </div>
+                    <!-- Terms & Conditions -->
+                    <div class="terms-box">
+                        <h6>Terms & Conditions - SooqKabeer Vendor Agreement</h6>
+                        <p>By registering as a vendor, you agree to:</p>
+                        <p>1. Provide accurate and truthful information about your business.</p>
+                        <p>2. Maintain the quality of products/services as described.</p>
+                        <p>3. Comply with all Kuwaiti laws and regulations.</p>
+                        <p>4. Pay applicable commission fees (5-15%) on successful transactions.</p>
+                        <p>5. Resolve customer disputes professionally within 48 hours.</p>
+                        <p>6. Keep all business licenses and documents valid and updated.</p>
+                        <p>7. Accept electronic payments through SooqKabeer's secure gateway.</p>
+                        <p>8. Maintain minimum stock levels as committed to buyers.</p>
                     </div>
 
-                    <div class="review-section mb-4">
-                        <h5 class="mb-3"><i class="fas fa-file-alt me-2"></i> Documents</h5>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <p><strong>Civil ID:</strong> <span id="review-civil-id">Ready</span></p>
-                                <p><strong>Commercial License:</strong> <span id="review-license">Ready</span></p>
-                            </div>
-                            <div class="col-md-6">
-                                <p><strong>Additional Docs:</strong> <span id="review-additional">0 files</span></p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Terms & Conditions -->
-                <div class="terms-box">
-                    <h6>Terms & Conditions</h6>
-                    <p>By registering as a vendor on SooqKabeer, you agree to:</p>
-                    <p>1. Provide accurate and truthful information about your business.</p>
-                    <p>2. Maintain product quality and timely delivery as promised.</p>
-                    <p>3. Comply with Kuwaiti laws and regulations.</p>
-                    <p>4. Pay applicable commission fees on successful transactions.</p>
-                    <p>5. Resolve customer disputes professionally and promptly.</p>
-                    <p>6. Maintain proper documentation and licenses as required.</p>
-                </div>
-
-                <div class="form-group">
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" name="agree_terms" id="agreeTerms" required>
                         <label class="form-check-label" for="agreeTerms">
-                            I agree to the Terms & Conditions and understand that my application will be reviewed within 3-5 business days.
+                            I have read and agree to the Terms & Conditions. I understand that my application will be reviewed within 3-5 business days and I may be contacted for additional information.
                         </label>
                     </div>
                 </div>
-            </div>
 
-            <!-- Form Actions -->
-            <div class="form-actions">
-                <button type="button" class="btn btn-prev" id="prevBtn">
-                    <i class="fas fa-arrow-left me-2"></i> Previous
-                </button>
-                <button type="button" class="btn btn-next" id="nextBtn">
-                    Next <i class="fas fa-arrow-right ms-2"></i>
-                </button>
-                <button type="submit" class="btn btn-submit" id="submitBtn" style="display: none;">
-                    <i class="fas fa-paper-plane me-2"></i> Submit Application
-                </button>
-            </div>
-        </form>
-    </div>
+                <!-- Form Actions -->
+                <div class="form-actions">
+                    <button type="button" class="btn btn-prev" id="prevBtn" onclick="prevStep()">
+                        <i class="fas fa-arrow-left"></i> Previous
+                    </button>
+                    <button type="button" class="btn btn-next" id="nextBtn" onclick="nextStep()">
+                        Next <i class="fas fa-arrow-right"></i>
+                    </button>
+                    <button type="submit" class="btn btn-submit" id="submitBtn">
+                        <i class="fas fa-paper-plane"></i> Submit Application
+                    </button>
+                </div>
+            </form>
+        </div>
 
-    <!-- Already have account -->
-    <div class="text-center mt-4">
-        <p>Already have a vendor account? <a href="/vendor/login" class="text-primary">Login here</a></p>
+        <!-- Already have account -->
+        <div class="text-center py-4" style="background: #f8f9fa; border-top: 1px solid #eaeaea;">
+            <p style="margin: 0; color: #6c757d; font-size: 0.95rem;">
+                Already have a vendor account? 
+                <a href="/vendor/login" style="color: var(--gold-primary); font-weight: 600; text-decoration: none;">
+                    <i class="fas fa-sign-in-alt"></i> Login here
+                </a>
+            </p>
+        </div>
     </div>
 </div>
 {% endblock %}
 
 {% block scripts %}
 <script>
-    // Form State Management
+    // ============================================
+    // SOOQKABEER VENDOR REGISTRATION - SIMPLE WORKING VERSION
+    // ============================================
+
     let currentStep = 1;
     const totalSteps = 4;
-    const formData = {};
 
-    // Initialize form
-    function initForm() {
-        updateSteps();
-        setupEventListeners();
-        setupFileUploads();
-        setupPasswordStrength();
-        setupReviewUpdate();
-    }
+    // When page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('✅ Vendor Registration Form Loaded');
+        
+        // Make sure first step is visible
+        showStep(1);
+        
+        // Add click events to buttons
+        document.getElementById('nextBtn').onclick = nextStepHandler;
+        document.getElementById('prevBtn').onclick = prevStepHandler;
+        document.getElementById('submitBtn').onclick = submitFormHandler;
+        
+        // Password validation
+        document.getElementById('confirm_password').onkeyup = validatePasswords;
+        
+        // Toggle password visibility
+        document.querySelectorAll('.toggle-password').forEach(btn => {
+            btn.onclick = function() {
+                const fieldId = this.closest('.input-group').querySelector('input').id;
+                togglePassword(fieldId);
+            };
+        });
+        
+        // File upload click handlers
+        document.querySelectorAll('.file-upload-area').forEach(area => {
+            area.onclick = function() {
+                const fileInput = this.querySelector('input[type="file"]');
+                if (fileInput) fileInput.click();
+            };
+        });
+        
+        // File input change handlers
+        document.querySelectorAll('input[type="file"]').forEach(input => {
+            input.onchange = function() {
+                previewFile(this);
+            };
+        });
+        
+        // Update review when form changes
+        document.querySelectorAll('input, select, textarea').forEach(element => {
+            element.onchange = updateReview;
+            element.oninput = updateReview;
+        });
+    });
 
-    // Update step indicators
-    function updateSteps() {
-        // Update step circles
-        document.querySelectorAll('.step').forEach((step, index) => {
-            const stepNum = index + 1;
-            step.classList.remove('active', 'completed');
+    // ============================================
+    // STEP FUNCTIONS - SIMPLE
+    // ============================================
+
+    function showStep(stepNumber) {
+        // Hide all steps
+        for (let i = 1; i <= totalSteps; i++) {
+            const section = document.getElementById(`section${i}`);
+            const stepCircle = document.querySelector(`.step[data-step="${i}"]`);
             
-            if (stepNum === currentStep) {
-                step.classList.add('active');
-            } else if (stepNum < currentStep) {
-                step.classList.add('completed');
+            if (section) {
+                section.style.display = 'none';
+                section.classList.remove('active');
             }
-        });
-
-        // Show current section
-        document.querySelectorAll('.form-section').forEach(section => {
-            section.classList.remove('active');
-        });
-        document.getElementById(`section${currentStep}`).classList.add('active');
-
+            if (stepCircle) {
+                stepCircle.classList.remove('active', 'completed');
+            }
+        }
+        
+        // Show current step
+        const currentSection = document.getElementById(`section${stepNumber}`);
+        const currentStepCircle = document.querySelector(`.step[data-step="${stepNumber}"]`);
+        
+        if (currentSection) {
+            currentSection.style.display = 'block';
+            currentSection.classList.add('active');
+        }
+        if (currentStepCircle) {
+            currentStepCircle.classList.add('active');
+        }
+        
+        // Mark previous steps as completed
+        for (let i = 1; i < stepNumber; i++) {
+            const prevStep = document.querySelector(`.step[data-step="${i}"]`);
+            if (prevStep) {
+                prevStep.classList.add('completed');
+            }
+        }
+        
+        // Update progress bar
+        const progressBar = document.getElementById('progressBar');
+        if (progressBar) {
+            const percentage = ((stepNumber - 1) / (totalSteps - 1)) * 100;
+            progressBar.style.width = `${percentage}%`;
+        }
+        
         // Update buttons
-        document.getElementById('prevBtn').style.display = currentStep === 1 ? 'none' : 'inline-flex';
-        document.getElementById('nextBtn').style.display = currentStep === totalSteps ? 'none' : 'inline-flex';
-        document.getElementById('submitBtn').style.display = currentStep === totalSteps ? 'inline-flex' : 'none';
+        updateButtons(stepNumber);
+        
+        // Scroll to top
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    // Setup event listeners
-    function setupEventListeners() {
-        // Next button
-        document.getElementById('nextBtn').addEventListener('click', () => {
-            if (validateCurrentStep()) {
-                if (currentStep < totalSteps) {
-                    currentStep++;
-                    updateSteps();
-                    updateReview();
-                    scrollToTop();
-                }
-            }
-        });
-
-        // Previous button
-        document.getElementById('prevBtn').addEventListener('click', () => {
-            if (currentStep > 1) {
-                currentStep--;
-                updateSteps();
-                scrollToTop();
-            }
-        });
-
-        // Form submission
-        document.getElementById('vendorRegForm').addEventListener('submit', function(e) {
-            e.preventDefault();
+    function nextStepHandler() {
+        console.log('Next button clicked, current step:', currentStep);
+        
+        // Validate current step
+        if (!validateCurrentStep()) {
+            alert('Please fill all required fields correctly');
+            return;
+        }
+        
+        if (currentStep < totalSteps) {
+            currentStep++;
+            showStep(currentStep);
             
-            if (validateAllSteps()) {
-                // Show loading state
-                const submitBtn = document.getElementById('submitBtn');
-                const originalText = submitBtn.innerHTML;
-                submitBtn.innerHTML = '<span class="loading-spinner"></span> Processing...';
-                submitBtn.disabled = true;
-
-                // Submit form
-                setTimeout(() => {
-                    this.submit();
-                }, 1500);
+            // If reached last step, update review
+            if (currentStep === totalSteps) {
+                updateReview();
             }
-        });
-
-        // Live validation for inputs
-        document.querySelectorAll('[data-validation]').forEach(input => {
-            input.addEventListener('blur', validateField);
-            input.addEventListener('input', validateField);
-        });
-
-        // Update review on input
-        document.querySelectorAll('#vendorRegForm input, #vendorRegForm select, #vendorRegForm textarea').forEach(element => {
-            element.addEventListener('change', updateReview);
-            element.addEventListener('input', updateReview);
-        });
-    }
-
-    // Setup file uploads
-    function setupFileUploads() {
-        const uploads = [
-            { id: 'civilIdUpload', input: 'civil_id_front', preview: 'civilIdPreview' },
-            { id: 'civilIdBackUpload', input: 'civil_id_back', preview: 'civilIdBackPreview' },
-            { id: 'licenseUpload', input: 'commercial_license', preview: 'licensePreview' },
-            { id: 'additionalUpload', input: 'additional_docs[]', preview: 'additionalPreview' }
-        ];
-
-        uploads.forEach(upload => {
-            const area = document.getElementById(upload.id);
-            const input = area.querySelector('input[type="file"]');
-            const preview = document.getElementById(upload.preview);
-
-            area.addEventListener('click', () => input.click());
-
-            // Drag and drop
-            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-                area.addEventListener(eventName, preventDefaults, false);
-            });
-
-            ['dragenter', 'dragover'].forEach(eventName => {
-                area.addEventListener(eventName, () => area.classList.add('drag-over'), false);
-            });
-
-            ['dragleave', 'drop'].forEach(eventName => {
-                area.addEventListener(eventName, () => area.classList.remove('drag-over'), false);
-            });
-
-            area.addEventListener('drop', handleDrop, false);
-            input.addEventListener('change', handleFileSelect, false);
-
-            function handleDrop(e) {
-                const dt = e.dataTransfer;
-                const files = dt.files;
-                handleFiles(files);
-            }
-
-            function handleFileSelect(e) {
-                const files = e.target.files;
-                handleFiles(files);
-            }
-
-            function handleFiles(files) {
-                Array.from(files).forEach(file => {
-                    if (validateFile(file)) {
-                        previewFile(file);
-                    }
-                });
-            }
-
-            function validateFile(file) {
-                const maxSize = upload.input === 'commercial_license' ? 10 * 1024 * 1024 : 5 * 1024 * 1024;
-                const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'application/pdf'];
-                
-                if (!allowedTypes.includes(file.type)) {
-                    alert('Please upload only JPG, PNG, or PDF files');
-                    return false;
-                }
-                
-                if (file.size > maxSize) {
-                    alert(`File size must be less than ${maxSize / (1024 * 1024)}MB`);
-                    return false;
-                }
-                
-                return true;
-            }
-
-            function previewFile(file) {
-                const reader = new FileReader();
-                
-                reader.onload = function(e) {
-                    const previewItem = document.createElement('div');
-                    previewItem.className = 'file-preview-item';
-                    
-                    if (file.type.startsWith('image/')) {
-                        previewItem.innerHTML = `
-                            <img src="${e.target.result}" alt="${file.name}">
-                            <button type="button" class="remove-file" onclick="removeFile(this)">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        `;
-                    } else {
-                        previewItem.innerHTML = `
-                            <div class="d-flex align-items-center justify-content-center h-100 bg-light">
-                                <i class="fas fa-file-pdf fa-3x text-danger"></i>
-                            </div>
-                            <button type="button" class="remove-file" onclick="removeFile(this)">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        `;
-                    }
-                    
-                    preview.appendChild(previewItem);
-                };
-                
-                reader.readAsDataURL(file);
-            }
-        });
-    }
-
-    // Setup password strength meter
-    function setupPasswordStrength() {
-        const passwordInput = document.getElementById('password');
-        const strengthFill = document.getElementById('strength-fill');
-        const strengthText = document.getElementById('strength-text');
-
-        passwordInput.addEventListener('input', function() {
-            const password = this.value;
-            const strength = calculatePasswordStrength(password);
-            
-            strengthFill.style.width = `${strength.score * 25}%`;
-            
-            switch(stressness.score) {
-                case 0:
-                case 1:
-                    strengthFill.style.backgroundColor = '#e74a3b';
-                    strengthText.textContent = 'Weak';
-                    break;
-                case 2:
-                    strengthFill.style.backgroundColor = '#f6c23e';
-                    strengthText.textContent = 'Fair';
-                    break;
-                case 3:
-                    strengthFill.style.backgroundColor = '#1cc88a';
-                    strengthText.textContent = 'Good';
-                    break;
-                case 4:
-                    strengthFill.style.backgroundColor = '#4cd964';
-                    strengthText.textContent = 'Strong';
-                    break;
-            }
-        });
-
-        function calculatePasswordStrength(password) {
-            let score = 0;
-            
-            // Length check
-            if (password.length >= 8) score++;
-            if (password.length >= 12) score++;
-            
-            // Complexity checks
-            if (/[a-z]/.test(password)) score++;
-            if (/[A-Z]/.test(password)) score++;
-            if (/[0-9]/.test(password)) score++;
-            if (/[^A-Za-z0-9]/.test(password)) score++;
-            
-            // Cap at 4
-            return { score: Math.min(score, 4) };
         }
     }
 
-    // Setup review update
-    function setupReviewUpdate() {
-        // Initialize review with form data
-        updateReview();
+    function prevStepHandler() {
+        console.log('Previous button clicked, current step:', currentStep);
+        
+        if (currentStep > 1) {
+            currentStep--;
+            showStep(currentStep);
+        }
     }
 
-    // Update review section
-    function updateReview() {
-        // Account info
-        document.getElementById('review-name').textContent = 
-            document.querySelector('input[name="name"]').value || '-';
-        document.getElementById('review-email').textContent = 
-            document.querySelector('input[name="email"]').value || '-';
+    function updateButtons(step) {
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const submitBtn = document.getElementById('submitBtn');
         
-        const phoneCode = document.querySelector('select[name="country_code"]').value;
-        const phoneNumber = document.querySelector('input[name="phone"]').value;
-        document.getElementById('review-phone').textContent = 
-            phoneNumber ? `${phoneCode} ${phoneNumber}` : '-';
+        if (!prevBtn || !nextBtn || !submitBtn) return;
         
-        document.getElementById('review-nationality').textContent = 
-            document.querySelector('select[name="nationality"]').value || '-';
-
-        // Business info
-        document.getElementById('review-business-name').textContent = 
-            document.querySelector('input[name="business_name"]').value || '-';
-        document.getElementById('review-business-type').textContent = 
-            document.querySelector('select[name="business_type"]').value || '-';
-        document.getElementById('review-cr-number').textContent = 
-            document.querySelector('input[name="cr_number"]').value || '-';
-        
-        // Address
-        const governorate = document.querySelector('select[name="governorate"]').value;
-        const block = document.querySelector('input[name="block"]').value;
-        const street = document.querySelector('input[name="street"]').value;
-        const building = document.querySelector('input[name="building"]').value;
-        
-        if (governorate && block) {
-            document.getElementById('review-address').textContent = 
-                `${building ? building + ', ' : ''}${street ? street + ', ' : ''}Block ${block}, ${governorate}`;
+        if (step === 1) {
+            prevBtn.style.display = 'none';
+            nextBtn.style.display = 'flex';
+            submitBtn.style.display = 'none';
+        } else if (step === totalSteps) {
+            prevBtn.style.display = 'flex';
+            nextBtn.style.display = 'none';
+            submitBtn.style.display = 'flex';
         } else {
-            document.getElementById('review-address').textContent = '-';
+            prevBtn.style.display = 'flex';
+            nextBtn.style.display = 'flex';
+            submitBtn.style.display = 'none';
         }
-
-        // Documents
-        const civilIdFiles = document.querySelector('input[name="civil_id_front"]').files.length;
-        const licenseFiles = document.querySelector('input[name="commercial_license"]').files.length;
-        const additionalFiles = document.querySelector('input[name="additional_docs[]"]').files.length;
-        
-        document.getElementById('review-civil-id').textContent = civilIdFiles > 0 ? 'Uploaded' : 'Pending';
-        document.getElementById('review-license').textContent = licenseFiles > 0 ? 'Uploaded' : 'Pending';
-        document.getElementById('review-additional').textContent = `${additionalFiles} file${additionalFiles !== 1 ? 's' : ''}`;
     }
 
-    // Validation functions
+    // ============================================
+    // VALIDATION FUNCTIONS
+    // ============================================
+
     function validateCurrentStep() {
+        const currentSection = document.getElementById(`section${currentStep}`);
+        if (!currentSection) return true;
+        
+        const requiredFields = currentSection.querySelectorAll('[required]');
         let isValid = true;
         
-        // Get all required fields in current step
-        const currentSection = document.getElementById(`section${currentStep}`);
-        const requiredFields = currentSection.querySelectorAll('[required]');
-        
         requiredFields.forEach(field => {
-            if (!validateField({ target: field })) {
+            const value = field.value.trim();
+            
+            if (!value) {
+                showError(field, 'This field is required');
                 isValid = false;
+            } else {
+                clearError(field);
+                
+                // Email validation
+                if (field.type === 'email' && !validateEmail(value)) {
+                    showError(field, 'Please enter a valid email');
+                    isValid = false;
+                }
+                
+                // Phone validation
+                if (field.name === 'phone' && !validatePhone(value)) {
+                    showError(field, 'Please enter valid Kuwaiti phone (starts with 5,6,9)');
+                    isValid = false;
+                }
+                
+                // Password validation
+                if (field.name === 'password' && value.length < 8) {
+                    showError(field, 'Password must be at least 8 characters');
+                    isValid = false;
+                }
             }
         });
         
-        // Special validation for step 1 (password match)
+        // Special validation for password match in step 1
         if (currentStep === 1) {
             const password = document.getElementById('password').value;
             const confirmPassword = document.getElementById('confirm_password').value;
             
-            if (password !== confirmPassword) {
-                showError('confirm-password-error', 'Passwords do not match');
-                isValid = false;
-            } else {
-                hideError('confirm-password-error');
-            }
-        }
-        
-        // Special validation for step 3 (files)
-        if (currentStep === 3) {
-            const requiredFiles = [
-                'civil_id_front',
-                'civil_id_back',
-                'commercial_license'
-            ];
-            
-            requiredFiles.forEach(fileName => {
-                const input = document.querySelector(`input[name="${fileName}"]`);
-                if (!input.files.length) {
-                    showError(`${fileName}-error`, 'This file is required');
-                    isValid = false;
+            if (password !== confirmPassword && confirmPassword !== '') {
+                const errorMsg = document.getElementById('passError');
+                if (errorMsg) {
+                    errorMsg.textContent = 'Passwords do not match!';
+                    errorMsg.style.color = '#ff4d4d';
+                    errorMsg.classList.add('show');
                 }
-            });
+                isValid = false;
+            }
         }
         
         return isValid;
     }
 
-    function validateAllSteps() {
-        for (let i = 1; i <= totalSteps; i++) {
-            currentStep = i;
-            if (!validateCurrentStep()) {
-                updateSteps();
-                alert(`Please complete all required fields in Step ${i}`);
-                return false;
-            }
-        }
-        return true;
-    }
-
-    function validateField(e) {
-        const field = e.target;
-        const value = field.value.trim();
-        const validationType = field.dataset.validation;
+    function showError(field, message) {
+        field.classList.add('has-error');
         const errorId = `${field.name}-error`;
-        
-        // Clear previous error
-        hideError(errorId);
-        field.classList.remove('has-error');
-        
-        // Required field validation
-        if (field.hasAttribute('required') && !value) {
-            showError(errorId, 'This field is required');
-            field.classList.add('has-error');
-            return false;
-        }
-        
-        // Type-specific validation
-        if (validationType && value) {
-            let isValid = true;
-            let errorMessage = '';
-            
-            switch(validationType) {
-                case 'email':
-                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                    isValid = emailRegex.test(value);
-                    errorMessage = 'Please enter a valid email address';
-                    break;
-                    
-                case 'phone':
-                    const phoneRegex = /^[569]\d{7}$/;
-                    isValid = phoneRegex.test(value);
-                    errorMessage = 'Please enter a valid Kuwaiti phone number (starting with 5, 6, or 9)';
-                    break;
-                    
-                case 'password':
-                    isValid = value.length >= 8;
-                    errorMessage = 'Password must be at least 8 characters long';
-                    break;
-                    
-                case 'name':
-                    isValid = value.length >= 2;
-                    errorMessage = 'Name must be at least 2 characters long';
-                    break;
-            }
-            
-            if (!isValid) {
-                showError(errorId, errorMessage);
-                field.classList.add('has-error');
-                return false;
-            }
-        }
-        
-        return true;
-    }
-
-    function showError(errorId, message) {
         const errorElement = document.getElementById(errorId);
         if (errorElement) {
             errorElement.textContent = message;
@@ -1255,29 +1496,212 @@
         }
     }
 
-    function hideError(errorId) {
+    function clearError(field) {
+        field.classList.remove('has-error');
+        const errorId = `${field.name}-error`;
         const errorElement = document.getElementById(errorId);
         if (errorElement) {
             errorElement.classList.remove('show');
         }
     }
 
-    // Utility functions
+    function validateEmail(email) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    }
+
+    function validatePhone(phone) {
+        return /^[569]\d{7}$/.test(phone);
+    }
+
+    // ============================================
+    // PASSWORD FUNCTIONS
+    // ============================================
+
+    function togglePassword(fieldId) {
+        const input = document.getElementById(fieldId);
+        if (!input) return;
+        
+        if (input.type === "password") {
+            input.type = "text";
+        } else {
+            input.type = "password";
+        }
+    }
+
+    function validatePasswords() {
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirm_password').value;
+        const errorMsg = document.getElementById('passError');
+        
+        if (!errorMsg) return;
+        
+        if (confirmPassword === '') {
+            errorMsg.textContent = '';
+            errorMsg.classList.remove('show');
+            return;
+        }
+        
+        if (password !== confirmPassword) {
+            errorMsg.textContent = '⚠️ Passwords do not match!';
+            errorMsg.style.color = '#ff4d4d';
+            errorMsg.classList.add('show');
+        } else {
+            errorMsg.textContent = '✓ Passwords match';
+            errorMsg.style.color = '#4cd964';
+            errorMsg.classList.add('show');
+        }
+    }
+
+    // ============================================
+    // FILE UPLOAD FUNCTIONS
+    // ============================================
+
+    function previewFile(input) {
+        if (!input.files || input.files.length === 0) return;
+        
+        const file = input.files[0];
+        const containerId = input.closest('.form-group').querySelector('.file-preview').id;
+        const previewContainer = document.getElementById(containerId);
+        
+        if (!previewContainer) return;
+        
+        // Clear previous preview
+        previewContainer.innerHTML = '';
+        
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const previewItem = document.createElement('div');
+            previewItem.className = 'file-preview-item';
+            
+            if (file.type.startsWith('image/')) {
+                previewItem.innerHTML = `
+                    <img src="${e.target.result}" alt="${file.name}">
+                    <button type="button" class="remove-file" onclick="removeFile(this)">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
+            } else {
+                previewItem.innerHTML = `
+                    <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#f8f9fa;">
+                        <i class="fas fa-file-pdf fa-2x" style="color:#ff4d4d;"></i>
+                    </div>
+                    <button type="button" class="remove-file" onclick="removeFile(this)">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
+            }
+            
+            previewContainer.appendChild(previewItem);
+        };
+        
+        reader.readAsDataURL(file);
+        updateReview();
+    }
+
     function removeFile(button) {
         const previewItem = button.closest('.file-preview-item');
-        previewItem.remove();
+        if (previewItem) {
+            previewItem.remove();
+        }
+        updateReview();
     }
 
-    function preventDefaults(e) {
+    // ============================================
+    // REVIEW FUNCTIONS
+    // ============================================
+
+    function updateReview() {
+        // Account Info
+        setReviewText('review-name', document.querySelector('input[name="name"]')?.value || '-');
+        setReviewText('review-email', document.querySelector('input[name="email"]')?.value || '-');
+        
+        const phone = document.querySelector('input[name="phone"]')?.value || '-';
+        setReviewText('review-phone', phone !== '-' ? `+965 ${phone}` : '-');
+        
+        setReviewText('review-nationality', document.querySelector('select[name="nationality"]')?.value || '-');
+        
+        // Business Info
+        setReviewText('review-business-name', document.querySelector('input[name="business_name"]')?.value || '-');
+        setReviewText('review-business-type', document.querySelector('select[name="business_type"]')?.value || '-');
+        setReviewText('review-cr-number', document.querySelector('input[name="cr_number"]')?.value || '-');
+        setReviewText('review-vat-number', document.querySelector('input[name="vat_number"]')?.value || 'Not provided');
+        
+        // Address
+        const governorate = document.querySelector('select[name="governorate"]')?.value || '';
+        const block = document.querySelector('input[name="block"]')?.value || '';
+        const street = document.querySelector('input[name="street"]')?.value || '';
+        const building = document.querySelector('input[name="building"]')?.value || '';
+        
+        let address = '';
+        if (building) address += building + ', ';
+        if (street) address += street + ', ';
+        if (block) address += 'Block ' + block + ', ';
+        if (governorate) address += governorate;
+        
+        setReviewText('review-address', address || '-');
+        
+        // Documents
+        const civilIdFront = document.querySelector('input[name="civil_id_front"]')?.files?.length || 0;
+        const civilIdBack = document.querySelector('input[name="civil_id_back"]')?.files?.length || 0;
+        const license = document.querySelector('input[name="commercial_license"]')?.files?.length || 0;
+        const additional = document.querySelector('input[name="additional_docs[]"]')?.files?.length || 0;
+        
+        setReviewText('review-civil-id-front', civilIdFront > 0 ? 'Uploaded' : 'Not uploaded');
+        setReviewText('review-civil-id-back', civilIdBack > 0 ? 'Uploaded' : 'Not uploaded');
+        setReviewText('review-license', license > 0 ? 'Uploaded' : 'Not uploaded');
+        setReviewText('review-additional', `${additional} file${additional !== 1 ? 's' : ''}`);
+    }
+
+    function setReviewText(elementId, text) {
+        const element = document.getElementById(elementId);
+        if (element) {
+            element.textContent = text;
+        }
+    }
+
+    // ============================================
+    // FORM SUBMISSION
+    // ============================================
+
+    function submitFormHandler(e) {
         e.preventDefault();
-        e.stopPropagation();
+        console.log('Submit button clicked');
+        
+        // Validate all steps
+        for (let i = 1; i <= totalSteps; i++) {
+            const tempStep = currentStep;
+            currentStep = i;
+            if (!validateCurrentStep()) {
+                currentStep = tempStep;
+                showStep(i);
+                alert(`Please complete all required fields in Step ${i}`);
+                return;
+            }
+        }
+        currentStep = totalSteps;
+        
+        // Check terms agreement
+        const agreeTerms = document.getElementById('agreeTerms');
+        if (!agreeTerms || !agreeTerms.checked) {
+            alert('Please agree to the Terms & Conditions');
+            return;
+        }
+        
+        // Show loading
+        const submitBtn = document.getElementById('submitBtn');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<span class="loading-spinner"></span> Processing...';
+        submitBtn.disabled = true;
+        
+        // Submit form
+        setTimeout(() => {
+            document.getElementById('vendorRegForm').submit();
+        }, 1000);
     }
 
-    function scrollToTop() {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    // Initialize form when page loads
-    document.addEventListener('DOMContentLoaded', initForm);
+    // ============================================
+    // INITIALIZATION COMPLETE
+    // ============================================
+    console.log('✅ SooqKabeer Vendor Registration Script Loaded');
 </script>
 {% endblock %}
