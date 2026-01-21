@@ -8,19 +8,21 @@ env/
 venv/
 .venv/
 ENV/
-env.bak/
-venv.bak/
 
 # Database
 *.db
+*.sqlite
 *.sqlite3
 instance/
-*.db-journal
 
 # Uploads
 static/uploads/
 media/
+uploads/
+
+# Logs
 *.log
+logs/
 
 # OS
 .DS_Store
