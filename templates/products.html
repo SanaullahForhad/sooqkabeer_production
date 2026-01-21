@@ -573,11 +573,11 @@
                     <!-- Language Switcher -->
                     <div class="lang-switcher">
                         <div class="btn-group">
-                            <a href="{{ url_for('set_language', lang='en') }}" 
+                            <a href="{{ url_for('change_site_lang', lang='en') }}" 
                                class="btn {% if lang == 'en' %}active{% endif %}">
                                 EN
                             </a>
-                            <a href="{{ url_for('set_language', lang='ar') }}" 
+                            <a href="{{ url_for('change_site_lang', lang='ar') }}" 
                                class="btn {% if lang == 'ar' %}active{% endif %}">
                                 عربي
                             </a>
